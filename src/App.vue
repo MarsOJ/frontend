@@ -1,5 +1,12 @@
 <script setup>
+import { ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
+
+const count = ref(0);
+
+function increment() {
+  count.value++
+}
 </script>
 
 <template>
@@ -9,6 +16,7 @@ import { RouterLink, RouterView } from 'vue-router'
       <RouterLink to="/about">About</RouterLink>
       <RouterLink to="/login">Login</RouterLink>
       <RouterLink to="/register">Register</RouterLink>
+      <el-button type="primary" @click="increment()">(By Element UI) Count is: {{ count }}</el-button>
     </nav>
   </header>
 
