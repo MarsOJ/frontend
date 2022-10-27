@@ -15,10 +15,14 @@ function register() {
   console.log("Register:", registerForm)
   var valid = verifyPassword()
   if (!valid) {
-    ElMessage.error('密码不合法，请重新选择密码！')
+    ElMessageBox.alert('密码不合法，请重新选择密码！', '密码错误', {
+      confirmButtonText: '确认',
+    })
   }
   else if (registerForm.password !== registerForm.password2) {
-    ElMessage.error('两次密码不一致，请重新输入！')
+    ElMessageBox.alert('两次密码不一致，请重新输入！', '密码错误', {
+      confirmButtonText: '确认',
+    })
   }
 }
 </script>
@@ -33,20 +37,21 @@ function register() {
         <br />
         <el-input v-model="registerForm.password2" type="password" placeholder="再次输入密码" show-password />
         <br />
-        <el-button type="primary" @click="register()">注册</el-button>
+        <el-button round type="primary" @click="register()">注册</el-button>
       </el-form>
     </div>
-    {{ registerForm }}
   </main>
 </template>
 
 <style scoped>
 main {
-  height: 90%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: url('../assets/bg_fullscreen.png') no-repeat center center;
+  background-size: cover;
 }
 
 #register-form {

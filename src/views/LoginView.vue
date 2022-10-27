@@ -13,26 +13,29 @@ function login() {
 
 <template>
   <main>
+    wefweffwe
     <div id="login-form">
       <el-form :model="loginForm">
         <el-input v-model="loginForm.username" type="text" placeholder="用户名" clearable />
         <br />
         <el-input v-model="loginForm.password" type="password" placeholder="密码" show-password />
         <br />
-        <el-button type="primary" @click="login()">登录</el-button>
+        <el-button round type="info" @click="$router.push('/register')">注册</el-button>
+        <el-button round type="primary" @click="login()">登录</el-button>
       </el-form>
     </div>
-    {{ loginForm }}
   </main>
 </template>
 
 <style scoped>
 main {
-  height: 90%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: url('../assets/bg_fullscreen.png') no-repeat center center;
+  background-size: cover;
 }
 
 #login-form {
