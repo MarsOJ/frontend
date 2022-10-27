@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 
-const count = ref(0);
+const count = ref(0)
 
 function increment() {
   count.value++
@@ -11,30 +11,39 @@ function increment() {
 
 <template>
   <header>
-    <nav>
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-      <RouterLink to="/login">Login</RouterLink>
-      <RouterLink to="/register">Register</RouterLink>
-      <el-button type="primary" @click="increment()">(By Element UI) Count is: {{ count }}</el-button>
-    </nav>
+    <el-affix>
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/login">Login</RouterLink>
+        <RouterLink to="/register">Register</RouterLink>
+        <el-button type="primary" @click="increment()">(By Element UI) Count is: {{ count }}</el-button>
+      </nav>
+    </el-affix>
   </header>
 
-  <div id="appRouterView">
-    <RouterView />
-  </div>
+  <RouterView />
 </template>
 
 <style>
 @import '@/assets/base.css';
 
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
 #app {
   font-weight: normal;
+  height: 100%;
 }
 
 header {
   line-height: 3em;
-  max-height: 100vh;
+  max-height: 20%;
 }
 
 a,
@@ -55,6 +64,7 @@ nav {
   font-size: 12px;
   text-align: center;
   border-bottom: 1px #e7e7e7 solid;
+  background-color: whitesmoke;
 }
 
 nav a.router-link-exact-active {
