@@ -20,7 +20,7 @@ pipeline {
         
     stage('Install node_modules') {
       steps {
-        sh "yarn install && yarn init"
+        sh "yarn install"
       }
     }
     stage('Install dependencies') {
