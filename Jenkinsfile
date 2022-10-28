@@ -20,17 +20,17 @@ pipeline {
         
     stage('Install node_modules') {
       steps {
-        sh "yarn install"
+        sh "npm install"
       }
     }
-    stage('Install dependencies') {
+    stage('Vite build') {
       steps {
-        sh "yarn"
+        sh "npm run build"
       }
     }
     stage('Run linter') {
       steps {
-        sh "yarn run lint"
+        sh "npm run lint"
       }
     }
   }
