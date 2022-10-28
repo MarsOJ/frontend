@@ -1,28 +1,27 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive } from "vue";
 
 const registerForm = reactive({
-  username: '',
-  password: '',
-  password2: '',
-})
+  username: "",
+  password: "",
+  password2: "",
+});
 
 function verifyPassword() {
-  return false
+  return false;
 }
 
 function register() {
-  console.log("Register:", registerForm)
-  var valid = verifyPassword()
+  console.log("Register:", registerForm);
+  var valid = verifyPassword();
   if (!valid) {
-    ElMessageBox.alert('密码不合法，请重新选择密码！', '密码错误', {
-      confirmButtonText: '确认',
-    })
-  }
-  else if (registerForm.password !== registerForm.password2) {
-    ElMessageBox.alert('两次密码不一致，请重新输入！', '密码错误', {
-      confirmButtonText: '确认',
-    })
+    ElMessageBox.alert("密码不合法，请重新选择密码！", "密码错误", {
+      confirmButtonText: "确认",
+    });
+  } else if (registerForm.password !== registerForm.password2) {
+    ElMessageBox.alert("两次密码不一致，请重新输入！", "密码错误", {
+      confirmButtonText: "确认",
+    });
   }
 }
 </script>
@@ -50,7 +49,7 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: url('../assets/bg_fullscreen.png') no-repeat center center;
+  background: url("../assets/bg_fullscreen.png") no-repeat center center;
   background-size: cover;
 }
 

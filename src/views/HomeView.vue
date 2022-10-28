@@ -1,11 +1,11 @@
 <script setup>
-import Navigation from '@/components/Navigation.vue'
-import { ref } from 'vue'
+import Navigation from "@/components/Navigation.vue";
+import { ref } from "vue";
 
-const count = ref(0)
+const count = ref(0);
 
 function increment() {
-  count.value++
+  count.value++;
 }
 </script>
 

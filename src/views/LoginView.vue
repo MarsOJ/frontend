@@ -1,19 +1,18 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive } from "vue";
 
 const loginForm = reactive({
-  username: '',
-  password: '',
-})
+  username: "",
+  password: "",
+});
 
 function login() {
-  console.log("Login:", loginForm)
+  console.log("Login:", loginForm);
 }
 </script>
 
 <template>
   <main>
-    wefweffwe
     <div id="login-form">
       <el-form :model="loginForm">
         <el-input v-model="loginForm.username" type="text" placeholder="用户名" clearable />
@@ -34,7 +33,7 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: url('../assets/bg_fullscreen.png') no-repeat center center;
+  background: url("../assets/bg_fullscreen.png") no-repeat center center;
   background-size: cover;
 }
 
