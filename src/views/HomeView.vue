@@ -1,5 +1,5 @@
 <script setup>
-import Navigation from "@/components/Navigation.vue";
+import NavigationBar from "@/components/NavigationBar.vue";
 import { ref } from "vue";
 
 const count = ref(0);
@@ -11,7 +11,7 @@ function increment() {
 
 <template>
   <header>
-    <Navigation />
+    <NavigationBar />
   </header>
 
   <main>
