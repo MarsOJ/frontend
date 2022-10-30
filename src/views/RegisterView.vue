@@ -28,37 +28,54 @@ function register() {
 
 <template>
   <main>
-    <div id="register-form">
-      <el-form :model="registerForm">
-        <el-input v-model="registerForm.username" type="text" placeholder="用户名" clearable />
-        <br />
-        <el-input v-model="registerForm.password" type="password" placeholder="密码" show-password />
-        <br />
-        <el-input v-model="registerForm.password2" type="password" placeholder="再次输入密码" show-password />
-        <br />
-        <el-button round type="primary" @click="register()">注册</el-button>
-      </el-form>
+    <div class="wrapper">
+      <img id="title" src="../assets/logo.png" />
+      <div id="register-form">
+        <el-form :model="registerForm">
+          <el-input v-model="registerForm.username" type="text" placeholder="用户名" clearable />
+          <br />
+          <el-input v-model="registerForm.password" type="password" placeholder="密码" show-password />
+          <br />
+          <el-input v-model="registerForm.password2" type="password" placeholder="再次输入密码" show-password />
+          <br />
+          <el-button round type="info" @click="$router.push('/login')">登录</el-button>
+          <el-button round type="primary" @click="register()">注册</el-button>
+        </el-form>
+      </div>
     </div>
   </main>
 </template>
 
 <style scoped>
 main {
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  height: 100%;
   background: url("../assets/bg_fullscreen.png") no-repeat center center;
   background-size: cover;
 }
 
-#register-form {
-  background-color: rgba(128, 128, 128, 0.5);
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 30%;
   min-width: 400px;
+}
+
+#title {
+  width: 70%;
+}
+
+#register-form {
+  width: 100%;
+  background-color: rgba(128, 128, 128, 0.5);
   padding: 1em;
   margin-top: 5em;
+  border-radius: 16px;
   text-align: center;
 }
 
