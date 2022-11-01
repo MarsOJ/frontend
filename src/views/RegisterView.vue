@@ -1,63 +1,100 @@
 <script setup>
-import { reactive } from "vue";
-
-const registerForm = reactive({
-  username: "",
-  password: "",
-  password2: "",
-});
-
-function verifyPassword() {
-  return false;
-}
-
-function register() {
-  console.log("Register:", registerForm);
-  var valid = verifyPassword();
-  if (!valid) {
-    ElMessageBox.alert("密码不合法，请重新选择密码！", "密码错误", {
-      confirmButtonText: "确认",
-    });
-  } else if (registerForm.password !== registerForm.password2) {
-    ElMessageBox.alert("两次密码不一致，请重新输入！", "密码错误", {
-      confirmButtonText: "确认",
-    });
-  }
-}
+import User from '@/models/user';
 </script>
 
 <template>
   <main>
-    <div id="register-form">
-      <el-form :model="registerForm">
-        <el-input
-          v-model="registerForm.username"
-          type="text"
-          placeholder="用户名"
-          clearable
-        />
-        <br />
-        <el-input
-          v-model="registerForm.password"
-          type="password"
-          placeholder="密码"
-          show-password
-        />
-        <br />
-        <el-input
-          v-model="registerForm.password2"
-          type="password"
-          placeholder="再次输入密码"
-          show-password
-        />
-        <br />
-        <el-button round type="primary" @click="register()">注册</el-button>
-      </el-form>
+    <div v-if="loading" id="loading">
+      <div>Loading...</div>
+    </div>
+    <div class="wrapper">
+      <img id="title" src="../assets/logo.png" />
+      <div id="register-form">
+        <el-form :model="user">
+          <el-input v-model="user.username" type="text" placeholder="用户名" clearable />
+          <br />
+          <el-input v-model="user.password" type="password" placeholder="密码" show-password />
+          <br />
+          <el-input v-model="password2" type="password" placeholder="再次输入密码" show-password />
+          <br />
+          <el-button round type="info" @click="$router.push('/login')">登录</el-button>
+          <el-button round type="primary" @click="onRegister()">注册</el-button>
+        </el-form>
+      </div>
     </div>
   </main>
 </template>
 
+<script>
+export default {
+  name: "RegisterView",
+  data() {
+    return {
+      loading: false,
+      user: new User("", ""),
+      password2: "",
+    }
+  },
+  methods: {
+    errorMessage(msg, title) {
+      ElMessageBox.alert(msg, title, {
+        confirmButtonText: "确认",
+      });
+    },
+    onRegister() {
+      if (this.user.password !== this.password2) {
+        this.errorMessage("两次密码不一致，请重新输入！", "密码错误");
+        return;
+      }
+
+      this.loading = true;
+      console.log("Register:", this.user);
+      // $validator.validateAll().then(isValid => {
+      //   if (!isValid) {
+      //     this.loading = false;
+      //     this.errorMessage("密码不合法，请重新选择密码！", "密码错误");
+      //     return;
+      //   }
+      if (this.user.username && this.user.password) {
+        this.$store.dispatch('auth/register', this.user).then(
+          () => {
+            // Register successful
+            this.loading = false;
+            this.$router.push('/login');
+          },
+          error => {
+            // Login failed
+            this.loading = false;
+            var msg = (error.response && error.response.data) || error.message || error.toString();
+            this.errorMessage(msg, "注册失败");
+          }
+        );
+      }
+      // });
+    }
+  },
+  created() {
+    if (this.$store.state.auth.status.loggedIn) {
+      this.$router.push('/home');
+    }
+  }
+}
+</script>
+
 <style scoped>
+#loading {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(128, 128, 128, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: xx-large;
+  color: white;
+}
+
 main {
   display: flex;
   flex-direction: column;
@@ -73,8 +110,12 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: url("../assets/bg_fullscreen.png") no-repeat center center;
-  background-size: cover;
+  width: 30%;
+  min-width: 400px;
+}
+
+#title {
+  width: 70%;
 }
 
 #register-form {

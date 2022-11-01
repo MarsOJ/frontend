@@ -1,6 +1,6 @@
 <script setup>
 import NaviBar from "@/components/NaviBar.vue";
-import Footer from "@/components/Footer.vue";
+import Footer from "@/components/PageFooter.vue";
 import UserService from "../services/user.service";
 </script>
 
@@ -19,7 +19,7 @@ import UserService from "../services/user.service";
                   <div class="week vertical-text">星期{{ week }}</div>
                 </div>
                 <div class="count-down">
-                  <p>据 {{ incomingCompetition }} 还剩 {{ leavingDay }} 天</p>
+                  <p>距 {{ incomingCompetition }} 还剩 {{ leavingDay }} 天</p>
                 </div>
               </div>
               <div class="link block">
@@ -135,6 +135,7 @@ export default {
           url: "https://atcoder.jp",
         },
       ],
+      announcement: null,
     };
   },
   methods: {},
@@ -177,6 +178,7 @@ div p {
   white-space: pre-wrap;
   width: 150px;
 }
+
 .common-layout {
   height: 100vh;
 }
@@ -245,6 +247,7 @@ div p {
   width: 100%;
   text-align: center;
 }
+
 .announcement p {
   width: 100%;
   display: text;
@@ -257,6 +260,7 @@ div p {
   padding-left: 50px;
   display: inline-block;
 }
+
 .info p {
   width: 100%;
   display: text;
