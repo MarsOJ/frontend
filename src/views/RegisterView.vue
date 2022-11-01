@@ -59,7 +59,16 @@ function register() {
 
 <style scoped>
 main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   height: 100%;
+  background: url("../assets/bg_fullscreen.png") no-repeat center center;
+  background-size: cover;
+}
+
+.wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,11 +78,11 @@ main {
 }
 
 #register-form {
+  width: 100%;
   background-color: rgba(128, 128, 128, 0.5);
-  width: 30%;
-  min-width: 400px;
   padding: 1em;
   margin-top: 5em;
+  border-radius: 16px;
   text-align: center;
 }
 

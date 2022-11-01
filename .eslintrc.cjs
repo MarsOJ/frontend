@@ -7,9 +7,6 @@ module.exports = {
     "plugin:vue/vue3-essential",
     "eslint:recommended",
     "@vue/eslint-config-prettier",
+    "./.eslintrc-auto-import.json",
   ],
-  rules: {
-    "vue/multi-word-component-names": 0,
-    "vue/require-v-for-key": 0,
-  },
 };
