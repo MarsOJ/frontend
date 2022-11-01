@@ -1,5 +1,5 @@
 <script setup>
-import { RouterView } from 'vue-router'
+import { RouterView } from "vue-router";
 </script>
 
 <template>
@@ -7,12 +7,12 @@ import { RouterView } from 'vue-router'
 </template>
 
 <style>
-html {
-  height: 100%;
-}
-
+html,
 body {
   margin: 0px;
+  border: 0px;
+  padding: 0px;
+  width: 100%;
   height: 100%;
 }
 
@@ -20,6 +20,10 @@ body {
   font-weight: normal;
   height: 100%;
   min-height: 400px;
+}
+
+.el-container {
+  height: 100%;
 }
 
 @media (max-width: 400px) {
