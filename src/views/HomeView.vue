@@ -1,6 +1,6 @@
 <script setup>
 import NaviBar from "@/components/NaviBar.vue";
-import Footer from "@/components/Footer.vue";
+import Footer from "@/components/PageFooter.vue";
 import UserService from "../services/user.service";
 </script>
 
@@ -202,6 +202,7 @@ div p {
   white-space: pre-wrap;
   width: 150px;
 }
+
 .common-layout {
   height: 100vh;
 }
@@ -212,7 +213,8 @@ div p {
   margin: 20px;
   padding: 20px;
   background-color: white;
-  box-shadow: 3px 3px 3px 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 3px 3px 3px 1px rgba(0, 0, 0, 0.2); */
 }
 
 .announcement {
@@ -274,6 +276,7 @@ div p {
   width: 100%;
   text-align: center;
 }
+
 .announcement p {
   width: 100%;
   display: text;
@@ -286,6 +289,7 @@ div p {
   padding-left: 50px;
   display: inline-block;
 }
+
 .info p {
   width: 100%;
   display: text;
