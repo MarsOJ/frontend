@@ -19,7 +19,13 @@ import UserService from "../services/user.service";
                   <div class="week vertical-text">星期{{ week }}</div>
                 </div>
                 <div class="count-down">
-                  <p>据 {{ incomingCompetition }} 还剩 {{ leavingDay }} 天</p>
+                  <p>
+                    据
+                    <span style="color: grey; font-size: 16px">{{
+                      incomingCompetition
+                    }}</span>
+                    还剩 {{ leavingDay }} 天
+                  </p>
                 </div>
               </div>
               <div class="link block">
@@ -39,7 +45,7 @@ import UserService from "../services/user.service";
           <el-main>
             <el-container direction="vertical">
               <div class="announcement block">
-                <p style="font-size: 24px">公告</p>
+                <p style="font-size: 28px">公告</p>
                 <p style="font-size: 18px">
                   MarsOJ致力于每一位同学的进步与成长，欢迎加入MarsOJ的大家庭~
                 </p>
@@ -50,7 +56,16 @@ import UserService from "../services/user.service";
                 <span class="announcement-text">{{ announcement }}</span>
               </div>
               <div class="info block">
-                <p style="font-size: 24px">资讯</p>
+                <p style="font-size: 28px">资讯</p>
+                <el-scrollbar>
+                  <div v-for="item in info" class="info-block">
+                    <div class="info-date"></div>
+                    <div class="info-detail">
+                      <div class="info-title">{{ item.title }}</div>
+                      <div class="info-src">来源：{{ item.src }}</div>
+                    </div>
+                  </div>
+                </el-scrollbar>
               </div>
             </el-container>
           </el-main>
@@ -135,6 +150,16 @@ export default {
           url: "https://atcoder.jp",
         },
       ],
+      info: [
+        {
+          title: "CSP-JS 2022第一轮认证电子证书开始申领",
+          src: "NOI官网",
+        },
+        {
+          title: "title2",
+          src: "src2",
+        },
+      ],
     };
   },
   methods: {},
@@ -215,10 +240,14 @@ div p {
   display: inline-block;
   align-items: left;
   margin: 10px;
-  color: rgb(37, 176, 231);
+  color: var(--el-color-primary);
   font-size: 18px;
   text-align: left;
   text-decoration: none;
+}
+
+.link a:hover {
+  text-decoration: underline;
 }
 
 .time {
@@ -263,5 +292,31 @@ div p {
   text-align: left;
   font-family: sans-serif;
   font-weight: light;
+}
+
+.info-block {
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  margin: 20px;
+  padding: 20px;
+  text-align: center;
+  border-radius: 4px;
+  background: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+}
+.info-title {
+  text-align: left;
+  font-family: sans-serif;
+  font-weight: 550;
+  font-size: 20px;
+}
+
+.info-src {
+  text-align: left;
+  font-family: sans-serif;
+  font-weight: normal;
+  font-size: 16px;
+  color: grey;
 }
 </style>
