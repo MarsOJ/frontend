@@ -40,7 +40,7 @@ const router = createRouter({
       component: () => import("../views/PersonalView.vue"),
     },
     {
-      path: "/home/news",
+      path: "/home/news/:id",
       name: "news",
       component: () => import("../views/NewsView.vue"),
     },
@@ -49,7 +49,8 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const publicPages = ["/login", "/register", "/home"];
-  const authRequired = !publicPages.includes(to.path);
+  // const authRequired = !publicPages.includes(to.path);
+  const authRequired = false;
   const loggedIn = localStorage.getItem("user");
 
   // trying to access a restricted page + not logged in
