@@ -9,4 +9,7 @@ module.exports = {
     "@vue/eslint-config-prettier",
     "./.eslintrc-auto-import.json",
   ],
+  rules: {
+    "vue/require-v-for-key": 0,
+  },
 };
