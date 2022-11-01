@@ -1,6 +1,7 @@
 <script setup>
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/Footer.vue";
+import UserService from "../services/user.service";
 </script>
 
 <template>
@@ -138,6 +139,17 @@ export default {
   },
   methods: {},
   mounted() {
+    UserService.getPublicContent().then(
+      (response) => {
+        this.content = response.data;
+      },
+      (error) => {
+        this.content =
+          (error.response && error.response.data) ||
+          error.message ||
+          error.toString();
+      }
+    );
     var d = new Date();
     this.day = d.getDate();
     this.month = this.numberMap[d.getMonth()] + "月";
