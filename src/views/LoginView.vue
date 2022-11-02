@@ -12,16 +12,33 @@ import User from "@/models/user";
       <div id="login-form">
         <el-form ref="formRef" :model="user" :rules="rules">
           <el-form-item prop="username">
-            <el-input v-model="user.username" type="text" placeholder="用户名" clearable />
+            <el-input
+              v-model="user.username"
+              type="text"
+              placeholder="用户名"
+              clearable
+            />
           </el-form-item>
           <br />
           <el-form-item prop="password">
-            <el-input v-model="user.password" type="password" placeholder="密码" show-password />
+            <el-input
+              v-model="user.password"
+              type="password"
+              placeholder="密码"
+              show-password
+            />
           </el-form-item>
           <br />
           <el-form-item class="submit-btns">
-            <el-button round type="info" @click="$router.push('/register')">注册</el-button>
-            <el-button round type="primary" @click="submitForm(this.$refs.formRef)">登录</el-button>
+            <el-button round type="info" @click="$router.push('/register')"
+              >注册</el-button
+            >
+            <el-button
+              round
+              type="primary"
+              @click="submitForm(this.$refs.formRef)"
+              >登录</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
@@ -38,13 +55,13 @@ export default {
       user: new User("", ""),
       rules: {
         username: [
-          { required: true, message: '请输入正确的用户名', trigger: 'blur' },
+          { required: true, message: "请输入正确的用户名", trigger: "blur" },
         ],
         password: [
-          { required: true, message: '请输入正确的密码', trigger: 'blur' },
+          { required: true, message: "请输入正确的密码", trigger: "blur" },
         ],
-      }
-    }
+      },
+    };
   },
   methods: {
     errorMessage(msg, title) {
@@ -60,23 +77,26 @@ export default {
       console.log("Login:", this.user);
       await formEl.validate((valid, fields) => {
         if (valid) {
-          this.$store.dispatch('auth/login', this.user).then(
+          this.$store.dispatch("auth/login", this.user).then(
             () => {
               // Login successful
               this.loading = false;
-              window.location.href = '/home';
+              window.location.href = "/home";
             },
-            error => {
+            (error) => {
               // Login failed
-              console.log('Error information!', this.user);
+              console.log("Error information!", this.user);
               this.loading = false;
-              var msg = (error.response && error.response.data) || error.message || error.toString();
+              var msg =
+                (error.response && error.response.data) ||
+                error.message ||
+                error.toString();
               this.errorMessage(msg, "登录失败");
             }
           );
         } else {
           // Validation failed
-          console.log('Error in validation!', fields);
+          console.log("Error in validation!", fields);
           this.loading = false;
           this.errorMessage("用户名或密码错误，请重新输入！", "信息错误");
         }
@@ -85,10 +105,10 @@ export default {
   },
   created() {
     if (this.$store.state.auth.status.loggedIn) {
-      window.location.href = '/home';
+      window.location.href = "/home";
     }
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

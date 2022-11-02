@@ -2,7 +2,7 @@
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import axios from "axios";
-import { Back } from '@element-plus/icons-vue'
+import { Back } from "@element-plus/icons-vue";
 </script>
 
 <template>
@@ -12,7 +12,12 @@ import { Back } from '@element-plus/icons-vue'
       <el-main class="main">
         <div class="block">
           <div class="title">
-            <el-button circle id="back-button" :icon="Back" @click="$router.push('/home')" />
+            <el-button
+              circle
+              id="back-button"
+              :icon="Back"
+              @click="$router.push('/home')"
+            />
             <span id="headline">
               {{ newsId }} CSP-JS 2022第一轮认证电子证书申领通知
             </span>
@@ -42,17 +47,17 @@ export default {
     return {
       newsId: null,
       contents: [],
-    }
+    };
   },
   mounted() {
     this.newsId = this.$route.params.id;
-    axios.get("https://baconipsum.com/api/?type=meat-and-filler").then(
-      (result) => {
+    axios
+      .get("https://baconipsum.com/api/?type=meat-and-filler")
+      .then((result) => {
         this.contents = result.data;
-      }
-    )
+      });
   },
-}
+};
 </script>
 
 <style scoped>
@@ -79,7 +84,7 @@ export default {
   margin: 16px;
   font-weight: bold;
   font-size: x-large;
-  color: #4A5259;
+  color: #4a5259;
 }
 
 #created-time {

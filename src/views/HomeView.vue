@@ -2,6 +2,7 @@
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import UserService from "../services/user.service";
+import axios from "axios";
 </script>
 
 <template>
@@ -42,7 +43,7 @@ import UserService from "../services/user.service";
               </div>
             </el-container>
           </el-aside>
-          <el-main>
+          <el-main @scroll="scrollEvent($event)">
             <el-container direction="vertical">
               <div class="announcement block">
                 <p style="font-size: 28px">公告</p>
@@ -57,15 +58,16 @@ import UserService from "../services/user.service";
               </div>
               <div class="info block">
                 <p style="font-size: 28px">资讯</p>
-                <el-scrollbar>
-                  <div v-for="item in info" class="info-block">
-                    <div class="info-date"></div>
-                    <div class="info-detail">
-                      <div class="info-title">{{ item.title }}</div>
-                      <div class="info-src">来源：{{ item.src }}</div>
-                    </div>
+                <!-- <el-scrollbar> -->
+                <div v-for="item in info" class="info-block">
+                  <div class="info-date"></div>
+                  <div class="info-detail">
+                    <div class="info-title">{{ item.title }}</div>
+                    <div class="info-src">来源：{{ item.source }}</div>
+                    <div class="info-date">时间：{{ item.date }}</div>
                   </div>
-                </el-scrollbar>
+                </div>
+                <!-- </el-scrollbar> -->
               </div>
             </el-container>
           </el-main>
@@ -81,6 +83,9 @@ import UserService from "../services/user.service";
 <script>
 export default {
   name: "HomeView",
+  async created() {
+    await Promise.all([this.getInfo()]);
+  },
   data() {
     return {
       month: "十月",
@@ -150,19 +155,39 @@ export default {
           url: "https://atcoder.jp",
         },
       ],
-      info: [
-        {
-          title: "CSP-JS 2022第一轮认证电子证书开始申领",
-          src: "NOI官网",
-        },
-        {
-          title: "title2",
-          src: "src2",
-        },
-      ],
+      info: [],
+      timer: null,
+      updateInfoForm: {
+        lastId: "",
+      },
     };
   },
-  methods: {},
+  methods: {
+    async getInfo() {
+      await axios
+        .get("http://localhost:5000/info/get-latest/")
+        .then((response) => {
+          this.info = response.data;
+        });
+    },
+    scrollEvent(e) {
+      if (
+        e.target.scrollTop + e.target.offsetHeight + 1 >=
+        e.target.scrollHeight
+      ) {
+        //防抖节流
+        clearInterval(this.timer);
+        this.timer = setTimeout(() => {
+          this.updateInfoForm.lastId = this.info[this.info.length - 1]["id"];
+          axios
+            .get("http://localhost:5000/info/get-latest/", this.updateInfoForm)
+            .then((response) => {
+              this.info = this.info.concat(response.data);
+            });
+        }, 500);
+      }
+    },
+  },
   mounted() {
     UserService.getPublicContent().then(
       (response) => {
@@ -317,6 +342,14 @@ div p {
 }
 
 .info-src {
+  text-align: left;
+  font-family: sans-serif;
+  font-weight: normal;
+  font-size: 16px;
+  color: grey;
+}
+
+.info-date {
   text-align: left;
   font-family: sans-serif;
   font-weight: normal;

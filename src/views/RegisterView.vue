@@ -1,5 +1,5 @@
 <script setup>
-import User from '@/models/user';
+import User from "@/models/user";
 </script>
 
 <template>
@@ -12,20 +12,41 @@ import User from '@/models/user';
       <div id="register-form">
         <el-form ref="formRef" :model="form" :rules="rules">
           <el-form-item prop="username">
-            <el-input v-model="form.username" type="text" placeholder="用户名" clearable />
+            <el-input
+              v-model="form.username"
+              type="text"
+              placeholder="用户名"
+              clearable
+            />
           </el-form-item>
           <br />
           <el-form-item prop="password">
-            <el-input v-model="form.password" type="password" placeholder="密码" show-password />
+            <el-input
+              v-model="form.password"
+              type="password"
+              placeholder="密码"
+              show-password
+            />
           </el-form-item>
           <br />
           <el-form-item prop="password2">
-            <el-input v-model="form.password2" type="password" placeholder="再次输入密码" />
+            <el-input
+              v-model="form.password2"
+              type="password"
+              placeholder="再次输入密码"
+            />
           </el-form-item>
           <br />
           <el-form-item class="submit-btns">
-            <el-button round type="info" @click="$router.push('/login')">登录</el-button>
-            <el-button round type="primary" @click="submitForm(this.$refs.formRef)">注册</el-button>
+            <el-button round type="info" @click="$router.push('/login')"
+              >登录</el-button
+            >
+            <el-button
+              round
+              type="primary"
+              @click="submitForm(this.$refs.formRef)"
+              >注册</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
@@ -47,19 +68,27 @@ export default {
       user: new User("", ""),
       rules: {
         username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, max: 12, message: '用户名的长度应为3到12字符', trigger: 'blur' },
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          {
+            min: 3,
+            max: 12,
+            message: "用户名的长度应为3到12字符",
+            trigger: "blur",
+          },
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 20, message: '密码的长度应为6到20字符', trigger: 'blur' },
-          { validator: this.validatePass, trigger: 'blur' }
+          { required: true, message: "请输入密码", trigger: "blur" },
+          {
+            min: 6,
+            max: 20,
+            message: "密码的长度应为6到20字符",
+            trigger: "blur",
+          },
+          { validator: this.validatePass, trigger: "blur" },
         ],
-        password2: [
-          { validator: this.validatePassConfirm, trigger: 'blur' }
-        ],
-      }
-    }
+        password2: [{ validator: this.validatePassConfirm, trigger: "blur" }],
+      },
+    };
   },
   methods: {
     errorMessage(msg, title) {
@@ -77,37 +106,43 @@ export default {
         if (valid) {
           this.user.username = this.form.username;
           this.user.password = this.form.password;
-          this.$store.dispatch('auth/register', this.user).then(
+          this.$store.dispatch("auth/register", this.user).then(
             () => {
               // Register successful: login now
               console.log("Login:", this.user);
-              this.$store.dispatch('auth/login', this.user).then(
+              this.$store.dispatch("auth/login", this.user).then(
                 () => {
                   // Login successful
                   this.loading = false;
-                  window.location.href = '/home';
+                  window.location.href = "/home";
                 },
-                error => {
+                (error) => {
                   // Login failed
-                  console.log('Error information!', this.user);
+                  console.log("Error information!", this.user);
                   this.loading = false;
-                  var msg = (error.response && error.response.data) || error.message || error.toString();
+                  var msg =
+                    (error.response && error.response.data) ||
+                    error.message ||
+                    error.toString();
                   this.errorMessage(msg, "注册成功，登录失败");
-                  this.$router.push('/login');
+                  this.$router.push("/login");
                 }
               );
             },
-            error => {
+            (error) => {
               // Register failed
-              console.log('Error information!', this.user);
+              console.log("Error information!", this.user);
               this.loading = false;
-              var msg = (error.response && error.response.data) || error.message || error.toString();
+              var msg =
+                (error.response && error.response.data) ||
+                error.message ||
+                error.toString();
               this.errorMessage(msg, "注册失败");
             }
           );
         } else {
           // Validation failed
-          console.log('Error in validation!', fields);
+          console.log("Error in validation!", fields);
           this.loading = false;
           this.errorMessage("请重新输入合法的信息！", "信息错误");
         }
@@ -119,25 +154,25 @@ export default {
       if (value.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
         callback();
       } else {
-        callback(new Error('应同时含有大写字母、小写字母和数字'));
+        callback(new Error("应同时含有大写字母、小写字母和数字"));
       }
     },
     validatePassConfirm(rule, value, callback) {
-      if (value === '') {
-        callback(new Error('请再次输入密码'));
+      if (value === "") {
+        callback(new Error("请再次输入密码"));
       } else if (value !== this.form.password) {
         callback(new Error("两次输入的密码不相同"));
       } else {
         callback();
       }
-    }
+    },
   },
   created() {
     if (this.$store.state.auth.status.loggedIn) {
-      this.$router.push('/home');
+      this.$router.push("/home");
     }
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
