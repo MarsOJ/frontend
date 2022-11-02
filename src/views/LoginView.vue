@@ -5,7 +5,7 @@ import User from "@/models/user";
 <template>
   <main>
     <div v-if="loading" id="loading">
-      <div>Loading...</div>
+      <div>加载中……</div>
     </div>
     <div class="wrapper">
       <img id="title" src="../assets/logo.png" />

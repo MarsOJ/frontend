@@ -5,7 +5,7 @@ import User from '@/models/user';
 <template>
   <main>
     <div v-if="loading" id="loading">
-      <div>Loading...</div>
+      <div>加载中……</div>
     </div>
     <div class="wrapper">
       <img id="title" src="../assets/logo.png" />
@@ -51,6 +51,8 @@ export default {
           { min: 3, max: 12, message: '用户名的长度应为3到12字符', trigger: 'blur' },
         ],
         password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 20, message: '密码的长度应为6到20字符', trigger: 'blur' },
           { validator: this.validatePass, trigger: 'blur' }
         ],
         password2: [
@@ -77,8 +79,7 @@ export default {
           this.user.password = this.form.password;
           this.$store.dispatch('auth/register', this.user).then(
             () => {
-              // Register successful
-              // TODO: Login now
+              // Register successful: login now
               console.log("Login:", this.user);
               this.$store.dispatch('auth/login', this.user).then(
                 () => {
@@ -114,10 +115,11 @@ export default {
     },
     validatePass(rule, value, callback) {
       // TODO: validate password
-      if (value === '') {
-        callback(new Error('请输入密码'));
-      } else {
+      console.log(value);
+      if (value.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
         callback();
+      } else {
+        callback(new Error('应同时含有大写字母、小写字母和数字'));
       }
     },
     validatePassConfirm(rule, value, callback) {
