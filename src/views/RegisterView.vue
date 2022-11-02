@@ -90,7 +90,8 @@ export default {
                   // Login failed
                   console.log('Error information!', this.user);
                   this.loading = false;
-                  this.errorMessage("注册成功，登录失败。请稍后重试登录。", "跳转登录失败");
+                  var msg = (error.response && error.response.data) || error.message || error.toString();
+                  this.errorMessage(msg, "注册成功，登录失败");
                   this.$router.push('/login');
                 }
               );
