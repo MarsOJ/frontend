@@ -1,7 +1,7 @@
 <script setup>
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
-import axios from "axios";
+import InfoService from "@/services/info.service"
 import { Back } from "@element-plus/icons-vue";
 </script>
 
@@ -12,24 +12,17 @@ import { Back } from "@element-plus/icons-vue";
       <el-main class="main">
         <div class="block">
           <div class="title">
-            <el-button
-              circle
-              id="back-button"
-              :icon="Back"
-              @click="$router.push('/home')"
-            />
+            <el-button circle id="back-button" :icon="Back" @click="$router.push('/home')" />
             <span id="headline">
-              {{ newsId }} CSP-JS 2022第一轮认证电子证书申领通知
+              {{ content.title }}
             </span>
-            <div id="created-time">2022年10月24日 13:29</div>
+            <div id="subtitle">
+              来源：{{ content.source }}&nbsp;&nbsp;&nbsp;&nbsp;日期：{{ content.date }}
+            </div>
           </div>
           <hr />
           <div class="content">
-            <ol type="1">
-              <li v-for="line in contents">
-                {{ line }}
-              </li>
-            </ol>
+            {{ content.content }}
           </div>
         </div>
       </el-main>
@@ -46,16 +39,23 @@ export default {
   data() {
     return {
       newsId: null,
-      contents: [],
+      content: "",
     };
   },
   mounted() {
     this.newsId = this.$route.params.id;
-    axios
-      .get("https://baconipsum.com/api/?type=meat-and-filler")
-      .then((result) => {
-        this.contents = result.data;
-      });
+    InfoService.getNewsDetail(this.newsId).then(
+      (content) => {
+        this.content = content;
+        this.content.replace("\n", "<br />");
+      },
+      (error) => {
+        this.content =
+          (error.response && error.response.data) ||
+          error.message ||
+          error.toString();
+      }
+    );
   },
 };
 </script>
@@ -76,18 +76,14 @@ export default {
   /* box-shadow: 3px 3px 3px 1px rgba(0, 0, 0, 0.2); */
 }
 
-.title {
-  margin: 2em;
-}
-
 #headline {
-  margin: 16px;
+  margin: 12px;
   font-weight: bold;
   font-size: x-large;
   color: #4a5259;
 }
 
-#created-time {
+#subtitle {
   text-align: right;
   font-size: small;
 }

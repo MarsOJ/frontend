@@ -1,8 +1,7 @@
 <script setup>
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
-import UserService from "../services/user.service";
-import axios from "axios";
+import InfoService from "@/services/info.service";
 </script>
 
 <template>
@@ -23,7 +22,7 @@ import axios from "axios";
                   <p>
                     据
                     <span style="color: grey; font-size: 16px">{{
-                      incomingCompetition
+                        incomingCompetition
                     }}</span>
                     还剩 {{ leavingDay }} 天
                   </p>
@@ -60,11 +59,13 @@ import axios from "axios";
                 <p style="font-size: 28px">资讯</p>
                 <!-- <el-scrollbar> -->
                 <div v-for="item in info" class="info-block">
-                  <div class="info-date"></div>
-                  <div class="info-detail">
-                    <div class="info-title">{{ item.title }}</div>
-                    <div class="info-src">来源：{{ item.source }}</div>
-                    <div class="info-date">时间：{{ item.date }}</div>
+                  <div @click="showDetail(item.id)">
+                    <div class="info-date"></div>
+                    <div class="info-detail">
+                      <div class="info-title">{{ item.title }}</div>
+                      <div class="info-src">来源：{{ item.source }}</div>
+                      <div class="info-date">时间：{{ item.date }}</div>
+                    </div>
                   </div>
                 </div>
                 <!-- </el-scrollbar> -->
@@ -83,9 +84,6 @@ import axios from "axios";
 <script>
 export default {
   name: "HomeView",
-  async created() {
-    await Promise.all([this.getInfo()]);
-  },
   data() {
     return {
       month: "十月",
@@ -155,43 +153,41 @@ export default {
           url: "https://atcoder.jp",
         },
       ],
+      announcement: "欢迎！",
       info: [],
       timer: null,
-      updateInfoForm: {
-        lastId: "",
-      },
+      lastNewsId: "",
     };
   },
   methods: {
-    async getInfo() {
-      await axios
-        .get("http://localhost:5000/info/get-latest/")
-        .then((response) => {
-          this.info = response.data;
-        });
+    showDetail(newsId) {
+      this.$router.push('/home/news/' + newsId);
     },
     scrollEvent(e) {
-      if (
-        e.target.scrollTop + e.target.offsetHeight + 1 >=
-        e.target.scrollHeight
-      ) {
-        //防抖节流
+      if (e.target.scrollTop + e.target.offsetHeight + 1 >= e.target.scrollHeight) {
+        // 防抖节流
         clearInterval(this.timer);
         this.timer = setTimeout(() => {
-          this.updateInfoForm.lastId = this.info[this.info.length - 1]["id"];
-          axios
-            .get("http://localhost:5000/info/get-latest/", this.updateInfoForm)
-            .then((response) => {
-              this.info = this.info.concat(response.data);
-            });
+          this.lastNewsId = this.info[this.info.length - 1]["id"];
+          InfoService.getLastestNews(this.lastNewsId).then(
+            (content) => {
+              this.info = this.info.concat(content);
+            },
+            (error) => {
+              this.content =
+                (error.response && error.response.data) ||
+                error.message ||
+                error.toString();
+            }
+          );
         }, 500);
       }
     },
   },
   mounted() {
-    UserService.getPublicContent().then(
-      (response) => {
-        this.content = response.data;
+    InfoService.getLastestNews("").then(
+      (content) => {
+        this.info = content;
       },
       (error) => {
         this.content =
@@ -333,7 +329,9 @@ div p {
   border-radius: 4px;
   background: var(--el-color-primary-light-9);
   color: var(--el-color-primary);
+  cursor: pointer;
 }
+
 .info-title {
   text-align: left;
   font-family: sans-serif;

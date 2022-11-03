@@ -2,9 +2,7 @@
 
 <template>
   <div class="footer">
-    <span style="text-align: center"
-      >Copyright &copy;2022 MarsOJ 信奥资讯 All rights reserved.</span
-    >
+    <span style="text-align: center">Copyright &copy;2022 MarsOJ 信奥资讯 All rights reserved.</span>
   </div>
 </template>
 
