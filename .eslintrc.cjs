@@ -12,4 +12,10 @@ module.exports = {
   rules: {
     "vue/require-v-for-key": 0,
   },
+  'prettier/prettier': [
+    'error',
+    {
+      'endOfLine': 'auto',
+    }
+  ]
 };
