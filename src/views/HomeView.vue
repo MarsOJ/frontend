@@ -320,7 +320,6 @@ div p {
 }
 
 .info-block {
-  display: flex;
   align-items: left;
   justify-content: left;
   margin: 20px;
@@ -330,6 +329,11 @@ div p {
   background: var(--el-color-primary-light-9);
   color: var(--el-color-primary);
   cursor: pointer;
+  transition: all .2s ease-in-out;
+}
+
+.info-block:hover {
+  transform: scale(1.03);
 }
 
 .info-title {
