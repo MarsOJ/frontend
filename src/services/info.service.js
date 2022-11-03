@@ -5,9 +5,10 @@ const API_URL = "http://localhost:5000/info/";
 
 class InfoService {
   getLastestNews(lastId) {
+    console.log(lastId);
     return axios
-      .get(API_URL + "get-latest/", {
-        lastId: lastId
+      .post(API_URL + "get-latest/", {
+        lastId: lastId,
       })
       .then((response) => {
         return response.data;
@@ -15,11 +16,9 @@ class InfoService {
   }
 
   getNewsDetail(id) {
-    return axios
-      .get(API_URL + "details/" + id)
-      .then((response) => {
-        return response.data;
-      });
+    return axios.get(API_URL + "details/" + id).then((response) => {
+      return response.data;
+    });
   }
 }
 
