@@ -5,18 +5,24 @@ import User from "@/models/user";
 <template>
   <main>
     <div v-if="loading" id="loading">
-      <div>Loading...</div>
+      <div>加载中……</div>
     </div>
     <div class="wrapper">
       <img id="title" src="../assets/logo.png" />
       <div id="login-form">
-        <el-form :model="user">
-          <el-input v-model="user.username" type="text" placeholder="用户名" clearable />
+        <el-form ref="formRef" :model="user" :rules="rules">
+          <el-form-item prop="username">
+            <el-input v-model="user.username" type="text" placeholder="用户名" clearable />
+          </el-form-item>
           <br />
-          <el-input v-model="user.password" type="password" placeholder="密码" show-password />
+          <el-form-item prop="password">
+            <el-input v-model="user.password" type="password" placeholder="密码" show-password />
+          </el-form-item>
           <br />
-          <el-button round type="info" @click="$router.push('/register')">注册</el-button>
-          <el-button round type="primary" @click="onLogIn()">登录</el-button>
+          <el-form-item class="submit-btns">
+            <el-button round type="info" @click="$router.push('/register')">注册</el-button>
+            <el-button round type="primary" @click="submitForm(this.$refs.formRef)">登录</el-button>
+          </el-form-item>
         </el-form>
       </div>
     </div>
@@ -30,7 +36,15 @@ export default {
     return {
       loading: false,
       user: new User("", ""),
-    }
+      rules: {
+        username: [
+          { required: true, message: "请输入正确的用户名", trigger: "blur" },
+        ],
+        password: [
+          { required: true, message: "请输入正确的密码", trigger: "blur" },
+        ],
+      },
+    };
   },
   methods: {
     errorMessage(msg, title) {
@@ -38,39 +52,46 @@ export default {
         confirmButtonText: "确认",
       });
     },
-    onLogIn() {
+    async submitForm(formEl) {
+      if (!formEl) {
+        return;
+      }
       this.loading = true;
       console.log("Login:", this.user);
-      // $validator.validateAll().then(isValid => {
-      //   if (!isValid) {
-      //     this.loading = false;
-      //     this.errorMessage("用户名或密码错误，请重新输入！", "密码错误");
-      //     return;
-      //   }
-      if (this.user.username && this.user.password) {
-        this.$store.dispatch('auth/login', this.user).then(
-          () => {
-            // Login successful
-            this.loading = false;
-            this.$router.push('/home');
-          },
-          error => {
-            // Login failed
-            this.loading = false;
-            var msg = (error.response && error.response.data) || error.message || error.toString();
-            this.errorMessage(msg, "登录失败");
-          }
-        );
-      }
-      // });
-    }
+      await formEl.validate((valid, fields) => {
+        if (valid) {
+          this.$store.dispatch("auth/login", this.user).then(
+            () => {
+              // Login successful
+              this.loading = false;
+              window.location.href = "/home";
+            },
+            (error) => {
+              // Login failed
+              console.log("Error information!", this.user);
+              this.loading = false;
+              var msg =
+                (error.response && error.response.data) ||
+                error.message ||
+                error.toString();
+              this.errorMessage(msg, "登录失败");
+            }
+          );
+        } else {
+          // Validation failed
+          console.log("Error in validation!", fields);
+          this.loading = false;
+          this.errorMessage("用户名或密码错误，请重新输入！", "信息错误");
+        }
+      });
+    },
   },
   created() {
     if (this.$store.state.auth.status.loggedIn) {
-      this.$router.push('/home');
+      window.location.href = "/home";
     }
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -119,13 +140,21 @@ main {
   text-align: center;
 }
 
-#login-form .el-input {
+#login-form .el-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#login-form .el-form-item {
   width: 80%;
   max-width: 256px;
   margin: 1em;
+  display: flex;
+  justify-content: center;
 }
 
-#login-form .el-button {
-  margin: 1em;
+#login-form .el-form-item.submit-btns {
+  width: fit-content;
 }
 </style>
