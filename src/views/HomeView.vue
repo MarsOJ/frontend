@@ -58,8 +58,8 @@ import InfoService from "@/services/info.service";
               <div class="info block">
                 <p style="font-size: 28px">资讯</p>
                 <!-- <el-scrollbar> -->
-                <div v-for="item in info" class="info-block">
-                  <div @click="showDetail(item.id)">
+                <div v-for="item in info">
+                  <div class="info-block" @click="showDetail(item.id)">
                     <div class="info-date"></div>
                     <div class="info-detail">
                       <div class="info-title">{{ item.title }}</div>

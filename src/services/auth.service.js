@@ -32,7 +32,7 @@ class AuthService {
   loginState() {
     return axios.get(API_URL + "state/").then((response) => {
       return response.data;
-    });;
+    });
   }
 }
 

@@ -5,7 +5,6 @@ const API_URL = "http://localhost:5000/info/";
 
 class InfoService {
   getLastestNews(lastId) {
-    console.log(lastId);
     return axios
       .post(API_URL + "get-latest/", {
         lastId: lastId,
