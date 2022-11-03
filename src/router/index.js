@@ -58,10 +58,10 @@ router.beforeEach((to, from, next) => {
   // const loggedIn = localStorage.getItem("user");
   if (authRequired) {
     AuthService.loginState().then(
-      (content) => {
+      () => {
         next();
       },
-      (error) => {
+      () => {
         next("/login");
       }
     );
