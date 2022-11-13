@@ -6,10 +6,10 @@ import { RouterLink } from "vue-router";
   <el-affix>
     <nav>
       <RouterLink to="/home">首页</RouterLink>
-      <RouterLink to="/battle">答题对战</RouterLink>
-      <RouterLink to="/favorites">收藏夹</RouterLink>
-      <RouterLink to="/gallery">礼品屋</RouterLink>
-      <RouterLink to="/personal">个人中心</RouterLink>
+      <RouterLink to="/home/battle">答题对战</RouterLink>
+      <RouterLink to="/home/favorites">收藏夹</RouterLink>
+      <RouterLink to="/home/gallery">礼品屋</RouterLink>
+      <RouterLink to="/home/personal">个人中心</RouterLink>
     </nav>
   </el-affix>
 </template>

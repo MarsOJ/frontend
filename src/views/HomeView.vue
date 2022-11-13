@@ -22,7 +22,7 @@ import InfoService from "@/services/info.service";
                   <p>
                     据
                     <span style="color: grey; font-size: 16px">{{
-                        incomingCompetition
+                      incomingCompetition
                     }}</span>
                     还剩 {{ leavingDay }} 天
                   </p>
@@ -161,10 +161,13 @@ export default {
   },
   methods: {
     showDetail(newsId) {
-      this.$router.push('/home/news/' + newsId);
+      this.$router.push("/home/news/" + newsId);
     },
     scrollEvent(e) {
-      if (e.target.scrollTop + e.target.offsetHeight + 1 >= e.target.scrollHeight) {
+      if (
+        e.target.scrollTop + e.target.offsetHeight + 1 >=
+        e.target.scrollHeight
+      ) {
         // 防抖节流
         clearInterval(this.timer);
         this.timer = setTimeout(() => {
