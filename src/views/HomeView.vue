@@ -58,8 +58,8 @@ import InfoService from "@/services/info.service";
               <div class="info block">
                 <p style="font-size: 28px">资讯</p>
                 <!-- <el-scrollbar> -->
-                <div v-for="item in info" class="info-block">
-                  <div @click="showDetail(item.id)">
+                <div v-for="item in info">
+                  <div class="info-block" @click="showDetail(item.id)">
                     <div class="info-date"></div>
                     <div class="info-detail">
                       <div class="info-title">{{ item.title }}</div>
@@ -323,7 +323,6 @@ div p {
 }
 
 .info-block {
-  display: flex;
   align-items: left;
   justify-content: left;
   margin: 20px;
@@ -333,6 +332,11 @@ div p {
   background: var(--el-color-primary-light-9);
   color: var(--el-color-primary);
   cursor: pointer;
+  transition: all .2s ease-in-out;
+}
+
+.info-block:hover {
+  transform: scale(1.03);
 }
 
 .info-title {

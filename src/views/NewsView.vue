@@ -54,7 +54,6 @@ export default {
     InfoService.getNewsDetail(this.newsId).then(
       (content) => {
         this.content = content;
-        this.content.replace("\n", "<br />");
       },
       (error) => {
         this.content =
@@ -97,5 +96,6 @@ export default {
 
 .content {
   margin: 2em;
+  white-space: pre-line;
 }
 </style>

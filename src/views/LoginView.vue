@@ -81,7 +81,7 @@ export default {
             () => {
               // Login successful
               this.loading = false;
-              window.location.href = "/home";
+              this.$router.push("/home");
             },
             (error) => {
               // Login failed
@@ -105,7 +105,7 @@ export default {
   },
   created() {
     if (this.$store.state.auth.status.loggedIn) {
-      window.location.href = "/home";
+      this.$router.push("/home");
     }
   },
 };

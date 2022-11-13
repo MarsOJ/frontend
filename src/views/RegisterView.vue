@@ -114,7 +114,7 @@ export default {
                 () => {
                   // Login successful
                   this.loading = false;
-                  window.location.href = "/home";
+                  this.$router.push("/home");
                 },
                 (error) => {
                   // Login failed
