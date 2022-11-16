@@ -34,16 +34,19 @@ a,
 }
 
 nav {
-  width: 100vw;
+  width: 100%;
+  /* width: 100vw; */
   font-size: 24px;
   font-weight: bold;
   line-height: 4.5em;
   text-align: right;
-  border-bottom: 3px #e7e7e7 solid;
-  background: url(../assets/navi.png) no-repeat center center;
+  /* border-bottom: 3px #e7e7e7 solid; */
+  background: url(../assets/navi.png) no-repeat left center;
   filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
-  -moz-background-size: 100% 100%;
-  background-size: 100% 100%;
+  /* -moz-background-size: 100% 100%; */
+  -moz-background-size: cover;
+  /* background-size: 100% 100%; */
+  background-size: cover;
 }
 
 nav a.router-link-exact-active {

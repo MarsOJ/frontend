@@ -74,9 +74,9 @@ import InfoService from "@/services/info.service";
           </el-main>
         </el-container>
       </el-main>
-      <el-footer>
-        <Footer />
-      </el-footer>
+      <!-- <el-footer> -->
+      <Footer />
+      <!-- </el-footer> -->
     </el-container>
   </div>
 </template>
@@ -174,10 +174,9 @@ export default {
               this.info = this.info.concat(content);
             },
             (error) => {
-              this.content =
-                (error.response && error.response.data) ||
-                error.message ||
-                error.toString();
+              var content = (error.response && error.response.data) ||
+                error.message || error.toString();
+              console.log(content);
             }
           );
         }, 500);
@@ -190,10 +189,9 @@ export default {
         this.info = content;
       },
       (error) => {
-        this.content =
-          (error.response && error.response.data) ||
-          error.message ||
-          error.toString();
+        var content = (error.response && error.response.data) ||
+          error.message || error.toString();
+        console.log(content);
       }
     );
     var d = new Date();
