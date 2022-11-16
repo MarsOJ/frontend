@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import AuthService from "@/services/auth.service"
+import AuthService from "@/services/auth.service";
 import store from "@/store";
 
 const router = createRouter({
@@ -64,7 +64,7 @@ router.beforeEach((to, from, next) => {
   // trying to access a restricted page + not logged in
   // redirect to login page
   // const loggedIn = localStorage.getItem("user");
-  const authRequired = to.matched.some(record => record.meta.requiresAuth);
+  const authRequired = to.matched.some((record) => record.meta.requiresAuth);
   if (authRequired) {
     AuthService.loginState().then(
       (user) => {
@@ -80,8 +80,7 @@ router.beforeEach((to, from, next) => {
         next("/login");
       }
     );
-  }
-  else {
+  } else {
     next();
   }
 });

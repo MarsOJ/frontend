@@ -9,7 +9,7 @@ export const auth = {
   getters: {
     loggedIn(state) {
       return state.status.loggedIn;
-    }
+    },
   },
   actions: {
     login({ commit }, user) {
@@ -43,11 +43,10 @@ export const auth = {
     alter({ commit }, user) {
       if (user !== null) {
         commit("loginSuccess", user);
-      }
-      else {
+      } else {
         commit("loginFailure");
       }
-    }
+    },
   },
   mutations: {
     loginSuccess(state, user) {

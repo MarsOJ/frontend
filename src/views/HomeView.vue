@@ -332,7 +332,7 @@ div p {
   background: var(--el-color-primary-light-9);
   color: var(--el-color-primary);
   cursor: pointer;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 .info-block:hover {

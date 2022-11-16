@@ -14,14 +14,14 @@ import { marked } from "marked";
       <NaviBar />
       <el-main class="main">
         <el-container>
-          <el-aside width="20vw">
+          <el-aside v-for="player in players" width="4vw">
             <div class="avatar">
-              <el-avatar :src="myAvatarSrc" :size="80" />
+              <el-avatar :src="player.avatar" :size="80" />
             </div>
             <ScoreBar
               :height="scoreBarHeight"
               :width="scoreBarWidth"
-              :score="myScore"
+              :score="player.scoreBar"
             />
           </el-aside>
           <el-main class="middle">
@@ -59,16 +59,6 @@ import { marked } from "marked";
               </div>
             </div>
           </el-main>
-          <el-aside width="20vw">
-            <div class="avatar">
-              <el-avatar :src="yourAvatarSrc" :size="80" />
-            </div>
-            <ScoreBar
-              :height="scoreBarHeight"
-              :width="scoreBarWidth"
-              :score="yourScore"
-            />
-          </el-aside>
         </el-container>
       </el-main>
       <el-footer>
@@ -79,7 +69,6 @@ import { marked } from "marked";
 </template>
 
 <script>
-
 const fullScore = 100;
 export default {
   name: "BattlingView",
@@ -88,17 +77,27 @@ export default {
       progress: 0,
       seconds: 30,
       progressBarStatus: "",
-      myAvatarSrc:
-        "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-      yourAvatarSrc:
-        "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+      players: [
+        {
+          avatar:
+            "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+          scoreBar: "100px",
+          score: 0,
+          id: 1,
+        },
+        {
+          avatar:
+            "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+          scoreBar: "200px",
+          score: 0,
+          id: 2,
+        },
+      ],
       problemType: 1,
       radio: ref("A"),
       input: "",
       scoreBarHeight: 500,
-      scoreBarWidth: 40,
-      myScore: "400px",
-      yourScore: "100px",
+      scoreBarWidth: 30,
       submitted: false,
     };
   },

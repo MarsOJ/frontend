@@ -11,6 +11,7 @@ module.exports = {
   ],
   rules: {
     "vue/require-v-for-key": 0,
+    "vue/valid-v-for": 0,
     "prettier/prettier": [
       "error",
       {
