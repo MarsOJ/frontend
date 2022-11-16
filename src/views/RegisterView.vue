@@ -12,20 +12,41 @@ import User from "@/models/user";
       <div id="register-form">
         <el-form ref="formRef" :model="form" :rules="rules">
           <el-form-item prop="username">
-            <el-input v-model="form.username" type="text" placeholder="用户名" clearable />
+            <el-input
+              v-model="form.username"
+              type="text"
+              placeholder="用户名"
+              clearable
+            />
           </el-form-item>
           <br />
           <el-form-item prop="password">
-            <el-input v-model="form.password" type="password" placeholder="密码" show-password />
+            <el-input
+              v-model="form.password"
+              type="password"
+              placeholder="密码"
+              show-password
+            />
           </el-form-item>
           <br />
           <el-form-item prop="password2">
-            <el-input v-model="form.password2" type="password" placeholder="再次输入密码" />
+            <el-input
+              v-model="form.password2"
+              type="password"
+              placeholder="再次输入密码"
+            />
           </el-form-item>
           <br />
           <el-form-item class="submit-btns">
-            <el-button round type="info" @click="$router.push('/login')">登录</el-button>
-            <el-button round type="primary" @click="submitForm(this.$refs.formRef)">注册</el-button>
+            <el-button round type="info" @click="$router.push('/login')"
+              >登录</el-button
+            >
+            <el-button
+              round
+              type="primary"
+              @click="submitForm(this.$refs.formRef)"
+              >注册</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
@@ -48,11 +69,21 @@ export default {
       rules: {
         username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
-          { min: 3, max: 12, message: "用户名的长度应为3到12字符", trigger: "blur" },
+          {
+            min: 3,
+            max: 12,
+            message: "用户名的长度应为3到12字符",
+            trigger: "blur",
+          },
         ],
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 6, max: 20, message: "密码的长度应为6到20字符", trigger: "blur" },
+          {
+            min: 6,
+            max: 20,
+            message: "密码的长度应为6到20字符",
+            trigger: "blur",
+          },
           { validator: this.validatePass, trigger: "blur" },
         ],
         password2: [{ validator: this.validatePassConfirm, trigger: "blur" }],

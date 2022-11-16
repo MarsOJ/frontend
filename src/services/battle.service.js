@@ -1,10 +1,10 @@
-import axios from "@/axios";
-// import authHeader from "./auth-header";
+import axios from "axios";
 
 const API_URL = "http://127.0.0.1:8080/info/";
 
-class InfoService {
+class BattleService {
   getLastestNews(lastId) {
+    console.log(lastId);
     return axios
       .post(API_URL + "get-latest/", {
         lastId: lastId,
@@ -21,4 +21,4 @@ class InfoService {
   }
 }
 
-export default new InfoService();
+export default new BattleService();

@@ -29,6 +29,11 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: "/home/battling",
+      name: "battling",
+      component: () => import("../views/BattlingView.vue"),
+    },
+    {
       path: "/battle/stats/:id",
       name: "PKStats",
       component: () => import("../views/PKStatsView.vue"),

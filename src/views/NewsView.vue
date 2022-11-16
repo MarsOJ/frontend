@@ -1,7 +1,7 @@
 <script setup>
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
-import InfoService from "@/services/info.service"
+import InfoService from "@/services/info.service";
 import { Back } from "@element-plus/icons-vue";
 </script>
 
@@ -12,12 +12,19 @@ import { Back } from "@element-plus/icons-vue";
       <el-main class="main">
         <div class="block">
           <div class="title">
-            <el-button circle id="back-button" :icon="Back" @click="$router.push('/home')" />
+            <el-button
+              circle
+              id="back-button"
+              :icon="Back"
+              @click="$router.push('/home')"
+            />
             <span id="headline">
               {{ content.title }}
             </span>
             <div id="subtitle">
-              来源：{{ content.source }}&nbsp;&nbsp;&nbsp;&nbsp;日期：{{ content.date }}
+              来源：{{ content.source }}&nbsp;&nbsp;&nbsp;&nbsp;日期：{{
+                content.date
+              }}
             </div>
           </div>
           <hr />
