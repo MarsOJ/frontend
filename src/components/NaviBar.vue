@@ -6,10 +6,10 @@ import { RouterLink } from "vue-router";
   <el-affix>
     <nav>
       <RouterLink to="/home">首页</RouterLink>
-      <RouterLink to="/home/battle">答题对战</RouterLink>
-      <RouterLink to="/home/favorites">收藏夹</RouterLink>
-      <RouterLink to="/home/gallery">礼品屋</RouterLink>
-      <RouterLink to="/home/personal">个人中心</RouterLink>
+      <RouterLink to="/battle">答题对战</RouterLink>
+      <RouterLink to="/favorites">收藏夹</RouterLink>
+      <RouterLink to="/gallery">礼品屋</RouterLink>
+      <RouterLink to="/personal">个人中心</RouterLink>
     </nav>
   </el-affix>
 </template>
@@ -34,16 +34,19 @@ a,
 }
 
 nav {
-  width: 100vw;
+  width: 100%;
+  /* width: 100vw; */
   font-size: 24px;
   font-weight: bold;
   line-height: 4.5em;
   text-align: right;
-  border-bottom: 3px #e7e7e7 solid;
-  background: url(../assets/navi.png) no-repeat center center;
+  /* border-bottom: 3px #e7e7e7 solid; */
+  background: url(../assets/navi.png) no-repeat left center;
   filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
-  -moz-background-size: 100% 100%;
-  background-size: 100% 100%;
+  /* -moz-background-size: 100% 100%; */
+  -moz-background-size: cover;
+  /* background-size: 100% 100%; */
+  background-size: cover;
 }
 
 nav a.router-link-exact-active {
