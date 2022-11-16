@@ -12,18 +12,13 @@ import { Back } from "@element-plus/icons-vue";
       <el-main class="main">
         <div class="block">
           <div class="title">
-            <el-button
-              circle
-              id="back-button"
-              :icon="Back"
-              @click="$router.push('/home')"
-            />
+            <el-button circle id="back-button" :icon="Back" @click="$router.go(-1)" />
             <span id="headline">
               {{ content.title }}
             </span>
             <div id="subtitle">
               来源：{{ content.source }}&nbsp;&nbsp;&nbsp;&nbsp;日期：{{
-                content.date
+                  content.date
               }}
             </div>
           </div>

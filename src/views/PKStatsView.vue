@@ -1,56 +1,68 @@
 <script setup>
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
+import LeaderSideBar from "@/components/LeaderSideBar.vue";
 </script>
 
 <template>
   <div class="common-layout">
     <el-container class="main-container">
       <NaviBar />
-      <el-main class="main">
-        <div class="block">
-          对局编号： {{ pkId }}
-          <!-- 需要判断是否是自己，确定是否获胜。否则无法查看 -->
-          <div class="result">
-            <span class="title score score-left">
-              {{ stats.users[0].points }}
-            </span>
-            <div class="title user">
-              <img class="user-pic" src="../assets/user.png" />
-              <div :class="{ win: stats.users[0].win }"></div>
-              <div>{{ stats.users[0].name }}</div>
-            </div>
-            <span class="title result-msg" v-if="userWin">你赢了！</span>
-            <span class="title result-msg" v-else>你输了！</span>
-            <div class="title user">
-              <img class="user-pic" src="../assets/user.png" />
-              <div :class="{ win: stats.users[1].win }"></div>
-              <div>{{ stats.users[1].name }}</div>
-            </div>
-            <span class="title score score-right">
-              {{ stats.users[1].points }}
-            </span>
-          </div>
-          <div class="problems">
-            <div v-for="problem in stats.problems" class="problem">
-              <span class="score score-left" :class="{ correct: problem.points[0] > 0, wrong: problem.points[0] <= 0 }">
-                {{ problem.points[0] }}
+      <el-container class="page-main">
+        <el-main class="main">
+          <div class="block">
+            对局编号： {{ pkId }}
+            <div class="title-result">
+              <span class="title" v-if="userRank == 1">恭喜，你在比赛中取得胜利！</span>
+              <span class="title" v-else>很遗憾，您在比赛中获得了第{{ userRank }}名。</span>
+              <span class="user">
+                <img class="user-pic" src="../assets/user.png" />
+                <div class="win"></div>
+                <div>{{ stats.points[userRank - 1].name }}</div>
               </span>
-              <div class="problem-title">
-                <el-collapse>
-                  <el-collapse-item :title="problem.num + '.' + problem.title" name="1">
-                    题目内容会在打开后再单独加载！
-                  </el-collapse-item>
-                </el-collapse>
+            </div>
+            <div class="detail-result">
+              本次比赛奖励：经验+5
+            </div>
+
+            <h2>答题详情</h2>
+            <div class="problems">
+              <div class="problem">
+                <span class="score">分数</span>
+                <div class="problem-title">题目</div>
               </div>
-              <span class="score score-right"
-                :class="{ correct: problem.points[1] > 0, wrong: problem.points[1] <= 0 }">
-                {{ problem.points[1] }}
-              </span>
+              <div v-for="problem in stats.problems" class="problem">
+                <span class="score" :class="{
+                  correct: problem.points[userRank - 1] > 0,
+                  wrong: problem.points[userRank - 1] <= 0
+                }">
+                  {{ problem.points[userRank - 1] }}
+                </span>
+                <div class="problem-title">
+                  <el-collapse>
+                    <el-collapse-item :title="problem.num + '.' + problem.title" name="1">
+                      <div class="problem-content">
+                        <div class="question-box">
+                          题干在这里
+                        </div>
+                        <div class="option-box">
+                          选项在这里
+                        </div>
+                        <div class="button-box">
+                          <el-button type="primary">收藏习题</el-button>
+                        </div>
+                      </div>
+                    </el-collapse-item>
+                  </el-collapse>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </el-main>
+          <el-aside class="aside">
+            <LeaderSideBar :data=stats.points :userRank=userRank />
+          </el-aside>
+        </el-main>
+      </el-container>
       <el-footer class="page-footer">
         <Footer />
       </el-footer>
@@ -64,30 +76,34 @@ export default {
   data() {
     return {
       pkId: null,
-      userWin: true,
+      userRank: 1,
       stats: {
-        users: [
-          { name: "user1", points: 58, win: true },
-          { name: "user2", points: 40, win: false },
+        points: [
+          { name: "user1", points: 58 },
+          { name: "user2", points: 40 },
+          { name: "user3", points: 38 },
+          { name: "user4", points: 35 },
+          { name: "user5", points: 12 },
+          { name: "user6", points: 10 },
         ],
         problems: [
           {
             num: 1,
             id: 12345,
-            title: "这是一道题目",
-            points: [10, 5],
+            title: "这是一道题目。预计在这里显示题型、正确率、平均分",
+            points: [10, 5, 10, 10, 6, 3],
           },
           {
             num: 2,
             id: 12346,
             title: "这是一道题目",
-            points: [7, 10],
+            points: [7, 10, 7, 10, 7, 10],
           },
           {
             num: 3,
             id: 12348,
             title: "这是一道题目",
-            points: [0, 10],
+            points: [0, 10, 0, 0, 5, 0],
           },
         ]
       }
@@ -105,39 +121,32 @@ export default {
   justify-content: center;
 }
 
+.aside {
+  width: 30vw;
+  min-width: 420px;
+}
+
 .block {
   width: 800px;
 }
 
-.result {
-  height: 128px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .title {
-  font-size: large;
+  font-size: xx-large;
   font-weight: bolder;
 }
 
-.score {
-  width: 120px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-}
-
-.score-left {
-  text-align: right;
-}
-
-.score-right {
-  text-align: left;
+.title-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3em;
+  margin-bottom: 3em;
 }
 
 .user {
-  width: 200px;
+  width: 100px;
   text-align: center;
+  display: inline-block;
   position: relative;
 }
 
@@ -155,32 +164,50 @@ export default {
   background-size: 100% 100%;
   position: absolute;
   top: -26px;
-  left: 80px;
+  left: 30px;
 }
 
-.result-msg {
-  text-align: center;
-  flex-grow: 1;
+.detail-result {
+  margin: 3em;
 }
 
-.score-left.correct {
-  background: url();
+.score {
+  width: 50px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  text-align: right;
 }
 
-.score-left.correct {}
+.score.correct {
+  background: url(../assets/correct.png) no-repeat center left;
+  background-size: contain;
+}
 
-.score-right.wrong {}
-
-.score-right.wrong {}
-
-
+.score.wrong {
+  background: url(../assets/wrong.png) no-repeat center left;
+  background-size: contain;
+}
 
 .problem {
   display: flex;
+  align-items: center;
 }
 
 .problem-title {
   flex-grow: 1;
   margin: 0px 20px 0px 20px;
+}
+
+.problem-content {
+  padding: 1em;
+}
+
+.question-box {
+  font-weight: bold;
+}
+
+.button-box {
+  display: flex;
+  flex-direction: row-reverse;
 }
 </style>

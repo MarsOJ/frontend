@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import AuthService from "@/services/auth.service"
+import AuthService from "@/services/auth.service";
 import store from "@/store";
 
 const router = createRouter({
@@ -29,7 +29,7 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/home/battling",
+      path: "/battle/battling",
       name: "battling",
       component: () => import("../views/BattlingView.vue"),
     },
