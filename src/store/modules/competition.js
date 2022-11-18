@@ -1,6 +1,9 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 
-const socket = io("ws://localhost:8765", { autoConnect: false });
+const socket = io("ws://localhost:5000/competition", {
+  withCredentials: true,
+  autoConnect: false,
+});
 
 const state = {
   status: "inactive",
@@ -22,7 +25,11 @@ export const competition = {
   },
   actions: {
     send({ state }, msg) {
-      state.socket.emit(msg.type, msg.content);
+      if (msg.content === undefined) {
+        state.socket.emit(msg.type);
+      } else {
+        state.socket.emit(msg.type, msg.content);
+      }
     },
     setHandlerOnce({ commit, state }, handler) {
       if (!state.connected) {
@@ -60,12 +67,11 @@ export const competition = {
       if (!state.socket.connected) {
         state.socket.connect();
         commit("connect");
-        state.socket.on('stateChanged', (oldState, newState) => {
-          if (oldState !== newState && newState !== 'Connected') {
-            commit("end")
-          }
-          else {
-            commit("connect");
+        state.socket.on("stateChanged", (oldState, newState) => {
+          if (oldState !== newState && newState !== "Connected") {
+            commit("cancel");
+          } else {
+            commit("end");
           }
         });
       }
@@ -95,6 +101,6 @@ export const competition = {
       state.connected = false;
       state.status = "inactive";
       console.log("[store]", state);
-    }
+    },
   },
 };

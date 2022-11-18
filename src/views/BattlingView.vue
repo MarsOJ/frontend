@@ -18,11 +18,21 @@ import { marked } from "marked";
             <div class="avatar">
               <el-avatar :src="player.avatar" :size="80" />
             </div>
-            <ScoreBar :height="scoreBarHeight" :width="scoreBarWidth" :score="player.scoreBar" />
+            <ScoreBar
+              :height="scoreBarHeight"
+              :width="scoreBarWidth"
+              :score="player.scoreBar"
+            />
           </el-aside>
           <el-main class="middle">
-            <el-progress class="progress" type="circle" :percentage="progress" :format="countdown"
-              :status="progressBarStatus" :width="110" />
+            <el-progress
+              class="progress"
+              type="circle"
+              :percentage="progress"
+              :format="countdown"
+              :status="progressBarStatus"
+              :width="110"
+            />
             <el-divider />
             <div class="problem">
               <div class="problem-text" v-html="problem"></div>
@@ -38,7 +48,14 @@ import { marked } from "marked";
                 <el-input v-model="input" placeholder="请输入答案" clearable />
               </div>
               <div class="answer-submit">
-                <el-button type="primary" round size="large" @click="onSubmit" :disabled="submitted">提交答案</el-button>
+                <el-button
+                  type="primary"
+                  round
+                  size="large"
+                  @click="onSubmit"
+                  :disabled="submitted"
+                  >提交答案</el-button
+                >
               </div>
             </div>
           </el-main>
@@ -127,9 +144,6 @@ export default {
     // emit "start" message
     this.$store.dispatch("competition/send", {
       type: "start",
-      content: {
-        fewf: "wejwiojo"
-      }
     });
 
     // listen on "problem" message only once
@@ -142,20 +156,23 @@ export default {
           // Finish: remove listeners (no need to remove one-time listeners)
           // this.$store.dispatch("competition/removeHandler", { type: "answer" });
           this.$router.push("/battle/stats");
-        }, 3000);
-      }
+        }, 30000);
+      },
     });
 
     //WebSocket connection
-    // const socket = io();
+    // const socket = io("ws://localhost:5000/competition", {
+    //   withCredentials: true,
+    //   autoConnect: false,
+    // });
     // this.socket = socket;
     // socket.on("prepare", () => {
-    //   //收到prepare消息3s后发送start消息。
+    //   //收到prepare消息3s后发送start消息
+    //   console.log("start prepare");
     //   setTimeout(() => {
     //     socket.emit("start");
     //   }, 3000);
     // });
-
     // socket.on("problem", (msg) => {
     //   const data = JSON.parse(msg);
     //   const problem = data.question.content;

@@ -18,11 +18,12 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
         <el-main class="main">
           当前在线人数：8888<br />
           <el-button id="pk-button" @click="this.startPairing()">
-            Level 5 <br /> 开始匹配
+            Level 5 <br />
+            开始匹配
           </el-button>
         </el-main>
         <el-aside class="aside">
-          <LeaderSideBar :data=leaderData :userRank=userRank />
+          <LeaderSideBar :data="leaderData" :userRank="userRank" />
         </el-aside>
       </el-container>
       <el-footer class="page-footer">
@@ -53,7 +54,7 @@ export default {
       socket: null,
       pairing: false,
       paired: false,
-    }
+    };
   },
   methods: {
     startPairing() {
@@ -66,21 +67,24 @@ export default {
               console.log("[vue]", data);
               this.paired = true;
               this.$router.push("/battle/battling");
-            }
+            },
           });
         },
         (err) => {
           console.log("[vue]", err);
         }
       );
-      ;
     },
     cancelPairing() {
       this.pairing = false;
+      this.$store.dispatch("competition/send", {
+        type: "cancel",
+        content: undefined,
+      });
       this.$store.dispatch("competition/closeSocket");
-    }
+    },
   },
-}
+};
 </script>
 
 <style scoped>
