@@ -22,7 +22,7 @@ import InfoService from "@/services/info.service";
                   <p>
                     据
                     <span style="color: grey; font-size: 16px">{{
-                        incomingCompetition
+                      incomingCompetition
                     }}</span>
                     还剩 {{ leavingDay }} 天
                   </p>
@@ -180,8 +180,10 @@ export default {
               this.loading = false;
             },
             (error) => {
-              var content = (error.response && error.response.data) ||
-                error.message || error.toString();
+              var content =
+                (error.response && error.response.data) ||
+                error.message ||
+                error.toString();
               console.log(content);
               this.loading = false;
             }
@@ -197,8 +199,10 @@ export default {
         this.loading = false;
       },
       (error) => {
-        var content = (error.response && error.response.data) ||
-          error.message || error.toString();
+        var content =
+          (error.response && error.response.data) ||
+          error.message ||
+          error.toString();
         console.log(content);
         this.loading = false;
       }

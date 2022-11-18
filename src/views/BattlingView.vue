@@ -3,8 +3,8 @@ import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import ScoreBar from "@/components/ScoreBar.vue";
 import { ref } from "vue";
-import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
-import { marked } from "marked";
+// import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
+// import { marked } from "marked";
 //import { ElMessage, ElMessageBox } from "@element-plus";
 </script>
 

@@ -13,17 +13,19 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
           <div class="block">
             <!-- 对局编号： {{ pkId }} -->
             <div class="title-result">
-              <span class="title" v-if="userRank == 1">恭喜，你在比赛中取得胜利！</span>
-              <span class="title" v-else>很遗憾，您在比赛中获得了第{{ userRank }}名。</span>
+              <span class="title" v-if="userRank == 1"
+                >恭喜，你在比赛中取得胜利！</span
+              >
+              <span class="title" v-else
+                >很遗憾，您在比赛中获得了第{{ userRank }}名。</span
+              >
               <span class="user">
                 <img class="user-pic" src="../assets/user.png" />
                 <div class="win"></div>
                 <div>{{ stats.points[userRank - 1].name }}</div>
               </span>
             </div>
-            <div class="detail-result">
-              本次比赛奖励：经验+5
-            </div>
+            <div class="detail-result">本次比赛奖励：经验+5</div>
 
             <h2>答题详情</h2>
             <div class="problems">
@@ -32,22 +34,24 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
                 <div class="problem-title">题目</div>
               </div>
               <div v-for="problem in stats.problems" class="problem">
-                <span class="score" :class="{
-                  correct: problem.points[userRank - 1] > 0,
-                  wrong: problem.points[userRank - 1] <= 0
-                }">
+                <span
+                  class="score"
+                  :class="{
+                    correct: problem.points[userRank - 1] > 0,
+                    wrong: problem.points[userRank - 1] <= 0,
+                  }"
+                >
                   {{ problem.points[userRank - 1] }}
                 </span>
                 <div class="problem-title">
                   <el-collapse>
-                    <el-collapse-item :title="problem.num + '.' + problem.title" name="1">
+                    <el-collapse-item
+                      :title="problem.num + '.' + problem.title"
+                      name="1"
+                    >
                       <div class="problem-content">
-                        <div class="question-box">
-                          题干在这里
-                        </div>
-                        <div class="option-box">
-                          选项在这里
-                        </div>
+                        <div class="question-box">题干在这里</div>
+                        <div class="option-box">选项在这里</div>
                         <div class="button-box">
                           <el-button type="primary">收藏习题</el-button>
                         </div>
@@ -59,7 +63,7 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
             </div>
           </div>
           <el-aside class="aside">
-            <LeaderSideBar :data=stats.points :userRank=userRank />
+            <LeaderSideBar :data="stats.points" :userRank="userRank" />
           </el-aside>
         </el-main>
       </el-container>
@@ -79,13 +83,13 @@ export default {
       loading: true,
       userRank: 1,
       stats: null,
-    }
+    };
   },
   mounted() {
     // this.pkId = this.$route.params.id;
     this.$store.dispatch("competition/send", {
       type: "over",
-      content: {}
+      content: {},
     });
     this.$store.dispatch("competition/setHandlerOnce", {
       type: "result",
@@ -94,10 +98,10 @@ export default {
         this.stats = data;
         this.loading = false;
         this.$store.dispatch("competition/closeSocket");
-      }
+      },
     });
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
