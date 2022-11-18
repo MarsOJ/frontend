@@ -10,7 +10,7 @@ import { Back } from "@element-plus/icons-vue";
     <el-container direction="vertical">
       <NaviBar />
       <el-main class="main">
-        <div class="block">
+        <div class="block" v-loading="loading">
           <div class="title">
             <el-button circle id="back-button" :icon="Back" @click="$router.go(-1)" />
             <span id="headline">
@@ -42,6 +42,7 @@ export default {
     return {
       newsId: null,
       content: "",
+      loading: true,
     };
   },
   mounted() {
@@ -49,12 +50,14 @@ export default {
     InfoService.getNewsDetail(this.newsId).then(
       (content) => {
         this.content = content;
+        this.loading = false;
       },
       (error) => {
         this.content =
           (error.response && error.response.data) ||
           error.message ||
           error.toString();
+        this.loading = false;
       }
     );
   },

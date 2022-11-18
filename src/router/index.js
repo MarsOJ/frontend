@@ -34,7 +34,7 @@ const router = createRouter({
       component: () => import("../views/BattlingView.vue"),
     },
     {
-      path: "/battle/stats/:id",
+      path: "/battle/stats",
       name: "PKStats",
       component: () => import("../views/PKStatsView.vue"),
       meta: { requiresAuth: true },

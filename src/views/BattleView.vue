@@ -2,14 +2,13 @@
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import LeaderSideBar from "@/components/LeaderSideBar.vue";
-import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 </script>
 
 <template>
   <div class="common-layout">
     <div v-if="pairing" id="pairing">
       <div>加载中……</div>
-      <el-button id="pk-button" @click="this.cancelPairing()">
+      <el-button v-if="!paired" id="pk-button" @click="this.cancelPairing()">
         取消匹配
       </el-button>
     </div>
@@ -53,24 +52,32 @@ export default {
       userRank: 5,
       socket: null,
       pairing: false,
+      paired: false,
     }
   },
   methods: {
     startPairing() {
       this.pairing = true;
-
-      // WebSocket connection
-      const socket = io();
-      this.socket = socket;
-      // socket.emit("connect");
-      // socket.on("prepare", () => {
-      this.$router.push("/battle/stats/68");
-      // });
+      this.$store.dispatch("competition/connectSocket").then(
+        () => {
+          this.$store.dispatch("competition/setHandlerOnce", {
+            type: "prepare",
+            func: (data) => {
+              console.log("[vue]", data);
+              this.paired = true;
+              this.$router.push("/battle/battling");
+            }
+          });
+        },
+        (err) => {
+          console.log("[vue]", err);
+        }
+      );
+      ;
     },
     cancelPairing() {
       this.pairing = false;
-      this.socket.emit("cancel");
-      this.socket.off("prepare");
+      this.$store.dispatch("competition/closeSocket");
     }
   },
 }

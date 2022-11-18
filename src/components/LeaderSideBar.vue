@@ -35,7 +35,6 @@ export default {
   methods: {
     tableRowClassName(row) {
       if (row.rowIndex === this.userRank - 1) {
-        console.log("fwef", this.userRank);
         return "user-row";
       }
       return "";

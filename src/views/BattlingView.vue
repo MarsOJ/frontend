@@ -18,21 +18,11 @@ import { marked } from "marked";
             <div class="avatar">
               <el-avatar :src="player.avatar" :size="80" />
             </div>
-            <ScoreBar
-              :height="scoreBarHeight"
-              :width="scoreBarWidth"
-              :score="player.scoreBar"
-            />
+            <ScoreBar :height="scoreBarHeight" :width="scoreBarWidth" :score="player.scoreBar" />
           </el-aside>
           <el-main class="middle">
-            <el-progress
-              class="progress"
-              type="circle"
-              :percentage="progress"
-              :format="countdown"
-              :status="progressBarStatus"
-              width="110"
-            />
+            <el-progress class="progress" type="circle" :percentage="progress" :format="countdown"
+              :status="progressBarStatus" :width="110" />
             <el-divider />
             <div class="problem">
               <div class="problem-text" v-html="problem"></div>
@@ -48,14 +38,7 @@ import { marked } from "marked";
                 <el-input v-model="input" placeholder="请输入答案" clearable />
               </div>
               <div class="answer-submit">
-                <el-button
-                  type="primary"
-                  round
-                  size="large"
-                  @click="onSubmit"
-                  :disabled="submitted"
-                  >提交答案</el-button
-                >
+                <el-button type="primary" round size="large" @click="onSubmit" :disabled="submitted">提交答案</el-button>
               </div>
             </div>
           </el-main>
@@ -93,6 +76,7 @@ export default {
           id: 2,
         },
       ],
+      problem: null,
       problemType: 1,
       radio: ref("A"),
       input: "",
@@ -138,47 +122,70 @@ export default {
   },
   mounted() {
     this.clock = setInterval(this.setClock, 1000);
+
+    // emit "start" message
+    this.$store.dispatch("competition/send", {
+      type: "start",
+      content: {
+        fewf: "wejwiojo"
+      }
+    });
+
+    // listen on "problem" message
+    this.$store.dispatch("competition/setHandler", {
+      type: "problem",
+      func: (data) => {
+        console.log("[vue]", data);
+        this.problem = data.content;
+        setTimeout(() => {
+          // Finish: remove listeners
+          this.$store.dispatch("competition/removeHandler", { type: "problem" });
+          this.$router.push("/battle/stats");
+        }, 3000);
+      }
+    });
+
     //WebSocket connection
-    const socket = io();
-    this.socket = socket;
-    socket.on("prepare", () => {
-      //收到prepare消息3s后发送start消息。
-      setTimeout(() => {
-        socket.emit("start");
-      }, 3000);
-    });
+    // const socket = io();
+    // this.socket = socket;
+    // socket.on("prepare", () => {
+    //   //收到prepare消息3s后发送start消息。
+    //   setTimeout(() => {
+    //     socket.emit("start");
+    //   }, 3000);
+    // });
 
-    socket.on("problem", (msg) => {
-      const data = JSON.parse(msg);
-      const problem = data.question.content;
-      this.problemType = problem.classification;
-      if (problem.render_mod == 1) {
-        this.problem = marked(problem.content);
-      } else if (problem.render_mod == 2) {
-        this.problem = problem.content;
-      } else {
-        //普通文本
-      }
-      //浏览器中显示题目
-      //开始计时
-      this.seconds = 30;
-      this.clock = setInterval(this.setClock, 1000);
-    });
+    // socket.on("problem", (msg) => {
+    //   const data = JSON.parse(msg);
+    //   const problem = data.question.content;
+    //   this.problemType = problem.classification;
+    //   if (problem.render_mod == 1) {
+    //     this.problem = marked(problem.content);
+    //   } else if (problem.render_mod == 2) {
+    //     this.problem = problem.content;
+    //   } else {
+    //     //普通文本
+    //   }
+    //   //浏览器中显示题目
+    //   //开始计时
+    //   this.seconds = 30;
+    //   this.clock = setInterval(this.setClock, 1000);
+    // });
 
-    socket.on("answer", (msg) => {
-      const answer = JSON.parse(msg);
-      if (answer.type == 1) {
-        //更新自己作答情况与分数
-      } else {
-        //更新对方作答情况与分数
-      }
-    });
+    // socket.on("answer", (msg) => {
+    //   const answer = JSON.parse(msg);
+    //   if (answer.type == 1) {
+    //     //更新自己作答情况与分数
+    //   } else {
+    //     //更新对方作答情况与分数
+    //   }
+    // });
 
-    socket.on("result", (msg) => {
-      const result = JSON.parse(msg);
-      console.log(result);
-      //应该要跳转页面,实现方式？
-    });
+    // socket.on("result", (msg) => {
+    //   const result = JSON.parse(msg);
+    //   console.log(result);
+    //   //应该要跳转页面,实现方式？
+    // });
   },
 };
 </script>

@@ -9,9 +9,9 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
     <el-container class="main-container">
       <NaviBar />
       <el-container class="page-main">
-        <el-main class="main">
+        <el-main class="main" v-if="!loading">
           <div class="block">
-            对局编号： {{ pkId }}
+            <!-- 对局编号： {{ pkId }} -->
             <div class="title-result">
               <span class="title" v-if="userRank == 1">恭喜，你在比赛中取得胜利！</span>
               <span class="title" v-else>很遗憾，您在比赛中获得了第{{ userRank }}名。</span>
@@ -75,42 +75,27 @@ export default {
   name: "PKStatsView",
   data() {
     return {
-      pkId: null,
+      // pkId: null,
+      loading: true,
       userRank: 1,
-      stats: {
-        points: [
-          { name: "user1", points: 58 },
-          { name: "user2", points: 40 },
-          { name: "user3", points: 38 },
-          { name: "user4", points: 35 },
-          { name: "user5", points: 12 },
-          { name: "user6", points: 10 },
-        ],
-        problems: [
-          {
-            num: 1,
-            id: 12345,
-            title: "这是一道题目。预计在这里显示题型、正确率、平均分",
-            points: [10, 5, 10, 10, 6, 3],
-          },
-          {
-            num: 2,
-            id: 12346,
-            title: "这是一道题目",
-            points: [7, 10, 7, 10, 7, 10],
-          },
-          {
-            num: 3,
-            id: 12348,
-            title: "这是一道题目",
-            points: [0, 10, 0, 0, 5, 0],
-          },
-        ]
-      }
+      stats: null,
     }
   },
   mounted() {
-    this.pkId = this.$route.params.id;
+    // this.pkId = this.$route.params.id;
+    this.$store.dispatch("competition/send", {
+      type: "over",
+      content: {}
+    });
+    this.$store.dispatch("competition/setHandlerOnce", {
+      type: "result",
+      func: (data) => {
+        console.log("[vue]", data);
+        this.stats = data;
+        this.loading = false;
+        this.$store.dispatch("competition/closeSocket");
+      }
+    });
   }
 }
 </script>
