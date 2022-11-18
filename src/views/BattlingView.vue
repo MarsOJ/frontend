@@ -123,6 +123,7 @@ export default {
   mounted() {
     this.clock = setInterval(this.setClock, 1000);
 
+    // TODO: Example
     // emit "start" message
     this.$store.dispatch("competition/send", {
       type: "start",
@@ -131,15 +132,15 @@ export default {
       }
     });
 
-    // listen on "problem" message
-    this.$store.dispatch("competition/setHandler", {
+    // listen on "problem" message only once
+    this.$store.dispatch("competition/setHandlerOnce", {
       type: "problem",
       func: (data) => {
         console.log("[vue]", data);
         this.problem = data.content;
         setTimeout(() => {
-          // Finish: remove listeners
-          this.$store.dispatch("competition/removeHandler", { type: "problem" });
+          // Finish: remove listeners (no need to remove one-time listeners)
+          // this.$store.dispatch("competition/removeHandler", { type: "answer" });
           this.$router.push("/battle/stats");
         }, 3000);
       }
