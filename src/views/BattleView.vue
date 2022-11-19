@@ -79,8 +79,7 @@ export default {
               },
             });
             this.$store.dispatch("competition/send", { type: "pair" });
-          }
-          else {
+          } else {
             this.$store.dispatch("competition/closeSocket");
           }
         },
