@@ -2,6 +2,7 @@
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import ScoreBar from "@/components/ScoreBar.vue";
+import NumPlus from "@/components/NumPlus.vue";
 import { ref } from "vue";
 // import { marked } from "marked";
 </script>
@@ -16,7 +17,12 @@ import { ref } from "vue";
             <div class="avatar">
               <el-avatar :src="player.avatar" :size="80" />
             </div>
-            <ScoreBar :height="scoreBarHeight" :width="scoreBarWidth" :score="player.scoreBar" />
+            <numPlus :value="player.score" :time="4"></numPlus>
+            <ScoreBar
+              :height="scoreBarHeight"
+              :width="scoreBarWidth"
+              :score="player.scoreBar"
+            />
           </el-aside>
           <el-main class="middle">
             <el-progress class="progress" type="circle" :percentage="progress" :format="countdown"
