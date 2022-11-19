@@ -55,7 +55,7 @@ import InfoService from "@/services/info.service";
                 </p>
                 <span class="announcement-text">{{ announcement }}</span>
               </div>
-              <div class="info block">
+              <div class="info block" v-loading="loading">
                 <p style="font-size: 28px">资讯</p>
                 <!-- <el-scrollbar> -->
                 <div v-for="item in info">
@@ -157,6 +157,7 @@ export default {
       info: [],
       timer: null,
       lastNewsId: "",
+      loading: true,
     };
   },
   methods: {
@@ -172,15 +173,19 @@ export default {
         clearInterval(this.timer);
         this.timer = setTimeout(() => {
           this.lastNewsId = this.info[this.info.length - 1]["id"];
+          this.loading = true;
           InfoService.getLastestNews(this.lastNewsId).then(
             (content) => {
               this.info = this.info.concat(content);
+              this.loading = false;
             },
             (error) => {
-              this.content =
+              var content =
                 (error.response && error.response.data) ||
                 error.message ||
                 error.toString();
+              console.log(content);
+              this.loading = false;
             }
           );
         }, 500);
@@ -191,12 +196,15 @@ export default {
     InfoService.getLastestNews("").then(
       (content) => {
         this.info = content;
+        this.loading = false;
       },
       (error) => {
-        this.content =
+        var content =
           (error.response && error.response.data) ||
           error.message ||
           error.toString();
+        console.log(content);
+        this.loading = false;
       }
     );
     var d = new Date();

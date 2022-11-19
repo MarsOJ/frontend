@@ -1,6 +1,5 @@
-import AuthService from "../services/auth.service";
+import AuthService from "@/services/auth.service";
 
-// const user = JSON.parse(localStorage.getItem("user"));
 const initialState = { status: { loggedIn: false }, user: null };
 
 export const auth = {
@@ -25,8 +24,15 @@ export const auth = {
       );
     },
     logout({ commit }) {
-      AuthService.logout();
-      commit("logout");
+      return AuthService.logout().then(
+        (response) => {
+          commit("logout");
+          return Promise.resolve(response.data);
+        },
+        (error) => {
+          return Promise.reject(error);
+        }
+      );
     },
     register({ commit }, user) {
       return AuthService.register(user).then(

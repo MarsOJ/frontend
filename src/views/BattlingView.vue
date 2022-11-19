@@ -4,9 +4,7 @@ import Footer from "@/components/PageFooter.vue";
 import ScoreBar from "@/components/ScoreBar.vue";
 import NumPlus from "@/components/NumPlus.vue";
 import { ref } from "vue";
-import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
-import { marked } from "marked";
-//import { ElMessage, ElMessageBox } from "@element-plus";
+// import { marked } from "marked";
 </script>
 
 <template>
@@ -27,14 +25,8 @@ import { marked } from "marked";
             />
           </el-aside>
           <el-main class="middle">
-            <el-progress
-              class="progress"
-              type="circle"
-              :percentage="progress"
-              :format="countdown"
-              :status="progressBarStatus"
-              width="110"
-            />
+            <el-progress class="progress" type="circle" :percentage="progress" :format="countdown"
+              :status="progressBarStatus" :width="110" />
             <el-divider />
             <div class="problem">
               <div class="problem-text" v-html="problem"></div>
@@ -50,14 +42,7 @@ import { marked } from "marked";
                 <el-input v-model="input" placeholder="请输入答案" clearable />
               </div>
               <div class="answer-submit">
-                <el-button
-                  type="primary"
-                  round
-                  size="large"
-                  @click="onSubmit"
-                  :disabled="submitted"
-                  >提交答案</el-button
-                >
+                <el-button type="primary" round size="large" @click="onSubmit" :disabled="submitted">提交答案</el-button>
               </div>
             </div>
           </el-main>
@@ -95,6 +80,7 @@ export default {
           id: 2,
         },
       ],
+      problem: null,
       problemType: 1,
       radio: ref("A"),
       input: "",
@@ -140,51 +126,71 @@ export default {
   },
   mounted() {
     this.clock = setInterval(this.setClock, 1000);
+
+    // TODO: Example
+    // emit "start" message
+    this.$store.dispatch("competition/send", {
+      type: "start",
+    });
+
+    // listen on "problem" message only once
+    this.$store.dispatch("competition/setHandlerOnce", {
+      type: "problem",
+      func: (data) => {
+        console.log("[vue]", data);
+        this.problem = data.content;
+        setTimeout(() => {
+          // Finish: remove listeners (no need to remove one-time listeners)
+          // this.$store.dispatch("competition/removeHandler", { type: "answer" });
+          this.$router.push("/battle/stats");
+        }, 30000);
+      },
+    });
+
     //WebSocket connection
-    const socket = io();
-    this.socket = socket;
-    socket.on("prepare", () => {
-      //收到prepare消息3s后发送start消息。
-      setTimeout(() => {
-        socket.emit("start");
-      }, 3000);
-    });
+    // const socket = io("ws://localhost:5000/competition", {
+    //   withCredentials: true,
+    //   autoConnect: false,
+    // });
+    // this.socket = socket;
+    // socket.on("prepare", () => {
+    //   //收到prepare消息3s后发送start消息
+    //   console.log("start prepare");
+    //   setTimeout(() => {
+    //     socket.emit("start");
+    //   }, 3000);
+    // });
+    // socket.on("problem", (msg) => {
+    //   const data = JSON.parse(msg);
+    //   const problem = data.question.content;
+    //   this.problemType = problem.classification;
+    //   if (problem.render_mod == 1) {
+    //     this.problem = marked(problem.content);
+    //   } else if (problem.render_mod == 2) {
+    //     this.problem = problem.content;
+    //   } else {
+    //     //普通文本
+    //   }
+    //   //浏览器中显示题目
+    //   //开始计时
+    //   this.seconds = 30;
+    //   this.clock = setInterval(this.setClock, 1000);
+    // });
 
-    socket.on("problem", (msg) => {
-      const data = JSON.parse(msg);
-      const problem = data.question.content;
-      this.problemType = problem.classification;
-      if (problem.render_mod == 1) {
-        this.problem = marked(problem.content);
-      } else if (problem.render_mod == 2) {
-        this.problem = problem.content;
-      } else {
-        //普通文本
-      }
-      //浏览器中显示题目
-      //开始计时
-      this.seconds = 30;
-      this.clock = setInterval(this.setClock, 1000);
-    });
+    // socket.on("answer", (msg) => {
+    //   const answer = JSON.parse(msg);
+    //   if (answer.type == 1) {
+    //     //更新自己作答情况与分数
+    //   } else {
+    //     //更新对方作答情况与分数
+    //   }
+    // });
 
-    socket.on("answer", (msg) => {
-      const answer = JSON.parse(msg);
-      if (answer.type == 1) {
-        //更新自己作答情况与分数
-      } else {
-        //更新对方作答情况与分数
-      }
-    });
-
-    socket.on("result", (msg) => {
-      const result = JSON.parse(msg);
-      console.log(result);
-      //应该要跳转页面,实现方式？
-    });
-    //testing
-    setTimeout(() => {
-      this.players[0].score = 200;
-    }, 3000);
+    // socket.on("result", (msg) => {
+    //   const result = JSON.parse(msg);
+    //   console.log(result);
+    //   //应该要跳转页面,实现方式？
+    // });
   },
 };
 </script>
