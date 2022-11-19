@@ -2,6 +2,7 @@
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import ScoreBar from "@/components/ScoreBar.vue";
+import NumPlus from "@/components/NumPlus.vue";
 import { ref } from "vue";
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 import { marked } from "marked";
@@ -18,6 +19,7 @@ import { marked } from "marked";
             <div class="avatar">
               <el-avatar :src="player.avatar" :size="80" />
             </div>
+            <numPlus :value="player.score" :time="4"></numPlus>
             <ScoreBar
               :height="scoreBarHeight"
               :width="scoreBarWidth"
@@ -179,6 +181,10 @@ export default {
       console.log(result);
       //应该要跳转页面,实现方式？
     });
+    //testing
+    setTimeout(() => {
+      this.players[0].score = 200;
+    }, 3000);
   },
 };
 </script>
