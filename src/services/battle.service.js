@@ -46,10 +46,10 @@ class BattleService {
 
   send(msg) {
     this.checkConnection();
-    if (msg.content === undefined) {
+    if (msg.param === undefined) {
       this.socket.emit(msg.type);
     } else {
-      this.socket.emit(msg.type, msg.content);
+      this.socket.emit(msg.type, ...msg.params);
     }
   }
 

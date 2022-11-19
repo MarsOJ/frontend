@@ -142,9 +142,7 @@ export default {
 
     // TODO: Example
     // emit "start" message
-    this.$store.dispatch("competition/send", {
-      type: "start",
-    });
+    this.$store.dispatch("competition/send", { type: "start" });
 
     // listen on "problem" message only once
     this.$store.dispatch("competition/setHandlerOnce", {
