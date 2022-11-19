@@ -2,13 +2,15 @@
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import LeaderSideBar from "@/components/LeaderSideBar.vue";
-import battleService from "@/services/battle.service";
 </script>
 
 <template>
   <div class="common-layout">
+    <!-- TODO: check whether there's an ongoing match (socketConnected) -->
     <div v-if="pairing" id="pairing">
-      <div>加载中……</div>
+      <div v-if="!socketConnected && !paired">连接服务器中……</div>
+      <div v-if="socketConnected && !paired">配对中……</div>
+      <div v-if="paired">加载中……</div>
       <el-button v-if="!paired" id="pk-button" @click="this.cancelPairing()">
         取消匹配
       </el-button>

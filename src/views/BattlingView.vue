@@ -3,9 +3,7 @@ import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import ScoreBar from "@/components/ScoreBar.vue";
 import { ref } from "vue";
-// import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 // import { marked } from "marked";
-//import { ElMessage, ElMessageBox } from "@element-plus";
 </script>
 
 <template>
@@ -18,21 +16,11 @@ import { ref } from "vue";
             <div class="avatar">
               <el-avatar :src="player.avatar" :size="80" />
             </div>
-            <ScoreBar
-              :height="scoreBarHeight"
-              :width="scoreBarWidth"
-              :score="player.scoreBar"
-            />
+            <ScoreBar :height="scoreBarHeight" :width="scoreBarWidth" :score="player.scoreBar" />
           </el-aside>
           <el-main class="middle">
-            <el-progress
-              class="progress"
-              type="circle"
-              :percentage="progress"
-              :format="countdown"
-              :status="progressBarStatus"
-              :width="110"
-            />
+            <el-progress class="progress" type="circle" :percentage="progress" :format="countdown"
+              :status="progressBarStatus" :width="110" />
             <el-divider />
             <div class="problem">
               <div class="problem-text" v-html="problem"></div>
@@ -48,14 +36,7 @@ import { ref } from "vue";
                 <el-input v-model="input" placeholder="请输入答案" clearable />
               </div>
               <div class="answer-submit">
-                <el-button
-                  type="primary"
-                  round
-                  size="large"
-                  @click="onSubmit"
-                  :disabled="submitted"
-                  >提交答案</el-button
-                >
+                <el-button type="primary" round size="large" @click="onSubmit" :disabled="submitted">提交答案</el-button>
               </div>
             </div>
           </el-main>

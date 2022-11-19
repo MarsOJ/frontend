@@ -18,10 +18,10 @@ export const competition = {
     },
   },
   actions: {
-    send({ }, msg) {
+    send(_context, msg) {
       BattleService.send(msg);
     },
-    setHandlerOnce({ }, handler) {
+    setHandlerOnce(_context, handler) {
       BattleService.receive(handler);
     },
     setHandler({ commit }, handler) {
