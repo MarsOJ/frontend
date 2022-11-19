@@ -1,13 +1,7 @@
-import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
-
-const socket = io("ws://localhost:5000/competition", {
-  withCredentials: true,
-  autoConnect: false,
-});
+import BattleService from "@/services/battle.service";
 
 const state = {
   status: "inactive",
-  socket: socket,
   connected: false,
   listeners: [],
 };
@@ -24,83 +18,73 @@ export const competition = {
     },
   },
   actions: {
-    send({ state }, msg) {
-      if (msg.content === undefined) {
-        state.socket.emit(msg.type);
-      } else {
-        state.socket.emit(msg.type, msg.content);
-      }
+    send({ }, msg) {
+      BattleService.send(msg);
     },
-    setHandlerOnce({ commit, state }, handler) {
-      if (!state.connected) {
-        throw "Connection failed";
-      }
-
-      state.socket.once(handler.type, handler.func);
-      // console.log("[store]", handler.type, "handler: ", state.socket.listeners(handler.type));
+    setHandlerOnce({ }, handler) {
+      BattleService.receive(handler);
+    },
+    setHandler({ commit }, handler) {
+      BattleService.listen(handler);
       commit("listen", handler.type);
     },
-    setHandler({ commit, state }, handler) {
-      if (!state.connected) {
-        throw "Connection failed";
-      }
-
-      state.socket.on(handler.type, handler.func);
-      state.listeners.push(handler.type);
-      // console.log("[store]", handler.type, "handler: ", state.socket.listeners(handler.type));
-      commit("listen", handler.type);
+    removeHandler({ commit }, handler) {
+      BattleService.drop(handler);
+      commit("stop", handler.type);
     },
-    removeHandler({ commit, state }, handler) {
-      if (!state.connected) {
-        throw "Connection failed";
-      }
-
-      state.socket.off(handler.type);
-      var index = state.listeners.indexOf(handler.type);
-      if (index > -1) {
-        state.listeners.splice(index, 1);
-      }
-      // console.log("[store]", handler.type, "handler: ", state.socket.listeners(handler.type));
-      commit("stop");
-    },
-    connectSocket({ commit, state }) {
-      if (!state.socket.connected) {
-        state.socket.connect();
-        commit("connect");
-        state.socket.on("stateChanged", (oldState, newState) => {
-          if (oldState !== newState && newState !== "Connected") {
-            commit("cancel");
-          } else {
-            commit("end");
-          }
+    connectSocket({ commit }) {
+      if (!BattleService.connected()) {
+        return new Promise((resolve, reject) => {
+          BattleService.connect(
+            () => {
+              commit("connect");
+              resolve("connected");
+            },
+            () => {
+              reject(new Error("Connection timeout"));
+            }
+          );
         });
       }
+      return Promise.resolve("already connected");
     },
-    closeSocket({ commit, state }) {
-      state.socket.disconnect();
-      commit("end");
+    closeSocket({ commit }) {
+      if (BattleService.connected()) {
+        return new Promise((resolve) => {
+          BattleService.disconnect(() => {
+            commit("end");
+            resolve("closed");
+          });
+        });
+      }
+      return Promise.resolve("already closed");
     },
   },
   mutations: {
     connect(state) {
       state.connected = true;
       state.status = "connected";
-      console.log("[store]", state);
+      console.log("[store] (connect)", state);
     },
-    listen(state) {
+    listen(state, type) {
       state.status = "listening";
-      console.log("[store]", state);
+      state.listeners.push(type);
+      console.log("[store] (listen)", state);
     },
-    stop(state) {
+    stop(state, type) {
+      var index = state.listeners.indexOf(type);
+      if (index > -1) {
+        state.listeners.splice(index, 1);
+      }
       if (state.listeners.length === 0) {
         state.status = "connected";
       }
-      console.log("[store]", state);
+      console.log("[store] (stop)", state);
     },
     end(state) {
       state.connected = false;
       state.status = "inactive";
-      console.log("[store]", state);
+      console.log("[store] (end)", state);
     },
   },
 };

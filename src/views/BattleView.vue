@@ -2,6 +2,7 @@
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import LeaderSideBar from "@/components/LeaderSideBar.vue";
+import battleService from "@/services/battle.service";
 </script>
 
 <template>
@@ -36,6 +37,11 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
 <script>
 export default {
   name: "BattleView",
+  computed: {
+    socketConnected() {
+      return this.$store.state.competition.connected;
+    },
+  },
   data() {
     return {
       leaderData: [
@@ -61,14 +67,20 @@ export default {
       this.pairing = true;
       this.$store.dispatch("competition/connectSocket").then(
         () => {
-          this.$store.dispatch("competition/setHandlerOnce", {
-            type: "prepare",
-            func: (data) => {
-              console.log("[vue]", data);
-              this.paired = true;
-              this.$router.push("/battle/battling");
-            },
-          });
+          if (this.pairing) {
+            this.$store.dispatch("competition/setHandlerOnce", {
+              type: "prepare",
+              func: (data) => {
+                console.log("[vue]", data);
+                this.paired = true;
+                this.$router.push("/battle/battling");
+              },
+            });
+            this.$store.dispatch("competition/send", { type: "pair" });
+          }
+          else {
+            this.$store.dispatch("competition/closeSocket");
+          }
         },
         (err) => {
           console.log("[vue]", err);
@@ -77,10 +89,10 @@ export default {
     },
     cancelPairing() {
       this.pairing = false;
-      this.$store.dispatch("competition/send", {
-        type: "cancel",
-        content: undefined,
-      });
+      if (this.socketConnected) {
+        this.$store.dispatch("competition/removeHandler", { type: "prepare" });
+        this.$store.dispatch("competition/send", { type: "cancel" });
+      }
       this.$store.dispatch("competition/closeSocket");
     },
   },

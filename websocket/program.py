@@ -8,26 +8,34 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 @socketio.on('connect')
-def handle_message():
-    print('received message: connect')
+def handle_connect():
+    print(str(time.time()) + 'received message: connect')
+    time.sleep(3)
+    socketio.emit('connect')
+    print(str(time.time()) + 'message sent: connect')
+
+
+@socketio.on('pair')
+def handle_pair():
+    print(str(time.time()) + 'received message: pair')
     time.sleep(3)
     socketio.emit('prepare', 'all players prepared')
-    print('message sent: prepare')
+    print(str(time.time()) + 'message sent: prepare')
 
 
 @socketio.on('start')
-def begin_competition(content):
-    print('received message: start', content)
+def begin_competition():
+    print(str(time.time()) + 'received message: start')
     socketio.emit('problem', {
         "title": "sdfs",
         "content": "wefjwoiefjweoif"
     })
-    print('message sent: problem')
+    print(str(time.time()) + 'message sent: problem')
 
 
 @socketio.on('over')
 def begin_competition(content):
-    print('received message: over', content)
+    print(str(time.time()) + 'received message: over', content)
     socketio.emit('result', {
         "points": [
             {"name": "user1", "points": 58},
@@ -58,7 +66,7 @@ def begin_competition(content):
             },
         ]
     })
-    print('message sent: result')
+    print(str(time.time()) + 'message sent: result')
 
 
 if __name__ == '__main__':
