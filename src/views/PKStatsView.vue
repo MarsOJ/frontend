@@ -77,11 +77,11 @@ export default {
   },
   mounted() {
     // this.pkId = this.$route.params.id;
-    this.$store.dispatch("competition/send", { type: "over" });
+    this.$store.dispatch("competition/send", { type: "result" });
     this.$store.dispatch("competition/setHandlerOnce", {
       type: "result",
       func: (data) => {
-        console.log("[vue]", data);
+        console.log("[vue] (result)", data);
         this.stats = data;
         this.loading = false;
         this.$store.dispatch("competition/closeSocket");

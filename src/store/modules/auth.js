@@ -5,11 +5,6 @@ const initialState = { status: { loggedIn: false }, user: null };
 export const auth = {
   namespaced: true,
   state: initialState,
-  getters: {
-    loggedIn(state) {
-      return state.status.loggedIn;
-    },
-  },
   actions: {
     login({ commit }, user) {
       return AuthService.login(user).then(

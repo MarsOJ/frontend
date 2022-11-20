@@ -17,22 +17,12 @@ import { ref } from "vue";
             <div class="avatar">
               <el-avatar :src="player.avatar" :size="80" />
             </div>
-            <numPlus :value="player.score" :time="4"></numPlus>
-            <ScoreBar
-              :height="scoreBarHeight"
-              :width="scoreBarWidth"
-              :score="player.scoreBar"
-            />
+            <NumPlus :value="player.score" :time="4"></NumPlus>
+            <ScoreBar :height="scoreBarHeight" :width="scoreBarWidth" :score="player.scoreBar" />
           </el-aside>
           <el-main class="middle">
-            <el-progress
-              class="progress"
-              type="circle"
-              :percentage="progress"
-              :format="countdown"
-              :status="progressBarStatus"
-              :width="110"
-            />
+            <el-progress class="progress" type="circle" :percentage="progress" :format="countdown"
+              :status="progressBarStatus" :width="110" />
             <el-divider />
             <div class="problem">
               <div class="problem-text" v-html="problem"></div>
@@ -48,14 +38,7 @@ import { ref } from "vue";
                 <el-input v-model="input" placeholder="请输入答案" clearable />
               </div>
               <div class="answer-submit">
-                <el-button
-                  type="primary"
-                  round
-                  size="large"
-                  @click="onSubmit"
-                  :disabled="submitted"
-                  >提交答案</el-button
-                >
+                <el-button type="primary" round size="large" @click="onSubmit" :disabled="submitted">提交答案</el-button>
               </div>
             </div>
           </el-main>
@@ -72,6 +55,14 @@ import { ref } from "vue";
 const fullScore = 100;
 export default {
   name: "BattlingView",
+  computed: {
+    users() {
+      return this.$store.state.competition.users;
+    },
+    userIndex() {
+      return this.$store.state.competition.index;
+    },
+  },
   data() {
     return {
       progress: 0,
@@ -141,6 +132,10 @@ export default {
     this.clock = setInterval(this.setClock, 1000);
 
     // TODO: Example
+    console.log(this.users,         // userlist
+      this.userIndex,               // which user am I
+      this.users[this.userIndex]);  // my username
+
     // emit "start" message
     this.$store.dispatch("competition/send", { type: "start" });
 

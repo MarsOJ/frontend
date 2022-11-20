@@ -19,7 +19,7 @@ def handle_connect():
 def handle_pair():
     print(str(time.time()) + 'received message: pair')
     time.sleep(3)
-    socketio.emit('prepare', 'all players prepared')
+    socketio.emit('prepare', ['tester1', 'tester', 'tester3'])  # add your username here
     print(str(time.time()) + 'message sent: prepare')
 
 
@@ -33,9 +33,9 @@ def begin_competition():
     print(str(time.time()) + 'message sent: problem')
 
 
-@socketio.on('over')
-def begin_competition(content):
-    print(str(time.time()) + 'received message: over', content)
+@socketio.on('result')
+def end_competition():
+    print(str(time.time()) + 'received message: result')
     socketio.emit('result', {
         "points": [
             {"name": "user1", "points": 58},

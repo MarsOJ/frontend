@@ -1,7 +1,7 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 
 const API_URL = "ws://localhost:5000/competition";
-//const API_URL = "ws://localhost:8765";
+// const API_URL = "ws://localhost:8765";
 
 class BattleService {
   constructor() {

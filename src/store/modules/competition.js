@@ -4,19 +4,13 @@ const state = {
   status: "inactive",
   connected: false,
   listeners: [],
+  users: [],
+  index: 0,
 };
 
 export const competition = {
   namespaced: true,
   state: state,
-  getters: {
-    status(state) {
-      return state.status;
-    },
-    connected(state) {
-      return state.connected;
-    },
-  },
   actions: {
     send(_context, msg) {
       BattleService.send(msg);
@@ -59,8 +53,19 @@ export const competition = {
       }
       return Promise.resolve("already closed");
     },
+    setUsers({ commit }, { users, username }) {
+      commit("setUsers", {
+        users: users,
+        index: users.indexOf(username),
+      });
+    },
   },
   mutations: {
+    setUsers(state, { users, index }) {
+      state.users = users;
+      state.index = index;
+      console.log("[store] (setUsers)", state);
+    },
     connect(state) {
       state.connected = true;
       state.status = "connected";

@@ -73,9 +73,14 @@ export default {
             this.$store.dispatch("competition/setHandlerOnce", {
               type: "prepare",
               func: (data) => {
-                console.log("[vue]", data);
                 this.paired = true;
-                this.$router.push("/battle/battling");
+                console.log("[vue] (prepare)", data);
+                this.$store.dispatch("competition/setUsers", {
+                  users: data,
+                  username: this.$store.state.auth.user,
+                }).then(() => {
+                  this.$router.push("/battle/battling");
+                });
               },
             });
             this.$store.dispatch("competition/send", { type: "pair" });
@@ -84,7 +89,7 @@ export default {
           }
         },
         (err) => {
-          console.log("[vue]", err);
+          console.log("[vue] (connect)", err);
         }
       );
     },
