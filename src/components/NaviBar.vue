@@ -5,14 +5,52 @@ import { RouterLink } from "vue-router";
 <template>
   <el-affix>
     <nav>
-      <RouterLink to="/home">首页</RouterLink>
-      <RouterLink to="/battle">答题对战</RouterLink>
-      <RouterLink to="/favorites">收藏夹</RouterLink>
-      <RouterLink to="/gallery">礼品屋</RouterLink>
-      <RouterLink to="/personal">个人中心</RouterLink>
+      <RouterLink to="/home">
+        <img src="../assets/main-logo.png" @click="this.$router.push('/home')" />
+      </RouterLink>
+
+      <div class="fill"></div>
+
+      <span class="links">
+        <RouterLink to="/battle">
+          <div>
+            答题对战
+          </div>
+        </RouterLink>
+        <RouterLink to="/favorites">
+          <div>
+            收藏夹
+          </div>
+        </RouterLink>
+        <RouterLink to="/gallery">
+          <div>
+            礼品屋
+          </div>
+        </RouterLink>
+        <RouterLink to="/personal">
+          <div>
+            {{ username }}
+          </div>
+        </RouterLink>
+      </span>
     </nav>
   </el-affix>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      username: "登录",
+    }
+  },
+  mounted() {
+    if (this.$store.state.auth.status.loggedIn) {
+      this.username = this.$store.state.auth.user;
+    }
+  }
+}
+</script>
 
 <style scoped>
 * {
@@ -20,7 +58,50 @@ import { RouterLink } from "vue-router";
   padding: 0;
 }
 
-a,
+nav {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  background: url(../assets/home.png) no-repeat center top;
+  background-size: cover;
+  position: relative;
+  z-index: 100;
+}
+
+nav img {
+  height: 36px;
+  margin: 12px 2em 12px 2em;
+  cursor: pointer;
+}
+
+nav .fill {
+  height: 100%;
+  flex-grow: 1;
+  background-image: linear-gradient(to right, transparent, rgba(0, 20, 18, 0.8));
+}
+
+nav .links {
+  height: 100%;
+  padding-right: 1em;
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+  font-size: 16px;
+  /* font-weight: bold; */
+  background: rgba(0, 20, 18, 0.8);
+}
+
+nav .links a {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  border-left: 0px solid var(--color-border);
+}
+
+nav .links a,
 .green {
   text-decoration: none;
   color: white;
@@ -28,42 +109,27 @@ a,
 }
 
 @media (hover: hover) {
-  a:hover {
-    background-color: paleturquoise;
+  nav .links a:hover {
+    background-color: darkcyan;
   }
 }
 
-nav {
-  width: 100%;
-  /* width: 100vw; */
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 4.5em;
-  text-align: right;
-  /* border-bottom: 3px #e7e7e7 solid; */
-  background: url(../assets/navi.png) no-repeat left center;
-  filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
-  /* -moz-background-size: 100% 100%; */
-  -moz-background-size: cover;
-  /* background-size: 100% 100%; */
-  background-size: cover;
+nav .links a.router-link-exact-active {
+  border-bottom: white 5px solid !important;
+  border-top: transparent 5px solid !important;
 }
 
-nav a.router-link-exact-active {
-  color: white;
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 2rem;
-  border-left: 0px solid var(--color-border);
-}
-
-nav a:first-of-type {
+nav .links a:first-of-type {
   border: 0;
+}
+
+@media (max-width: 800px) {
+  nav {
+    background-image: url(../assets/navi.png);
+  }
+
+  .links {
+    display: none !important;
+  }
 }
 </style>

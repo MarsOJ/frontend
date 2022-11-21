@@ -8,34 +8,31 @@ import { Back } from "@element-plus/icons-vue";
 <template>
   <div class="common-layout">
     <el-container direction="vertical">
-      <NaviBar />
-      <el-main class="main">
-        <div class="block" v-loading="loading">
-          <div class="title">
-            <el-button
-              circle
-              id="back-button"
-              :icon="Back"
-              @click="$router.go(-1)"
-            />
-            <span id="headline">
-              {{ content.title }}
-            </span>
-            <div id="subtitle">
-              来源：{{ content.source }}&nbsp;&nbsp;&nbsp;&nbsp;日期：{{
-                content.date
-              }}
+      <el-scrollbar>
+        <div ref="mainpage">
+          <NaviBar />
+          <el-main class="main">
+            <div class="block" v-loading="loading">
+              <div class="title">
+                <el-button circle id="back-button" :icon="Back" @click="$router.go(-1)" />
+                <span id="headline">
+                  {{ content.title }}
+                </span>
+                <div id="subtitle">
+                  来源：{{ content.source }}&nbsp;&nbsp;&nbsp;&nbsp;日期：{{
+                      content.date
+                  }}
+                </div>
+              </div>
+              <hr />
+              <div class="content">
+                {{ content.content }}
+              </div>
             </div>
-          </div>
-          <hr />
-          <div class="content">
-            {{ content.content }}
-          </div>
+          </el-main>
+          <Footer />
         </div>
-      </el-main>
-      <el-footer>
-        <Footer />
-      </el-footer>
+      </el-scrollbar>
     </el-container>
   </div>
 </template>
@@ -70,6 +67,10 @@ export default {
 </script>
 
 <style scoped>
+.common-layout {
+  height: 100vh;
+}
+
 .main {
   display: flex;
   justify-content: center;

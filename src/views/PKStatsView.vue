@@ -99,7 +99,8 @@ export default {
 
 .aside {
   width: 30vw;
-  min-width: 420px;
+  min-width: 356px;
+  max-width: 480px;
 }
 
 .block {

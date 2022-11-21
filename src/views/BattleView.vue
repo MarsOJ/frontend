@@ -15,23 +15,25 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
         取消匹配
       </el-button>
     </div>
-    <el-container>
-      <NaviBar />
-      <el-container class="page-main">
-        <el-main class="main">
-          当前在线人数：8888<br />
-          <el-button id="pk-button" @click="this.startPairing()">
-            Level 5 <br />
-            开始匹配
-          </el-button>
-        </el-main>
-        <el-aside class="aside">
-          <LeaderSideBar :data="leaderData" :userRank="userRank" />
-        </el-aside>
-      </el-container>
-      <el-footer class="page-footer">
-        <Footer />
-      </el-footer>
+    <el-container direction="vertical">
+      <el-scrollbar>
+        <div ref="mainpage">
+          <NaviBar />
+          <el-container class="page-main">
+            <el-main class="main">
+              当前在线人数：8888<br />
+              <el-button id="pk-button" @click="this.startPairing()">
+                Level 5 <br />
+                开始匹配
+              </el-button>
+            </el-main>
+            <el-aside class="aside">
+              <LeaderSideBar :data="leaderData" :userRank="userRank" />
+            </el-aside>
+          </el-container>
+          <Footer />
+        </div>
+      </el-scrollbar>
     </el-container>
   </div>
 </template>
@@ -108,6 +110,7 @@ export default {
 <style scoped>
 .common-layout {
   position: relative;
+  height: 100vh;
 }
 
 .page-main {
@@ -128,7 +131,8 @@ export default {
 
 .aside {
   width: 30vw;
-  min-width: 350px;
+  min-width: 356px;
+  max-width: 480px;
 }
 
 #pairing {
@@ -143,5 +147,11 @@ export default {
   align-items: center;
   font-size: xx-large;
   color: white;
+}
+
+@media (max-width: 800px) {
+  .page-main {
+    flex-direction: column;
+  }
 }
 </style>
