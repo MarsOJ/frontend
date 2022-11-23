@@ -8,10 +8,11 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
   <div class="common-layout">
     <!-- TODO: check whether there's an ongoing match (socketConnected) -->
     <div v-if="pairing" id="pairing">
+      <!-- <img src="../assets/Fidget-spinner.gif" /> -->
       <div v-if="!socketConnected && !paired">连接服务器中……</div>
       <div v-if="socketConnected && !paired">配对中……</div>
       <div v-if="paired">加载中……</div>
-      <el-button v-if="!paired" id="pk-button" @click="this.cancelPairing()">
+      <el-button v-if="!paired" id="cancel-button" @click="this.cancelPairing()">
         取消匹配
       </el-button>
     </div>
@@ -20,15 +21,23 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
         <div ref="mainpage">
           <NaviBar />
           <el-container class="page-main">
-            <el-main class="main">
-              当前在线人数：8888<br />
-              <el-button id="pk-button" @click="this.startPairing()">
-                Level 5 <br />
-                开始匹配
-              </el-button>
+            <el-main class="main fade-down">
+              <div class="main">
+                <div class="title">Skills speak louder than words</div>
+                <div class="description">
+                  We help companies develop the strongest tech teams around. We help candidates
+                  sharpen their tech skills and pursue job opportunities.
+                </div>
+                <el-button id="pk-button" @click="this.startPairing()">
+                  Start Pairing
+                </el-button>
+                <div class="info">
+                  当前等级：Level 5 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;钱：没有
+                </div>
+              </div>
             </el-main>
             <el-aside class="aside">
-              <LeaderSideBar :data="leaderData" :userRank="userRank" />
+              <LeaderSideBar :data="leaderData" :userRank="userRank" class="fade-down" />
             </el-aside>
           </el-container>
           <Footer />
@@ -49,16 +58,16 @@ export default {
   data() {
     return {
       leaderData: [
-        { name: "user1", points: 45 },
-        { name: "user2", points: 42 },
-        { name: "user3", points: 41 },
-        { name: "user4", points: 40 },
-        { name: "user5", points: 40 },
-        { name: "user6", points: 40 },
-        { name: "user7", points: 40 },
-        { name: "user8", points: 40 },
-        { name: "user9", points: 40 },
-        { name: "user10", points: 40 },
+        { name: "user1", points: 45, isUser: false },
+        { name: "user2", points: 42, isUser: false },
+        { name: "user3", points: 41, isUser: true },
+        { name: "user4", points: 40, isUser: false },
+        { name: "user5", points: 40, isUser: false },
+        { name: "user6", points: 40, isUser: false },
+        { name: "user7", points: 40, isUser: false },
+        { name: "user8", points: 40, isUser: false },
+        { name: "user9", points: 40, isUser: false },
+        { name: "user10", points: 40, isUser: false },
       ],
       userRank: 5,
       socket: null,
@@ -108,6 +117,8 @@ export default {
 </script>
 
 <style scoped>
+@import "@/assets/css/animation.css";
+
 .common-layout {
   position: relative;
   height: 100vh;
@@ -116,17 +127,44 @@ export default {
 .page-main {
   align-items: center;
   text-align: center;
+  background:
+    linear-gradient(to bottom left, #d2eedb, transparent, transparent, #d2eedb),
+    linear-gradient(to bottom right, #d3d3fc, transparent, transparent, #d3d3fc);
 }
 
 .main {
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-#pk-button {
+.main .title {
+  font-size: 54px;
+  font-weight: 900;
+  color: #1F1F20;
+}
+
+.main .description {
+  font-size: 18px;
+  font-weight: 300;
+  color: #1F1F20;
+  width: 70%;
+  margin: 2em;
+}
+
+.main #pk-button {
   width: 30%;
-  min-width: 300px;
-  height: 100px;
-  font-size: xx-large;
+  min-width: 180px;
+  height: 48px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background-color: #068932;
+}
+
+.main .info {
+  margin: 2em;
 }
 
 .aside {
@@ -140,13 +178,24 @@ export default {
   z-index: 1000;
   width: 100%;
   height: 100%;
-  background-color: rgba(128, 128, 128, 0.5);
+  background-color: rgba(128, 128, 128, 0.7);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   font-size: xx-large;
   color: white;
+}
+
+#pairing #cancel-button {
+  margin: 2em;
+  width: 180px;
+  height: 50px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background-color: #a10b0b;
+  border-color: #8a0a0a;
 }
 
 @media (max-width: 800px) {

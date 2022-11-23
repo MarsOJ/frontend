@@ -242,6 +242,8 @@ export default {
 </script>
 
 <style scoped>
+@import "@/assets/css/animation.css";
+
 .main {
   text-align: center;
   padding-left: 15vw;
@@ -297,30 +299,6 @@ export default {
   top: -60px;
 }
 
-@keyframes fadeInDown {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@-webkit-keyframes fadeInDown {
-  0% {
-    opacity: 0;
-    -webkit-transform: translateY(-20px);
-  }
-
-  100% {
-    opacity: 1;
-    -webkit-transform: translateY(0);
-  }
-}
-
 .block {
   /* display: inline-block; */
   height: fit-content;
@@ -329,16 +307,6 @@ export default {
   color: #64646d;
   background-color: white;
   /* box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.2); */
-}
-
-.fade-down {
-  visibility: visible;
-  -webkit-animation-duration: 0.4s;
-  animation-duration: 0.4s;
-  -webkit-animation-fill-mode: both;
-  animation-fill-mode: both;
-  -webkit-animation-name: fadeInDown;
-  animation-name: fadeInDown;
 }
 
 .block h2 {

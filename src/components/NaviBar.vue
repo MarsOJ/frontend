@@ -34,6 +34,8 @@ import { RouterLink } from "vue-router";
         </RouterLink>
       </span>
     </nav>
+
+    <!-- Add drop-down menu if the screen is narrow -->
   </el-affix>
 </template>
 

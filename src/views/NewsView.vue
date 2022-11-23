@@ -12,20 +12,20 @@ import { Back } from "@element-plus/icons-vue";
         <div ref="mainpage">
           <NaviBar />
           <el-main class="main">
-            <div class="block" v-loading="loading">
+            <div class="block fade-down" v-loading="loading">
               <div class="title">
                 <el-button circle id="back-button" :icon="Back" @click="$router.go(-1)" />
-                <span id="headline">
+                <span id="headline" v-if="content">
                   {{ content.title }}
                 </span>
-                <div id="subtitle">
+                <div id="subtitle" v-if="content">
                   来源：{{ content.source }}&nbsp;&nbsp;&nbsp;&nbsp;日期：{{
                       content.date
                   }}
                 </div>
               </div>
               <hr />
-              <div class="content">
+              <div class="content" v-if="content">
                 {{ content.content }}
               </div>
             </div>
@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       newsId: null,
-      content: "",
+      content: null,
       loading: true,
     };
   },
@@ -67,6 +67,8 @@ export default {
 </script>
 
 <style scoped>
+@import "@/assets/css/animation.css";
+
 .common-layout {
   height: 100vh;
 }

@@ -1,7 +1,7 @@
 <template>
   <a class="scroll-up" :class="{
-    'appear': display,
-    'disappear': !display,
+    'fade-in': display,
+    'fade-out': !display,
   }" @click="scrollUp();">
     <img src="../assets/right-arrow.png" />
     <i class="fa fa-chevron-up"></i>
@@ -23,6 +23,8 @@ export default {
 </script>
 
 <style scoped>
+@import "@/assets/css/animation.css";
+
 .scroll-up {
   display: inline;
   border-radius: 0px;
@@ -48,35 +50,5 @@ export default {
   width: 30%;
   transform: rotate(-90deg);
   filter: invert(1);
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}
-
-.appear {
-  animation: fadeIn ease 0.3s;
-  animation-fill-mode: forwards;
-}
-
-.disappear {
-  animation: fadeOut ease 0.3s;
-  animation-fill-mode: forwards;
 }
 </style>

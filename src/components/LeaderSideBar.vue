@@ -30,11 +30,10 @@
 export default {
   props: {
     data: Object,
-    userRank: Number,
   },
   methods: {
     tableRowClassName(row) {
-      if (row.rowIndex === this.userRank - 1) {
+      if (row.row.isUser) {
         return "user-row";
       }
       return "";
@@ -58,6 +57,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: white;
 }
 
 .podium {
