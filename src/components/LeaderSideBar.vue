@@ -18,12 +18,7 @@
         <div>{{ data[2].name }}</div>
       </div>
     </div>
-    <el-table
-      id="leader-table"
-      :data="data"
-      table-layout="auto"
-      :row-class-name="tableRowClassName"
-    >
+    <el-table id="leader-table" :data="data" table-layout="auto" :row-class-name="tableRowClassName">
       <el-table-column type="index" label="名次" align="center" width="80" />
       <el-table-column prop="name" label="用户名" align="center" />
       <el-table-column prop="points" label="积分" align="center" />
@@ -35,11 +30,10 @@
 export default {
   props: {
     data: Object,
-    userRank: Number,
   },
   methods: {
     tableRowClassName(row) {
-      if (row.rowIndex === this.userRank - 1) {
+      if (row.row.isUser) {
         return "user-row";
       }
       return "";
@@ -55,15 +49,15 @@ export default {
 }
 
 #leaderboard {
-  margin: 2em;
+  margin: 2em 0px 2em;
   padding: 2em;
   border: gray 3px solid;
   border-radius: 10px;
-  width: 60%;
-  min-width: 250px;
+  width: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: white;
 }
 
 .podium {

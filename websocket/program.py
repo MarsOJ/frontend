@@ -38,31 +38,32 @@ def end_competition():
     print(str(time.time()) + 'received message: result')
     socketio.emit('result', {
         "points": [
-            {"name": "user1", "points": 58},
-            {"name": "user2", "points": 40},
-            {"name": "user3", "points": 38},
-            {"name": "user4", "points": 35},
-            {"name": "user5", "points": 12},
-            {"name": "user6", "points": 10},
+            { "name": "user3", "points": 38 },
+            { "name": "user2", "points": 20 },
+            { "name": "user5", "points": 12 },
+            { "name": "user1", "points": 58 },
+            { "name": "user4", "points": 35 },
+            { "name": "user6", "points": 10 },
         ],
         "problems": [
             {
-                "num": 1,
+                "num": 0,
                 "id": 12345,
-                "title": "这是一道题目。预计在这里显示题型、正确率、平均分",
-                "points": [10, 5, 10, 10, 6, 3],
+                "type": 0,
+                "points": [[0], [10], [5], [6], [6], [3]],
             },
             {
-                "num": 2,
+                "num": 1,
                 "id": 12346,
-                "title": "这是一道题目",
-                "points": [7, 10, 7, 10, 7, 10],
-            },
-            {
-                "num": 3,
-                "id": 12348,
-                "title": "这是一道题目",
-                "points": [0, 10, 0, 0, 5, 0],
+                "type": 1,
+                "points": [
+                    [0, 10, 0, 10, 0],
+                    [5, 10, 2, 10, 8],
+                    [0, 10, 0, 10, 0],
+                    [0, 10, 0, 10, 0],
+                    [0, 10, 0, 10, 0],
+                    [0, 10, 0, 10, 0]
+                ],
             },
         ]
     })

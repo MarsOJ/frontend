@@ -2,8 +2,10 @@
 
 <template>
   <div class="footer">
-    <!-- <hr /> -->
-    <small>Copyright &copy;2022 MarsOJ 信奥资讯 All rights reserved.</small>
+    <div class="container">
+      <hr />
+      <p>Copyright &copy;2022 MarsOJ 信奥资讯 All rights reserved.</p>
+    </div>
   </div>
 </template>
 
@@ -15,18 +17,50 @@
 
 hr {
   height: 1px;
-  width: 50%;
   border-width: 0;
   margin: auto;
-  color: gray;
-  background-color: gray;
+  color: #403f4e;
+  background-color: #403f4e;
 }
 
 .footer {
-  /* width: 100%; */
-  padding-bottom: 16px;
-  /* position: fixed; */
-  /* bottom: 16px; */
+  border-top: 3px solid #00a8b1;
+  border-bottom: 3px solid #00a8b1;
+  background-color: #21202e;
+  margin: 0;
+  padding: 80px 0 16px;
+  width: 100%;
   text-align: center;
+}
+
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  color: #c4c4c4;
+  font-size: 15px;
+}
+
+.container p {
+  padding: 16px 0 16px;
+}
+
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    width: 970px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
 }
 </style>

@@ -14,12 +14,14 @@ body {
   padding: 0px;
   width: 100%;
   height: 100%;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, \5fae\8f6f\96c5\9ed1, Arial, sans-serif;
 }
 
 #app {
   font-weight: normal;
   height: 100%;
   min-height: 400px;
+  background-color: #f5f5f5;
 }
 
 .el-container {

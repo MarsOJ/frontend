@@ -6,70 +6,60 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
 
 <template>
   <div class="common-layout">
-    <el-container class="main-container">
-      <NaviBar />
-      <el-container class="page-main">
-        <el-main class="main" v-if="!loading">
-          <div class="block">
-            <!-- 对局编号： {{ pkId }} -->
-            <div class="title-result">
-              <span class="title" v-if="userRank == 1"
-                >恭喜，你在比赛中取得胜利！</span
-              >
-              <span class="title" v-else
-                >很遗憾，您在比赛中获得了第{{ userRank }}名。</span
-              >
-              <span class="user">
-                <img class="user-pic" src="../assets/user.png" />
-                <div class="win"></div>
-                <div>{{ stats.points[userRank - 1].name }}</div>
-              </span>
-            </div>
-            <div class="detail-result">本次比赛奖励：经验+5</div>
+    <el-container direction="vertical">
+      <el-scrollbar>
+        <div ref="mainpage">
+          <NaviBar />
+          <el-container class="page-main">
+            <el-main class="main">
+              <div class="block" v-loading="loading">
+                <div class="title-result" v-if="stats">
+                  <span class="title" v-if="userRank == 1">恭喜，你在比赛中取得胜利！</span>
+                  <span class="title" v-else>很遗憾，您在比赛中获得了第{{ userRank }}名。</span>
+                  <span class="user">
+                    <img class="user-pic" src="../assets/user.png" />
+                    <div class="win" v-if="userRank == 1"></div>
+                    <div>{{ stats.points[userRank - 1].name }}</div>
+                  </span>
+                </div>
+                <div class="detail-result" v-if="stats">本次比赛奖励：经验+5</div>
 
-            <h2>答题详情</h2>
-            <div class="problems">
-              <div class="problem">
-                <span class="score">分数</span>
-                <div class="problem-title">题目</div>
-              </div>
-              <div v-for="problem in stats.problems" class="problem">
-                <span
-                  class="score"
-                  :class="{
-                    correct: problem.points[userRank - 1] > 0,
-                    wrong: problem.points[userRank - 1] <= 0,
-                  }"
-                >
-                  {{ problem.points[userRank - 1] }}
-                </span>
-                <div class="problem-title">
-                  <el-collapse>
-                    <el-collapse-item
-                      :title="problem.num + '.' + problem.title"
-                      name="1"
-                    >
-                      <div class="problem-content">
-                        <div class="question-box">题干在这里</div>
-                        <div class="option-box">选项在这里</div>
-                        <div class="button-box">
-                          <el-button type="primary">收藏习题</el-button>
-                        </div>
-                      </div>
-                    </el-collapse-item>
-                  </el-collapse>
+                <h2 v-if="stats">答题详情</h2>
+                <div class="problems" v-if="stats">
+                  <div class="problem">
+                    <span class="score">分数</span>
+                    <div class="problem-title">题目</div>
+                  </div>
+                  <div v-for="problem in stats.problems" class="problem">
+                    <span class="score" :class="{
+                      correct: problem.correct, wrong: !problem.correct,
+                    }">
+                      {{ problem.userPoints }}
+                    </span>
+                    <div class="problem-title">
+                      <el-collapse>
+                        <el-collapse-item :title="problem.title" :name="problem.num">
+                          <div class="problem-content">
+                            <div class="question-box">题干在这里</div>
+                            <div class="option-box">选项在这里</div>
+                            <div class="button-box">
+                              <el-button type="primary">收藏习题</el-button>
+                            </div>
+                          </div>
+                        </el-collapse-item>
+                      </el-collapse>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <el-aside class="aside">
-            <LeaderSideBar :data="stats.points" :userRank="userRank" />
-          </el-aside>
-        </el-main>
-      </el-container>
-      <el-footer class="page-footer">
-        <Footer />
-      </el-footer>
+            </el-main>
+            <el-aside class="aside">
+              <LeaderSideBar :data="stats.points" v-if="stats" />
+            </el-aside>
+          </el-container>
+          <Footer />
+        </div>
+      </el-scrollbar>
     </el-container>
   </div>
 </template>
@@ -77,21 +67,51 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
 <script>
 export default {
   name: "PKStatsView",
+  computed: {
+    users() {
+      return this.$store.state.competition.users;
+    },
+    userIndex() {
+      return this.$store.state.competition.index;
+    },
+  },
   data() {
     return {
-      // pkId: null,
       loading: true,
       userRank: 1,
       stats: null,
+      types: ["单项选择题", "阅读程序题", "完善程序题"],
     };
   },
   mounted() {
-    // this.pkId = this.$route.params.id;
     this.$store.dispatch("competition/send", { type: "result" });
     this.$store.dispatch("competition/setHandlerOnce", {
       type: "result",
       func: (data) => {
         console.log("[vue] (result)", data);
+        data.points.forEach((user, i) => {
+          user.isUser = (this.userIndex === i);
+        });
+        data.points.sort((a, b) => {
+          return a.points < b.points ? 1 :
+            (b.points < a.points ? -1 :
+              (a.isUser < b.isUser ? 1 :
+                (a.isUser > b.isUser ? -1 : 0)));
+        });
+        data.points.forEach((user, i) => {
+          if (user.isUser) {
+            this.userRank = i + 1;
+          }
+        });
+        data.problems.forEach((problem) => {
+          problem.userPoints = problem.points[this.userIndex].reduce((a, x) => a + x);
+          problem.correct = problem.points[this.userIndex].reduce((a, x) => a && (x > 0));
+          problem.sum = problem.points.reduce((a, x) => a.concat(x)).reduce((a, x) => a + x);
+          problem.correctSum = problem.points.map(x => x.reduce((a, x) => a && (x > 0), true)).reduce((a, x) => a + x);
+          problem.title = problem.num + 1 + ". [" + this.types[problem.type] +
+            "] 正确率：" + Math.round(problem.correctSum / problem.points.length * 100) +
+            "% 平均分：" + (problem.sum / problem.points.length).toFixed(2);
+        });
         this.stats = data;
         this.loading = false;
         this.$store.dispatch("competition/closeSocket");
@@ -109,7 +129,8 @@ export default {
 
 .aside {
   width: 30vw;
-  min-width: 420px;
+  min-width: 356px;
+  max-width: 480px;
 }
 
 .block {
@@ -185,7 +206,7 @@ export default {
 }
 
 .problem-content {
-  padding: 1em;
+  padding: 1em 1em 0 1em;
 }
 
 .question-box {
@@ -195,5 +216,12 @@ export default {
 .button-box {
   display: flex;
   flex-direction: row-reverse;
+}
+</style>
+
+<style>
+.el-collapse-item__header {
+  padding-left: 1em;
+  font-size: 18px;
 }
 </style>

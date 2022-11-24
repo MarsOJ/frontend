@@ -3,51 +3,26 @@ import User from "@/models/user";
 </script>
 
 <template>
-  <main
-    v-loading="loading"
-    element-loading-text="Loading..."
-    element-loading-background=" rgba(80, 80, 80, 0.8)"
-  >
+  <main v-loading="loading" element-loading-text="Loading..." element-loading-background=" rgba(80, 80, 80, 0.8)">
     <div class="wrapper">
       <img id="title" src="../assets/logo.png" />
-      <div id="register-form">
+      <div id="register-form" class="fade-down">
         <el-form ref="formRef" :model="form" :rules="rules">
           <el-form-item prop="username">
-            <el-input
-              v-model="form.username"
-              type="text"
-              placeholder="用户名"
-              clearable
-            />
+            <el-input v-model="form.username" type="text" placeholder="用户名" clearable />
           </el-form-item>
           <br />
           <el-form-item prop="password">
-            <el-input
-              v-model="form.password"
-              type="password"
-              placeholder="密码"
-              show-password
-            />
+            <el-input v-model="form.password" type="password" placeholder="密码" show-password />
           </el-form-item>
           <br />
           <el-form-item prop="password2">
-            <el-input
-              v-model="form.password2"
-              type="password"
-              placeholder="再次输入密码"
-            />
+            <el-input v-model="form.password2" type="password" placeholder="再次输入密码" />
           </el-form-item>
           <br />
           <el-form-item class="submit-btns">
-            <el-button round type="info" @click="$router.push('/login')"
-              >登录</el-button
-            >
-            <el-button
-              round
-              type="primary"
-              @click="submitForm(this.$refs.formRef)"
-              >注册</el-button
-            >
+            <el-button round type="info" @click="$router.push('/login')">登录</el-button>
+            <el-button round type="primary" @click="submitForm(this.$refs.formRef)">注册</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -177,6 +152,8 @@ export default {
 </script>
 
 <style scoped>
+@import "@/assets/css/animation.css";
+
 main {
   display: flex;
   flex-direction: column;
