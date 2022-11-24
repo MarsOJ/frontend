@@ -18,27 +18,89 @@ import { ref } from "vue";
               <el-avatar :src="player.avatar" :size="80" />
             </div>
             <NumPlus :value="player.score" :time="4"></NumPlus>
-            <ScoreBar :height="scoreBarHeight" :width="scoreBarWidth" :score="player.scoreBar" />
+            <ScoreBar
+              :height="scoreBarHeight"
+              :width="scoreBarWidth"
+              :score="player.scoreBar"
+            />
           </el-aside>
           <el-main class="middle">
-            <el-progress class="progress" type="circle" :percentage="progress" :format="countdown"
-              :status="progressBarStatus" :width="110" />
+            <el-progress
+              class="progress"
+              type="circle"
+              :percentage="progress"
+              :format="countdown"
+              :status="progressBarStatus"
+              :width="110"
+            />
             <el-divider />
             <div class="problem">
-              <div class="problem-text" v-html="problem"></div>
-              <div class="answer" v-if="problemType === 1">
-                <el-radio-group v-model="radio" size="large">
-                  <el-radio-button label="A" />
-                  <el-radio-button label="B" />
-                  <el-radio-button label="C" />
-                  <el-radio-button label="D" />
-                </el-radio-group>
-              </div>
-              <div class="answer" v-else-if="problemType === 2">
-                <el-input v-model="input" placeholder="请输入答案" clearable />
+              <div class="problem-content">
+                <div v-if="problem.type === 0">
+                  <span class="problem-text">{{ problem.content }}</span>
+                  <div
+                    class="answer"
+                    v-if="problem.subproblem[0].choice.length === 4"
+                  >
+                    <el-radio-group
+                      v-model="problem.subproblem[0].radio"
+                      size="large"
+                    >
+                      <el-radio label="A">{{
+                        problem.subproblem[0].choice[0]
+                      }}</el-radio>
+                      <el-radio label="B">{{
+                        problem.subproblem[0].choice[1]
+                      }}</el-radio>
+                      <el-radio label="C">{{
+                        problem.subproblem[0].choice[2]
+                      }}</el-radio>
+                      <el-radio label="D">{{
+                        problem.subproblem[0].choice[3]
+                      }}</el-radio>
+                    </el-radio-group>
+                  </div>
+                  <div class="answer" v-else>
+                    <el-radio-group
+                      v-model="problem.subproblem[0].radio"
+                      size="large"
+                    >
+                      <el-radio label="A">正确</el-radio>
+                      <el-radio label="B">错误</el-radio>
+                    </el-radio-group>
+                  </div>
+                </div>
+                <div v-else-if="problem.type === 1">
+                  <span class="problem-text">{{ problem.content }}</span>
+                  <div v-for="sp in problem.subproblem">
+                    <span class="problem-text">{{ sp.content }}</span>
+                    <div class="answer" v-if="sp.choice.length === 4">
+                      <el-radio-group v-model="sp.radio" size="large">
+                        <el-radio label="A">{{ sp.choice[0] }}</el-radio>
+                        <el-radio label="B">{{ sp.choice[1] }}</el-radio>
+                        <el-radio label="C">{{ sp.choice[2] }}</el-radio>
+                        <el-radio label="D">{{ sp.choice[3] }}</el-radio>
+                      </el-radio-group>
+                    </div>
+                    <div class="answer" v-else>
+                      <el-radio-group v-model="sp.radio" size="large">
+                        <el-radio label="A">正确</el-radio>
+                        <el-radio label="B">错误</el-radio>
+                      </el-radio-group>
+                    </div>
+                  </div>
+                </div>
+                <div v-else></div>
               </div>
               <div class="answer-submit">
-                <el-button type="primary" round size="large" @click="onSubmit" :disabled="submitted">提交答案</el-button>
+                <el-button
+                  type="primary"
+                  round
+                  size="large"
+                  @click="onSubmit"
+                  :disabled="submitted"
+                  >提交答案</el-button
+                >
               </div>
             </div>
           </el-main>
@@ -68,26 +130,8 @@ export default {
       progress: 0,
       seconds: 30,
       progressBarStatus: "",
-      players: [
-        {
-          avatar:
-            "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-          scoreBar: "100px",
-          score: 0,
-          id: 1,
-        },
-        {
-          avatar:
-            "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-          scoreBar: "200px",
-          score: 0,
-          id: 2,
-        },
-      ],
-      problem: null,
-      problemType: 1,
-      radio: ref("A"),
-      input: "",
+      players: [],
+      problem: {},
       scoreBarHeight: 500,
       scoreBarWidth: 30,
       submitted: false,
@@ -109,19 +153,24 @@ export default {
       }
     },
     onSubmit() {
-      //var ans;
-      //根据题目类型得到相应的答案对象
-      if (this.problemType === 1) {
-        //ans = this.radio.value;
-      } else if (this.problemType === 2) {
-        //ans = this.input;
+      var ans = [];
+      this.problem.subproblem.forEach(function (value) {
+        ans.push(value.radio.value);
+      });
+      for (var sp in this.problem.subproblem) {
+        //ans.push(sp.radio.value);
+        console.log(sp);
       }
-      //this.socket.emit("finish", JSON.jsonify({ answer: ans }));
+      this.$store.dispatch("competition/send", {
+        type: "finish",
+        params: {
+          problemID: this.problem.problemID,
+          answer: ans,
+        },
+      });
       //停止计时
       clearInterval(this.clock);
       this.submitted = true;
-      this.progress = 100;
-      this.progressBarStatus = "success";
     },
     computeScore(score) {
       var ret = this.scoreBarHeight * (1 - score / fullScore);
@@ -130,42 +179,74 @@ export default {
   },
   mounted() {
     this.clock = setInterval(this.setClock, 1000);
+    // load players' infomation
+    for (const user in this.users) {
+      var player = user;
+      player.avatar =
+        "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
+      player.scoreBar = "0px";
+      player.score = 0;
+      this.players.push(player);
+    }
+    this.myUsername = this.users[this.userIndex];
 
-    // TODO: Example
-    console.log(this.users,         // userlist
-      this.userIndex,               // which user am I
-      this.users[this.userIndex]);  // my username
-
+    //TODO:倒计时动画
     // emit "start" message
     this.$store.dispatch("competition/send", { type: "start" });
 
-    // listen on "problem" message only once
-    this.$store.dispatch("competition/setHandlerOnce", {
-      type: "problem",
+    //begin loop of recieving problems
+    this.finished = false;
+    this.$store.dispatch("competition/setHandler", {
+      type: "answer",
       func: (data) => {
-        console.log("[vue]", data);
-        this.problem = data.content;
-        setTimeout(() => {
-          // Finish: remove listeners (no need to remove one-time listeners)
-          // this.$store.dispatch("competition/removeHandler", { type: "answer" });
-          this.$router.push("/battle/stats");
-        }, 30000);
+        for (var player in this.players) {
+          if (player.username === data.username) {
+            player.score = data.score;
+            player.scoreBar = this.computeScore(player.score);
+          }
+        }
+        if (data.username === this.myUsername) {
+          this.progress = 100;
+          if (data.correct) {
+            this.progressBarStatus = "success";
+          } else {
+            this.progressBarStatus = "exception";
+          }
+        }
       },
     });
+    while (!this.finished) {
+      // listen on "problem" message only once
+      this.$store.dispatch("competition/setHandlerOnce", {
+        type: "problem",
+        func: (data) => {
+          console.log("[vue]", data);
+          this.problem = data;
+          for (var sp in this.problem.subproblem) {
+            sp.radio = ref("A");
+          }
+          this.seconds = 30;
+          this.clock = setInterval(this.setClock, 1000);
+        },
+      });
 
-    //WebSocket connection
-    // const socket = io("ws://localhost:5000/competition", {
-    //   withCredentials: true,
-    //   autoConnect: false,
-    // });
-    // this.socket = socket;
-    // socket.on("prepare", () => {
-    //   //收到prepare消息3s后发送start消息
-    //   console.log("start prepare");
-    //   setTimeout(() => {
-    //     socket.emit("start");
-    //   }, 3000);
-    // });
+      this.$store.dispatch("competition/setHandlerOnce", {
+        type: "next",
+        func: (data) => {
+          console.log("[vue]", data);
+          if (data.lastQuestion) this.finished = true;
+          else {
+            var answer = data.answers;
+            for (let i = 0; i < answer.length; i++) {
+              this.problem.subproblem[i].radio = ref(answer[i]);
+            }
+          }
+        },
+      });
+    }
+    this.$router.dispatch("competition/removeHandler", { type: "answer" });
+    this.$router.push("/battle/stats");
+
     // socket.on("problem", (msg) => {
     //   const data = JSON.parse(msg);
     //   const problem = data.question.content;
@@ -232,7 +313,7 @@ export default {
   height: 75%;
 }
 
-.problem-text {
+.problem-content {
   width: 90%;
   flex: 6;
   box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.2);
@@ -241,8 +322,13 @@ export default {
   text-align: left;
 }
 
+.problem-text {
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  margin: 20px;
+}
+
 .answer {
-  flex: 1;
+  margin-left: 20px;
 }
 
 .answer-submit {

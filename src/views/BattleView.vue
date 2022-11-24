@@ -75,12 +75,14 @@ export default {
               func: (data) => {
                 this.paired = true;
                 console.log("[vue] (prepare)", data);
-                this.$store.dispatch("competition/setUsers", {
-                  users: data,
-                  username: this.$store.state.auth.user,
-                }).then(() => {
-                  this.$router.push("/battle/battling");
-                });
+                this.$store
+                  .dispatch("competition/setUsers", {
+                    users: data,
+                    username: this.$store.state.auth.user,
+                  })
+                  .then(() => {
+                    this.$router.push("/battle/battling");
+                  });
               },
             });
             this.$store.dispatch("competition/send", { type: "pair" });

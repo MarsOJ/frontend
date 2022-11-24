@@ -13,8 +13,12 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
           <div class="block">
             <!-- 对局编号： {{ pkId }} -->
             <div class="title-result">
-              <span class="title" v-if="userRank == 1">恭喜，你在比赛中取得胜利！</span>
-              <span class="title" v-else>很遗憾，您在比赛中获得了第{{ userRank }}名。</span>
+              <span class="title" v-if="userRank == 1"
+                >恭喜，你在比赛中取得胜利！</span
+              >
+              <span class="title" v-else
+                >很遗憾，您在比赛中获得了第{{ userRank }}名。</span
+              >
               <span class="user">
                 <img class="user-pic" src="../assets/user.png" />
                 <div class="win"></div>
@@ -30,15 +34,21 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
                 <div class="problem-title">题目</div>
               </div>
               <div v-for="problem in stats.problems" class="problem">
-                <span class="score" :class="{
-                  correct: problem.points[userRank - 1] > 0,
-                  wrong: problem.points[userRank - 1] <= 0,
-                }">
+                <span
+                  class="score"
+                  :class="{
+                    correct: problem.points[userRank - 1] > 0,
+                    wrong: problem.points[userRank - 1] <= 0,
+                  }"
+                >
                   {{ problem.points[userRank - 1] }}
                 </span>
                 <div class="problem-title">
                   <el-collapse>
-                    <el-collapse-item :title="problem.num + '.' + problem.title" name="1">
+                    <el-collapse-item
+                      :title="problem.num + '.' + problem.title"
+                      name="1"
+                    >
                       <div class="problem-content">
                         <div class="question-box">题干在这里</div>
                         <div class="option-box">选项在这里</div>

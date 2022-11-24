@@ -46,7 +46,7 @@ class BattleService {
 
   send(msg) {
     this.checkConnection();
-    if (msg.param === undefined) {
+    if (msg.params === undefined) {
       this.socket.emit(msg.type);
     } else {
       this.socket.emit(msg.type, ...msg.params);
