@@ -1,8 +1,12 @@
 <template>
-  <a class="scroll-up" :class="{
-    'fade-in': display,
-    'fade-out': !display,
-  }" @click="scrollUp();">
+  <a
+    class="scroll-up"
+    :class="{
+      'fade-in': display,
+      'fade-out': !display,
+    }"
+    @click="scrollUp()"
+  >
     <img src="../assets/right-arrow.png" />
     <i class="fa fa-chevron-up"></i>
   </a>
@@ -17,9 +21,9 @@ export default {
   methods: {
     scrollUp() {
       this.$emit("scrollup");
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -40,7 +44,7 @@ export default {
   z-index: 9999;
   color: #ffffff;
   background-color: #00a8b1;
-  font-size: 1.000rem;
+  font-size: 1rem;
   line-height: 1.9;
   cursor: pointer;
 }

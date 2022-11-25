@@ -14,13 +14,18 @@ import { Back } from "@element-plus/icons-vue";
           <el-main class="main">
             <div class="block fade-down" v-loading="loading">
               <div class="title">
-                <el-button circle id="back-button" :icon="Back" @click="$router.go(-1)" />
+                <el-button
+                  circle
+                  id="back-button"
+                  :icon="Back"
+                  @click="$router.go(-1)"
+                />
                 <span id="headline" v-if="content">
                   {{ content.title }}
                 </span>
                 <div id="subtitle" v-if="content">
                   来源：{{ content.source }}&nbsp;&nbsp;&nbsp;&nbsp;日期：{{
-                      content.date
+                    content.date
                   }}
                 </div>
               </div>

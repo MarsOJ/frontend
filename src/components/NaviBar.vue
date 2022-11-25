@@ -6,26 +6,23 @@ import { RouterLink } from "vue-router";
   <el-affix>
     <nav>
       <RouterLink to="/home">
-        <img src="../assets/main-logo.png" @click="this.$router.push('/home')" />
+        <img
+          src="../assets/main-logo.png"
+          @click="this.$router.push('/home')"
+        />
       </RouterLink>
 
       <div class="fill"></div>
 
       <span class="links">
         <RouterLink to="/battle">
-          <div>
-            答题对战
-          </div>
+          <div>答题对战</div>
         </RouterLink>
         <RouterLink to="/favorites">
-          <div>
-            收藏夹
-          </div>
+          <div>收藏夹</div>
         </RouterLink>
         <RouterLink to="/gallery">
-          <div>
-            礼品屋
-          </div>
+          <div>礼品屋</div>
         </RouterLink>
         <RouterLink to="/personal">
           <div>
@@ -44,14 +41,14 @@ export default {
   data() {
     return {
       username: "登录",
-    }
+    };
   },
   mounted() {
     if (this.$store.state.auth.status.loggedIn) {
       this.username = this.$store.state.auth.user;
     }
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -80,7 +77,11 @@ nav img {
 nav .fill {
   height: 100%;
   flex-grow: 1;
-  background-image: linear-gradient(to right, transparent, rgba(0, 20, 18, 0.8));
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 20, 18, 0.8)
+  );
 }
 
 nav .links {

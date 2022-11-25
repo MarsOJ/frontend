@@ -9,9 +9,7 @@ import Footer from "@/components/PageFooter.vue";
       <el-scrollbar>
         <div ref="mainpage">
           <NaviBar />
-          <el-container class="page-main">
-            qwfqwfqwf
-          </el-container>
+          <el-container class="page-main"> qwfqwfqwf </el-container>
           <Footer />
         </div>
       </el-scrollbar>

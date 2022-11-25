@@ -25,7 +25,9 @@ import ScrollUpButton from "@/components/ScrollUpButton.vue";
                 本网站仅供交流学习使用，一切不文明的行为将被封号甚至封IP。如有疑问请致信官方email:
                 MarsOJ@xxx.com
               </p>
-              <p class="announcement-text" v-if="announcement">{{ announcement }}</p>
+              <p class="announcement-text" v-if="announcement">
+                {{ announcement }}
+              </p>
             </div>
           </section>
           <div class="page-title-shadow"></div>
@@ -33,17 +35,24 @@ import ScrollUpButton from "@/components/ScrollUpButton.vue";
             <el-main>
               <div class="info">
                 <div v-for="item in info">
-                  <div class="info-block fade-down" @click="showDetail(item.id)">
+                  <div
+                    class="info-block fade-down"
+                    @click="showDetail(item.id)"
+                  >
                     <div class="info-date">
                       <span>{{ item.date }}</span>
                     </div>
                     <div class="info-detail">
                       <div class="info-title">{{ item.title }}</div>
-                      <div class="info-src">来源：<strong>{{ item.source }}</strong></div>
+                      <div class="info-src">
+                        来源：<strong>{{ item.source }}</strong>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="loading info-block fade-down" v-loading="loading">下拉加载更多</div>
+                <div class="loading info-block fade-down" v-loading="loading">
+                  下拉加载更多
+                </div>
                 <!-- <div class="loading info-block" v-loading="loading"></div> -->
               </div>
             </el-main>
@@ -58,7 +67,7 @@ import ScrollUpButton from "@/components/ScrollUpButton.vue";
                 <div class="count-down">
                   据
                   <span style="color: grey; font-size: 16px">{{
-                      incomingCompetition
+                    incomingCompetition
                   }}</span>
                   还剩 {{ leavingDay }} 天
                 </div>
@@ -180,8 +189,11 @@ export default {
       this.$router.push("/home/news/" + newsId);
     },
     scrollEvent(scrollTop) {
-      this.top = (scrollTop.scrollTop < 256);
-      if (scrollTop.scrollTop + document.body.offsetHeight + 3 >= this.$refs.mainpage.clientHeight) {
+      this.top = scrollTop.scrollTop < 256;
+      if (
+        scrollTop.scrollTop + document.body.offsetHeight + 3 >=
+        this.$refs.mainpage.clientHeight
+      ) {
         // 防抖节流
         clearInterval(this.timer);
         this.timer = setTimeout(() => {
@@ -205,13 +217,13 @@ export default {
       }
     },
     scrollUpMsg() {
-      document.getElementsByClassName('el-scrollbar__wrap')[0].scroll({
+      document.getElementsByClassName("el-scrollbar__wrap")[0].scroll({
         top: 0,
         left: 0,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
       // this.$refs.scrollbar.setScrollTop(0);
-    }
+    },
   },
   mounted() {
     InfoService.getLastestNews("").then(

@@ -12,7 +12,11 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
       <div v-if="!socketConnected && !paired">连接服务器中……</div>
       <div v-if="socketConnected && !paired">配对中……</div>
       <div v-if="paired">加载中……</div>
-      <el-button v-if="!paired" id="cancel-button" @click="this.cancelPairing()">
+      <el-button
+        v-if="!paired"
+        id="cancel-button"
+        @click="this.cancelPairing()"
+      >
         取消匹配
       </el-button>
     </div>
@@ -25,8 +29,9 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
               <div class="main">
                 <div class="title">Skills speak louder than words</div>
                 <div class="description">
-                  We help companies develop the strongest tech teams around. We help candidates
-                  sharpen their tech skills and pursue job opportunities.
+                  We help companies develop the strongest tech teams around. We
+                  help candidates sharpen their tech skills and pursue job
+                  opportunities.
                 </div>
                 <el-button id="pk-button" @click="this.startPairing()">
                   Start Pairing
@@ -37,7 +42,11 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
               </div>
             </el-main>
             <el-aside class="aside">
-              <LeaderSideBar :data="leaderData" :userRank="userRank" class="fade-down" />
+              <LeaderSideBar
+                :data="leaderData"
+                :userRank="userRank"
+                class="fade-down"
+              />
             </el-aside>
           </el-container>
           <Footer />
@@ -129,8 +138,13 @@ export default {
 .page-main {
   align-items: center;
   text-align: center;
-  background:
-    linear-gradient(to bottom left, #d2eedb, transparent, transparent, #d2eedb),
+  background: linear-gradient(
+      to bottom left,
+      #d2eedb,
+      transparent,
+      transparent,
+      #d2eedb
+    ),
     linear-gradient(to bottom right, #d3d3fc, transparent, transparent, #d3d3fc);
 }
 
@@ -144,13 +158,13 @@ export default {
 .main .title {
   font-size: 54px;
   font-weight: 900;
-  color: #1F1F20;
+  color: #1f1f20;
 }
 
 .main .description {
   font-size: 18px;
   font-weight: 300;
-  color: #1F1F20;
+  color: #1f1f20;
   width: 70%;
   margin: 2em;
 }

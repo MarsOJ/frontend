@@ -14,15 +14,21 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
             <el-main class="main">
               <div class="block" v-loading="loading">
                 <div class="title-result" v-if="stats">
-                  <span class="title" v-if="userRank == 1">恭喜，你在比赛中取得胜利！</span>
-                  <span class="title" v-else>很遗憾，您在比赛中获得了第{{ userRank }}名。</span>
+                  <span class="title" v-if="userRank == 1"
+                    >恭喜，你在比赛中取得胜利！</span
+                  >
+                  <span class="title" v-else
+                    >很遗憾，您在比赛中获得了第{{ userRank }}名。</span
+                  >
                   <span class="user">
                     <img class="user-pic" src="../assets/user.png" />
                     <div class="win" v-if="userRank == 1"></div>
                     <div>{{ stats.points[userRank - 1].name }}</div>
                   </span>
                 </div>
-                <div class="detail-result" v-if="stats">本次比赛奖励：经验+5</div>
+                <div class="detail-result" v-if="stats">
+                  本次比赛奖励：经验+5
+                </div>
 
                 <h2 v-if="stats">答题详情</h2>
                 <div class="problems" v-if="stats">
@@ -31,14 +37,21 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
                     <div class="problem-title">题目</div>
                   </div>
                   <div v-for="problem in stats.problems" class="problem">
-                    <span class="score" :class="{
-                      correct: problem.correct, wrong: !problem.correct,
-                    }">
+                    <span
+                      class="score"
+                      :class="{
+                        correct: problem.correct,
+                        wrong: !problem.correct,
+                      }"
+                    >
                       {{ problem.userPoints }}
                     </span>
                     <div class="problem-title">
                       <el-collapse>
-                        <el-collapse-item :title="problem.title" :name="problem.num">
+                        <el-collapse-item
+                          :title="problem.title"
+                          :name="problem.num"
+                        >
                           <div class="problem-content">
                             <div class="question-box">题干在这里</div>
                             <div class="option-box">选项在这里</div>
@@ -90,13 +103,18 @@ export default {
       func: (data) => {
         console.log("[vue] (result)", data);
         data.points.forEach((user, i) => {
-          user.isUser = (this.userIndex === i);
+          user.isUser = this.userIndex === i;
         });
         data.points.sort((a, b) => {
-          return a.points < b.points ? 1 :
-            (b.points < a.points ? -1 :
-              (a.isUser < b.isUser ? 1 :
-                (a.isUser > b.isUser ? -1 : 0)));
+          return a.points < b.points
+            ? 1
+            : b.points < a.points
+            ? -1
+            : a.isUser < b.isUser
+            ? 1
+            : a.isUser > b.isUser
+            ? -1
+            : 0;
         });
         data.points.forEach((user, i) => {
           if (user.isUser) {
@@ -104,13 +122,27 @@ export default {
           }
         });
         data.problems.forEach((problem) => {
-          problem.userPoints = problem.points[this.userIndex].reduce((a, x) => a + x);
-          problem.correct = problem.points[this.userIndex].reduce((a, x) => a && (x > 0));
-          problem.sum = problem.points.reduce((a, x) => a.concat(x)).reduce((a, x) => a + x);
-          problem.correctSum = problem.points.map(x => x.reduce((a, x) => a && (x > 0), true)).reduce((a, x) => a + x);
-          problem.title = problem.num + 1 + ". [" + this.types[problem.type] +
-            "] 正确率：" + Math.round(problem.correctSum / problem.points.length * 100) +
-            "% 平均分：" + (problem.sum / problem.points.length).toFixed(2);
+          problem.userPoints = problem.points[this.userIndex].reduce(
+            (a, x) => a + x
+          );
+          problem.correct = problem.points[this.userIndex].reduce(
+            (a, x) => a && x > 0
+          );
+          problem.sum = problem.points
+            .reduce((a, x) => a.concat(x))
+            .reduce((a, x) => a + x);
+          problem.correctSum = problem.points
+            .map((x) => x.reduce((a, x) => a && x > 0, true))
+            .reduce((a, x) => a + x);
+          problem.title =
+            problem.num +
+            1 +
+            ". [" +
+            this.types[problem.type] +
+            "] 正确率：" +
+            Math.round((problem.correctSum / problem.points.length) * 100) +
+            "% 平均分：" +
+            (problem.sum / problem.points.length).toFixed(2);
         });
         this.stats = data;
         this.loading = false;
