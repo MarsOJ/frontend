@@ -157,16 +157,13 @@ export default {
       this.problem.subproblem.forEach(function (value) {
         ans.push(value.radio.value);
       });
-      for (var sp in this.problem.subproblem) {
+      for (var sp of this.problem.subproblem) {
         //ans.push(sp.radio.value);
         console.log(sp);
       }
       this.$store.dispatch("competition/send", {
         type: "finish",
-        params: {
-          problemID: this.problem.problemID,
-          answer: ans,
-        },
+        params: [this.problem.problemID, ans],
       });
       //停止计时
       clearInterval(this.clock);
@@ -180,8 +177,10 @@ export default {
   mounted() {
     this.clock = setInterval(this.setClock, 1000);
     // load players' infomation
-    for (const user in this.users) {
-      var player = user;
+    for (const user of this.users) {
+      // var player = user;
+      var player = { username: user };
+      console.log(user);
       player.avatar =
         "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
       player.scoreBar = "0px";
@@ -190,6 +189,7 @@ export default {
     }
     this.myUsername = this.users[this.userIndex];
 
+    console.log(this.userIndex);
     //TODO:倒计时动画
     // emit "start" message
     this.$store.dispatch("competition/send", { type: "start" });
@@ -199,7 +199,7 @@ export default {
     this.$store.dispatch("competition/setHandler", {
       type: "answer",
       func: (data) => {
-        for (var player in this.players) {
+        for (var player of this.players) {
           if (player.username === data.username) {
             player.score = data.score;
             player.scoreBar = this.computeScore(player.score);
@@ -215,37 +215,39 @@ export default {
         }
       },
     });
-    while (!this.finished) {
-      // listen on "problem" message only once
-      this.$store.dispatch("competition/setHandlerOnce", {
-        type: "problem",
-        func: (data) => {
-          console.log("[vue]", data);
-          this.problem = data;
-          for (var sp in this.problem.subproblem) {
-            sp.radio = ref("A");
-          }
-          this.seconds = 30;
-          this.clock = setInterval(this.setClock, 1000);
-        },
-      });
+    // while (!this.finished) {
+    // listen on "problem" message only once
+    this.$store.dispatch("competition/setHandler", {
+      type: "problem",
+      func: (data) => {
+        this.submitted = false;
+        console.log("[vue]", data);
+        this.problem = data;
+        for (var sp of this.problem.subproblem) {
+          sp.radio = ref("A");
+        }
+        this.seconds = 30;
+        this.clock = setInterval(this.setClock, 1000);
+      },
+    });
 
-      this.$store.dispatch("competition/setHandlerOnce", {
-        type: "next",
-        func: (data) => {
-          console.log("[vue]", data);
-          if (data.lastQuestion) this.finished = true;
-          else {
-            var answer = data.answers;
-            for (let i = 0; i < answer.length; i++) {
-              this.problem.subproblem[i].radio = ref(answer[i]);
-            }
+    this.$store.dispatch("competition/setHandler", {
+      type: "next",
+      func: (data) => {
+        console.log("[vue]", data);
+        if (data.lastQuestion) {
+          this.finished = true;
+          this.$router.push("/battle/stats");
+        } else {
+          var answer = data.answer;
+          for (let i = 0; i < answer.length; i++) {
+            this.problem.subproblem[i].radio = ref(answer[i]);
           }
-        },
-      });
-    }
-    this.$router.dispatch("competition/removeHandler", { type: "answer" });
-    this.$router.push("/battle/stats");
+        }
+      },
+    });
+    // }
+    //this.$router.dispatch("competition/removeHandler", {type: "answer",});
 
     // socket.on("problem", (msg) => {
     //   const data = JSON.parse(msg);
@@ -275,7 +277,7 @@ export default {
 
     // socket.on("result", (msg) => {
     //   const result = JSON.parse(msg);
-    //   console.log(result);
+    //   console.log(retsult);
     //   //应该要跳转页面,实现方式？
     // });
   },
