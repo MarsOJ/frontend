@@ -122,6 +122,9 @@ export default {
           }
         });
         data.problems.forEach((problem) => {
+          console.log(problem.points);
+          console.log(problem.points[this.userIndex]);
+          console.log(this.userIndex);
           problem.userPoints = problem.points[this.userIndex].reduce(
             (a, x) => a + x
           );
