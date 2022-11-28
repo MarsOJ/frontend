@@ -18,53 +18,34 @@ import { ref } from "vue";
               <el-avatar :src="player.avatar" :size="80" />
             </div>
             <NumPlus :value="player.score" :time="4"></NumPlus>
-            <ScoreBar
-              :height="scoreBarHeight"
-              :width="scoreBarWidth"
-              :score="player.scoreBar"
-            />
+            <ScoreBar :height="scoreBarHeight" :width="scoreBarWidth" :score="player.scoreBar" />
           </el-aside>
           <el-main class="middle">
-            <el-progress
-              class="progress"
-              type="circle"
-              :percentage="progress"
-              :format="countdown"
-              :status="progressBarStatus"
-              :width="110"
-            />
+            <el-progress class="progress" type="circle" :percentage="progress" :format="countdown"
+              :status="progressBarStatus" :width="110" />
             <el-divider />
             <div class="problem">
               <div class="problem-content">
                 <div v-if="problem.type === 0">
                   <span class="problem-text">{{ problem.content }}</span>
-                  <div
-                    class="answer"
-                    v-if="problem.subproblem[0].choice.length === 4"
-                  >
-                    <el-radio-group
-                      v-model="problem.subproblem[0].radio"
-                      size="large"
-                    >
+                  <div class="answer" v-if="problem.subproblem[0].choice.length === 4">
+                    <el-radio-group v-model="problem.subproblem[0].radio" size="large">
                       <el-radio label="A">{{
-                        problem.subproblem[0].choice[0]
+                          problem.subproblem[0].choice[0]
                       }}</el-radio>
                       <el-radio label="B">{{
-                        problem.subproblem[0].choice[1]
+                          problem.subproblem[0].choice[1]
                       }}</el-radio>
                       <el-radio label="C">{{
-                        problem.subproblem[0].choice[2]
+                          problem.subproblem[0].choice[2]
                       }}</el-radio>
                       <el-radio label="D">{{
-                        problem.subproblem[0].choice[3]
+                          problem.subproblem[0].choice[3]
                       }}</el-radio>
                     </el-radio-group>
                   </div>
                   <div class="answer" v-else>
-                    <el-radio-group
-                      v-model="problem.subproblem[0].radio"
-                      size="large"
-                    >
+                    <el-radio-group v-model="problem.subproblem[0].radio" size="large">
                       <el-radio label="A">正确</el-radio>
                       <el-radio label="B">错误</el-radio>
                     </el-radio-group>
@@ -93,14 +74,7 @@ import { ref } from "vue";
                 <div v-else></div>
               </div>
               <div class="answer-submit">
-                <el-button
-                  type="primary"
-                  round
-                  size="large"
-                  @click="onSubmit"
-                  :disabled="submitted"
-                  >提交答案</el-button
-                >
+                <el-button type="primary" round size="large" @click="onSubmit" :disabled="submitted">提交答案</el-button>
               </div>
             </div>
           </el-main>
@@ -154,17 +128,15 @@ export default {
     },
     onSubmit() {
       var ans = [];
-      this.problem.subproblem.forEach(function (value) {
-        ans.push(value.radio.value);
+      this.problem.subproblem.forEach(function (sp) {
+        // console.log(sp);
+        ans.push(sp.radio);
       });
-      for (var sp of this.problem.subproblem) {
-        //ans.push(sp.radio.value);
-        console.log(sp);
-      }
       this.$store.dispatch("competition/send", {
         type: "finish",
         params: [this.problem.problemID, ans],
       });
+      console.log("[vue] (finish)", [this.problem.problemID, ans]);
       //停止计时
       clearInterval(this.clock);
       this.submitted = true;
@@ -175,12 +147,12 @@ export default {
     },
   },
   mounted() {
-    this.clock = setInterval(this.setClock, 1000);
+    // this.clock = setInterval(this.setClock, 1000);
     // load players' infomation
     for (const user of this.users) {
       // var player = user;
       var player = { username: user };
-      console.log(user);
+      // console.log(user);
       player.avatar =
         "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
       player.scoreBar = "0px";
@@ -189,16 +161,16 @@ export default {
     }
     this.myUsername = this.users[this.userIndex];
 
-    console.log(this.userIndex);
     //TODO:倒计时动画
     // emit "start" message
     this.$store.dispatch("competition/send", { type: "start" });
 
-    //begin loop of recieving problems
+    // listen on "answer" message
     this.finished = false;
     this.$store.dispatch("competition/setHandler", {
       type: "answer",
       func: (data) => {
+        console.log("[vue] (answer)", data);
         for (var player of this.players) {
           if (player.username === data.username) {
             player.score = data.score;
@@ -207,7 +179,8 @@ export default {
         }
         if (data.username === this.myUsername) {
           this.progress = 100;
-          if (data.correct) {
+          this.seconds = 0;
+          if (data.correct.every(Boolean)) {
             this.progressBarStatus = "success";
           } else {
             this.progressBarStatus = "exception";
@@ -216,12 +189,12 @@ export default {
       },
     });
     // while (!this.finished) {
-    // listen on "problem" message only once
+    // listen on "problem" message
     this.$store.dispatch("competition/setHandler", {
       type: "problem",
       func: (data) => {
         this.submitted = false;
-        console.log("[vue]", data);
+        console.log("[vue] (problem)", data);
         this.problem = data;
         for (var sp of this.problem.subproblem) {
           sp.radio = ref("A");
@@ -231,12 +204,17 @@ export default {
       },
     });
 
+    // post-problem confirmation: show the answer
     this.$store.dispatch("competition/setHandler", {
       type: "next",
       func: (data) => {
-        console.log("[vue]", data);
+        console.log("[vue] (next)", data);
         if (data.lastQuestion) {
           this.finished = true;
+          // TODO: wait for a period of time
+          this.$router.dispatch("competition/removeHandler", { type: "answer", });
+          this.$router.dispatch("competition/removeHandler", { type: "problem", });
+          this.$router.dispatch("competition/removeHandler", { type: "next", });
           this.$router.push("/battle/stats");
         } else {
           var answer = data.answer;
@@ -246,40 +224,6 @@ export default {
         }
       },
     });
-    // }
-    //this.$router.dispatch("competition/removeHandler", {type: "answer",});
-
-    // socket.on("problem", (msg) => {
-    //   const data = JSON.parse(msg);
-    //   const problem = data.question.content;
-    //   this.problemType = problem.classification;
-    //   if (problem.render_mod == 1) {
-    //     this.problem = marked(problem.content);
-    //   } else if (problem.render_mod == 2) {
-    //     this.problem = problem.content;
-    //   } else {
-    //     //普通文本
-    //   }
-    //   //浏览器中显示题目
-    //   //开始计时
-    //   this.seconds = 30;
-    //   this.clock = setInterval(this.setClock, 1000);
-    // });
-
-    // socket.on("answer", (msg) => {
-    //   const answer = JSON.parse(msg);
-    //   if (answer.type == 1) {
-    //     //更新自己作答情况与分数
-    //   } else {
-    //     //更新对方作答情况与分数
-    //   }
-    // });
-
-    // socket.on("result", (msg) => {
-    //   const result = JSON.parse(msg);
-    //   console.log(retsult);
-    //   //应该要跳转页面,实现方式？
-    // });
   },
 };
 </script>

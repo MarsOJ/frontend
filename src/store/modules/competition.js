@@ -13,7 +13,6 @@ export const competition = {
   state: state,
   actions: {
     send(_context, msg) {
-      console.log("emit", msg);
       BattleService.send(msg);
     },
     setHandlerOnce(_context, handler) {
@@ -63,7 +62,6 @@ export const competition = {
   },
   mutations: {
     setUsers(state, { users, index }) {
-      console.log(index);
       state.users = users;
       state.index = index;
       console.log("[store] (setUsers)", state);
