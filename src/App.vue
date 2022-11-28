@@ -7,6 +7,8 @@ import { RouterView } from "vue-router";
 </template>
 
 <style>
+@import "@/assets/css/animation.css";
+
 html,
 body {
   margin: 0px;
