@@ -17,34 +17,53 @@ import { ref } from "vue";
             <el-avatar :src="player.avatar" :size="80" />
           </div>
           <NumPlus :value="player.score" :time="4"></NumPlus>
-          <ScoreBar :height="scoreBarHeight" :width="scoreBarWidth" :score="player.scoreBar" />
+          <ScoreBar
+            :height="scoreBarHeight"
+            :width="scoreBarWidth"
+            :score="player.scoreBar"
+          />
         </el-aside>
         <el-main class="middle">
-          <el-progress class="progress" type="circle" :percentage="progress" :format="countdown"
-            :status="progressBarStatus" :width="110" />
+          <el-progress
+            class="progress"
+            type="circle"
+            :percentage="progress"
+            :format="countdown"
+            :status="progressBarStatus"
+            :width="110"
+          />
           <el-divider />
           <div class="problem">
             <div class="problem-content">
               <div v-if="problem.type === 0">
                 <span class="problem-text">{{ problem.content }}</span>
-                <div class="answer" v-if="problem.subproblem[0].choice.length === 4">
-                  <el-radio-group v-model="problem.subproblem[0].radio" size="large">
+                <div
+                  class="answer"
+                  v-if="problem.subproblem[0].choice.length === 4"
+                >
+                  <el-radio-group
+                    v-model="problem.subproblem[0].radio"
+                    size="large"
+                  >
                     <el-radio label="A">{{
-                        problem.subproblem[0].choice[0]
+                      problem.subproblem[0].choice[0]
                     }}</el-radio>
                     <el-radio label="B">{{
-                        problem.subproblem[0].choice[1]
+                      problem.subproblem[0].choice[1]
                     }}</el-radio>
                     <el-radio label="C">{{
-                        problem.subproblem[0].choice[2]
+                      problem.subproblem[0].choice[2]
                     }}</el-radio>
                     <el-radio label="D">{{
-                        problem.subproblem[0].choice[3]
+                      problem.subproblem[0].choice[3]
                     }}</el-radio>
                   </el-radio-group>
                 </div>
                 <div class="answer" v-else>
-                  <el-radio-group v-model="problem.subproblem[0].radio" size="large">
+                  <el-radio-group
+                    v-model="problem.subproblem[0].radio"
+                    size="large"
+                  >
                     <el-radio label="A">正确</el-radio>
                     <el-radio label="B">错误</el-radio>
                   </el-radio-group>
@@ -73,7 +92,14 @@ import { ref } from "vue";
               <div v-else></div>
             </div>
             <div class="answer-submit">
-              <el-button type="primary" round size="large" @click="onSubmit" :disabled="submitted">提交答案</el-button>
+              <el-button
+                type="primary"
+                round
+                size="large"
+                @click="onSubmit"
+                :disabled="submitted"
+                >提交答案</el-button
+              >
             </div>
           </div>
         </el-main>
@@ -208,9 +234,14 @@ export default {
         if (data.lastQuestion) {
           this.finished = true;
           // TODO: wait for a period of time
-          this.$router.dispatch("competition/removeHandler", { type: "answer", });
-          this.$router.dispatch("competition/removeHandler", { type: "problem", });
-          this.$router.dispatch("competition/removeHandler", { type: "next", });
+
+          this.$store.dispatch("competition/removeHandler", {
+            type: "answer",
+          });
+          this.$store.dispatch("competition/removeHandler", {
+            type: "problem",
+          });
+          this.$store.dispatch("competition/removeHandler", { type: "next" });
           this.$router.push("/battle/stats");
         } else {
           var answer = data.answer;
@@ -246,7 +277,6 @@ export default {
   width: 80%;
   min-width: 800px;
 }
-
 
 .middle {
   width: 100%;
