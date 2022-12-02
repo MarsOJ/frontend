@@ -1,9 +1,10 @@
 <script setup>
+import { Edit, Search } from "@element-plus/icons-vue";
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import Pagination from "@/components/Pagination.vue";
-import Sidebar from "@/components/Sidebar";
 import FavoriteService from "@/services/favorites.service";
+import { ref } from "vue";
 </script>
 
 <template>
@@ -13,46 +14,15 @@ import FavoriteService from "@/services/favorites.service";
         <div ref="mainpage">
           <NaviBar />
           <el-container class="page-main">
-            <el-aside>
-              <sidebar class="sidebar-container" />
-            </el-aside>
             <el-main>
               <div class="app-container">
                 <div class="filter-container">
                   <el-input
                     v-model="listQuery.title"
-                    placeholder="Title"
+                    placeholder="标题"
                     style="width: 200px"
                     class="filter-item"
                   />
-                  <el-select
-                    v-model="listQuery.importance"
-                    placeholder="Imp"
-                    clearable
-                    style="width: 90px"
-                    class="filter-item"
-                  >
-                    <el-option
-                      v-for="item in importanceOptions"
-                      :key="item"
-                      :label="item"
-                      :value="item"
-                    />
-                  </el-select>
-                  <el-select
-                    v-model="listQuery.type"
-                    placeholder="Type"
-                    clearable
-                    class="filter-item"
-                    style="width: 130px"
-                  >
-                    <el-option
-                      v-for="item in calendarTypeOptions"
-                      :key="item.key"
-                      :label="item.display_name + '(' + item.key + ')'"
-                      :value="item.key"
-                    />
-                  </el-select>
                   <el-select
                     v-model="listQuery.sort"
                     style="width: 140px"
@@ -69,42 +39,27 @@ import FavoriteService from "@/services/favorites.service";
                   <el-button
                     class="filter-item"
                     type="primary"
-                    icon="el-icon-search"
+                    :icon="Search"
+                    size="small"
                     @click="handleFilter"
                   >
-                    Search
+                    搜索
                   </el-button>
                   <el-button
                     class="filter-item"
                     style="margin-left: 10px"
                     type="primary"
-                    icon="el-icon-edit"
-                    @click="handleCreate"
+                    size="small"
+                    :icon="Edit"
+                    @click="handleAddFavorite"
                   >
-                    Add
+                    新建
                   </el-button>
-                  <el-button
-                    :loading="downloadLoading"
-                    class="filter-item"
-                    type="primary"
-                    icon="el-icon-download"
-                    @click="handleDownload"
-                  >
-                    Export
-                  </el-button>
-                  <el-checkbox
-                    v-model="showReviewer"
-                    class="filter-item"
-                    style="margin-left: 15px"
-                    @change="tableKey = tableKey + 1"
-                  >
-                    reviewer
-                  </el-checkbox>
                 </div>
 
                 <el-table
                   :key="tableKey"
-                  v-loading="listLoading"
+                  v-loading="problemLoading"
                   :data="list"
                   border
                   fit
@@ -113,113 +68,57 @@ import FavoriteService from "@/services/favorites.service";
                   @sort-change="sortChange"
                 >
                   <el-table-column
-                    label="ID"
+                    label="序号"
                     prop="id"
                     sortable="custom"
                     align="center"
                     width="80"
-                    :class-name="getSortClass('id')"
                   >
-                    <template v-slot="{ row }">
-                      <span>{{ row.id }}</span>
+                    <template v-slot="{ $index }">
+                      <span>{{ $index + 1 }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column label="Date" width="150px" align="center">
+                  <el-table-column label="日期" width="150px" align="center">
                     <template v-slot="{ row }">
-                      <span>{{ row.timestamp }}</span>
+                      <span>{{ row.date }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column label="Title" min-width="150px">
+                  <el-table-column label="标题" width="150px">
                     <template v-slot="{ row }">
-                      <span class="link-type" @click="handleUpdate(row)">{{
-                        row.title
-                      }}</span>
-                      <el-tag>{{ row.type }}</el-tag>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="Author" width="110px" align="center">
-                    <template v-slot="{ row }">
-                      <span>{{ row.author }}</span>
+                      <span class="link-type">{{ row.title }}</span>
+                      <el-tag v-if="row.type === 1">单选题</el-tag>
+                      <el-tag v-else-if="row.type === 2">一般多选题</el-tag>
+                      <el-tag v-else-if="row.type === 3">程序多选题</el-tag>
+                      <el-tag v-else>其他题型</el-tag>
                     </template>
                   </el-table-column>
                   <el-table-column
-                    v-if="showReviewer"
-                    label="Reviewer"
-                    width="110px"
+                    label="内容"
+                    min-width="150px"
                     align="center"
                   >
                     <template v-slot="{ row }">
-                      <span style="color: red">{{ row.reviewer }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="Imp" width="80px">
-                    <template v-slot="{ row }">
-                      <svg-icon
-                        v-for="n in +row.importance"
-                        :key="n"
-                        icon-class="star"
-                        class="meta-item__icon"
-                      />
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="Readings" align="center" width="95">
-                    <template v-slot="{ row }">
-                      <span
-                        v-if="row.pageviews"
-                        class="link-type"
-                        @click="handleFetchPv(row.pageviews)"
-                        >{{ row.pageviews }}</span
-                      >
-                      <span v-else>0</span>
+                      <span>{{ row.content }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column
-                    label="Status"
-                    class-name="status-col"
-                    width="100"
-                  >
-                    <template v-slot="{ row }">
-                      <el-tag :type="row.status">
-                        {{ row.status }}
-                      </el-tag>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    label="Actions"
+                    label="操作"
                     align="center"
-                    width="230"
+                    width="330"
                     class-name="small-padding fixed-width"
                   >
                     <template v-slot="{ row, $index }">
-                      <el-button
-                        type="primary"
-                        size="mini"
-                        @click="handleUpdate(row)"
-                      >
-                        Edit
+                      <el-button type="primary" @click="handleCheck(row)">
+                        查看
+                      </el-button>
+                      <el-button type="success" @click="handleMove(row)">
+                        移动
                       </el-button>
                       <el-button
-                        v-if="row.status != 'published'"
-                        size="mini"
-                        type="success"
-                        @click="handleModifyStatus(row, 'published')"
-                      >
-                        Publish
-                      </el-button>
-                      <el-button
-                        v-if="row.status != 'draft'"
-                        size="mini"
-                        @click="handleModifyStatus(row, 'draft')"
-                      >
-                        Draft
-                      </el-button>
-                      <el-button
-                        v-if="row.status != 'deleted'"
-                        size="mini"
                         type="danger"
                         @click="handleDelete(row, $index)"
                       >
-                        Delete
+                        删除
                       </el-button>
                     </template>
                   </el-table-column>
@@ -230,110 +129,24 @@ import FavoriteService from "@/services/favorites.service";
                   :total="total"
                   v-model:page="listQuery.page"
                   v-model:limit="listQuery.limit"
-                  @pagination="getList"
                 />
 
                 <el-dialog
-                  :title="textMap[dialogStatus]"
-                  v-model:visible="dialogFormVisible"
+                  title="移动问题至"
+                  v-model="dialogSelectVisible"
+                  :append-to-body="true"
                 >
-                  <el-form
-                    ref="dataForm"
-                    :rules="rules"
-                    :model="temp"
-                    label-position="left"
-                    label-width="70px"
-                    style="width: 400px; margin-left: 50px"
-                  >
-                    <el-form-item label="Type" prop="type">
-                      <el-select
-                        v-model="temp.type"
-                        class="filter-item"
-                        placeholder="Please select"
-                      >
-                        <el-option
-                          v-for="item in calendarTypeOptions"
-                          :key="item.key"
-                          :label="item.display_name"
-                          :value="item.key"
-                        />
-                      </el-select>
-                    </el-form-item>
-                    <el-form-item label="Date" prop="timestamp">
-                      <el-date-picker
-                        v-model="temp.timestamp"
-                        type="datetime"
-                        placeholder="Please pick a date"
-                      />
-                    </el-form-item>
-                    <el-form-item label="Title" prop="title">
-                      <el-input v-model="temp.title" />
-                    </el-form-item>
-                    <el-form-item label="Status">
-                      <el-select
-                        v-model="temp.status"
-                        class="filter-item"
-                        placeholder="Please select"
-                      >
-                        <el-option
-                          v-for="item in statusOptions"
-                          :key="item"
-                          :label="item"
-                          :value="item"
-                        />
-                      </el-select>
-                    </el-form-item>
-                    <el-form-item label="Imp">
-                      <el-rate
-                        v-model="temp.importance"
-                        :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
-                        :max="3"
-                        style="margin-top: 8px"
-                      />
-                    </el-form-item>
-                    <el-form-item label="Remark">
-                      <el-input
-                        v-model="temp.remark"
-                        :autosize="{ minRows: 2, maxRows: 4 }"
-                        type="textarea"
-                        placeholder="Please input"
-                      />
-                    </el-form-item>
-                  </el-form>
                   <div class="dialog-footer">
-                    <el-button @click="dialogFormVisible = false">
-                      Cancel
-                    </el-button>
                     <el-button
-                      type="primary"
-                      @click="
-                        dialogStatus === 'create' ? createData() : updateData()
-                      "
+                      @click="dialogSelectVisible = false"
+                      size="small"
                     >
-                      Confirm
+                      取消
+                    </el-button>
+                    <el-button type="primary" @click="MoveProblem" size="small">
+                      确定
                     </el-button>
                   </div>
-                </el-dialog>
-
-                <el-dialog
-                  v-model:visible="dialogPvVisible"
-                  title="Reading statistics"
-                >
-                  <el-table
-                    :data="pvData"
-                    border
-                    fit
-                    highlight-current-row
-                    style="width: 100%"
-                  >
-                    <el-table-column prop="key" label="Channel" />
-                    <el-table-column prop="pv" label="Pv" />
-                  </el-table>
-                  <span class="dialog-footer">
-                    <el-button type="primary" @click="dialogPvVisible = false"
-                      >Confirm</el-button
-                    >
-                  </span>
                 </el-dialog>
               </div>
             </el-main>
@@ -346,73 +159,33 @@ import FavoriteService from "@/services/favorites.service";
 </template>
 
 <script>
-const calendarTypeOptions = [
-  { key: "CN", display_name: "China" },
-  { key: "US", display_name: "USA" },
-  { key: "JP", display_name: "Japan" },
-  { key: "EU", display_name: "Eurozone" },
-];
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name;
-  return acc;
-}, {});
-
 export default {
-  component: [Sidebar],
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: "success",
-        draft: "info",
-        deleted: "danger",
-      };
-      return statusMap[status];
-    },
-    typeFilter(type) {
-      return calendarTypeKeyValue[type];
-    },
-  },
   data() {
     return {
       tableKey: 0,
-      list: null,
-      total: 0,
-      listLoading: true,
+      list: [
+        {
+          title: "test", //string
+          id: 1, //string
+          content: "This is a test problem", //20-30 characters
+          type: 1, //
+          date: "2022-09-19",
+        },
+      ],
+      favoriteId: 0,
+      total: 1,
+      problemLoading: false,
       listQuery: {
         page: 1,
         limit: 20,
-        importance: undefined,
         title: undefined,
         type: undefined,
         sort: "+id",
       },
-      importanceOptions: [1, 2, 3],
-      calendarTypeOptions,
       sortOptions: [
-        { label: "ID Ascending", key: "+id" },
-        { label: "ID Descending", key: "-id" },
+        { label: "升序", key: "+id" },
+        { label: "降序", key: "-id" },
       ],
-      statusOptions: ["published", "draft", "deleted"],
-      showReviewer: false,
-      temp: {
-        id: undefined,
-        importance: 1,
-        remark: "",
-        timestamp: new Date(),
-        title: "",
-        type: "",
-        status: "published",
-      },
-      dialogFormVisible: false,
-      dialogStatus: "",
-      textMap: {
-        update: "Edit",
-        create: "Create",
-      },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
         type: [
           { required: true, message: "type is required", trigger: "change" },
@@ -429,16 +202,15 @@ export default {
           { required: true, message: "title is required", trigger: "blur" },
         ],
       },
-      downloadLoading: false,
+      dialogSelectVisible: ref(false),
     };
   },
   created() {
-    this.getList();
+    //FavoriteService.getFavoriteList().then(() => {});
+    this.updateProblemList();
   },
   methods: {
-    getList() {
-      this.listLoading = true;
-    },
+    updateProblemList() {},
     handleFilter() {
       this.listQuery.page = 1;
       this.getList();
@@ -464,89 +236,51 @@ export default {
       }
       this.handleFilter();
     },
-    resetTemp() {
-      this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: "",
-        timestamp: new Date(),
-        title: "",
-        status: "published",
-        type: "",
-      };
+    handleAddFavorite() {},
+    handleCheck(row) {
+      console.log(row);
     },
-    handleCreate() {
-      this.resetTemp();
-      this.dialogStatus = "create";
-      this.dialogFormVisible = true;
-      this.$nextTick(() => {
-        this.$refs["dataForm"].clearValidate();
-      });
+    handleMove(row) {
+      this.problemId = row.id;
+      this.dialogSelectVisible = ref(true);
+      console.log(this.problemId);
     },
-    createData() {
-      this.$refs["dataForm"].validate((valid) => {
-        if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024; // mock a id
-          this.temp.author = "vue-element-admin";
+    MoveProblem() {
+      FavoriteService.moveProblem(
+        this.srcId,
+        this.dstId,
+        this.problemId,
+        true
+      ).then((response) => {
+        if (response.status === "success") {
+          ElMessage({
+            message: "移动问题成功！",
+            type: "success",
+          });
+          this.updateProblemList();
+        } else {
+          ElMessage({
+            message: "移动问题失败！",
+            type: "success",
+          });
         }
       });
     },
-    handleUpdate(row) {
-      this.temp = Object.assign({}, row); // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp);
-      this.dialogStatus = "update";
-      this.dialogFormVisible = true;
-      this.$nextTick(() => {
-        this.$refs["dataForm"].clearValidate();
-      });
-    },
-    updateData() {
-      this.$refs["dataForm"].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp);
-          tempData.timestamp = +new Date(tempData.timestamp); // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-        }
-      });
-    },
-    handleDelete(row, index) {
-      this.$notify({
-        title: "Success",
-        message: "Delete Successfully",
-        type: "success",
-        duration: 2000,
-      });
-      this.list.splice(index, 1);
-    },
-    handleFetchPv() {},
-    handleDownload() {
-      this.downloadLoading = true;
-      import("@/vendor/Export2Excel").then((excel) => {
-        const tHeader = ["timestamp", "title", "type", "importance", "status"];
-        const filterVal = [
-          "timestamp",
-          "title",
-          "type",
-          "importance",
-          "status",
-        ];
-        const data = this.formatJson(filterVal);
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: "table-list",
-        });
-        this.downloadLoading = false;
-      });
-    },
-    formatJson(filterVal) {
-      return this.list.map((v) =>
-        filterVal.map((j) => {
-          if (j === "timestamp") {
-            return null;
+    handleDelete(row) {
+      FavoriteService.deleteProblem(this.favoriteId, row.id).then(
+        (response) => {
+          if (response.status === "success") {
+            ElMessage({
+              message: "删除成功！",
+              type: "success",
+            });
           } else {
-            return v[j];
+            ElMessage({
+              message: "删除失败！",
+              type: "success",
+            });
           }
-        })
+        }
       );
     },
     getSortClass: function (key) {
@@ -557,8 +291,6 @@ export default {
 };
 </script>
 
-<style scoped>
-.common-layout {
-  height: 100vh;
-}
+<style lang="scss" scoped>
+@import "@/styles/index.scss";
 </style>
