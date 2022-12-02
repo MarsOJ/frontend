@@ -18,12 +18,7 @@
         <div>{{ data[2].name }}</div>
       </div>
     </div>
-    <el-table
-      id="leader-table"
-      :data="data"
-      table-layout="auto"
-      :row-class-name="tableRowClassName"
-    >
+    <el-table id="leader-table" :data="data" table-layout="auto" :row-class-name="tableRowClassName">
       <el-table-column type="index" label="名次" align="center" width="80" />
       <el-table-column prop="name" label="用户名" align="center" />
       <el-table-column prop="points" label="积分" align="center" />
@@ -57,7 +52,7 @@ export default {
   margin: 2em 0px 2em;
   padding: 2em;
   border: gray 3px solid;
-  border-radius: 10px;
+  border-radius: 28px;
   width: 80%;
   display: flex;
   flex-direction: column;

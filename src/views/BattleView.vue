@@ -2,24 +2,18 @@
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import LeaderSideBar from "@/components/LeaderSideBar.vue";
+import LoadingBlock from "@/components/LoadingBlock.vue";
 </script>
 
 <template>
   <div class="common-layout">
     <!-- TODO: check whether there's an ongoing match (socketConnected) -->
-    <div v-if="pairing" id="pairing">
-      <!-- <img src="../assets/Fidget-spinner.gif" /> -->
-      <div v-if="!socketConnected && !paired">连接服务器中……</div>
-      <div v-if="socketConnected && !paired">配对中……</div>
-      <div v-if="paired">加载中……</div>
-      <el-button
-        v-if="!paired"
-        id="cancel-button"
-        @click="this.cancelPairing()"
-      >
+    <LoadingBlock v-if="pairing" :cond="[!socketConnected && !paired, socketConnected && !paired, paired]"
+      :msg="['连接服务器中……', '配对中……', '加载中……']">
+      <el-button v-if="!paired" id="cancel-button" @click="this.cancelPairing()">
         取消匹配
       </el-button>
-    </div>
+    </LoadingBlock>
     <el-container direction="vertical">
       <el-scrollbar>
         <div ref="mainpage">
@@ -42,11 +36,7 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
               </div>
             </el-main>
             <el-aside class="aside">
-              <LeaderSideBar
-                :data="leaderData"
-                :userRank="userRank"
-                class="fade-down"
-              />
+              <LeaderSideBar :data="leaderData" :userRank="userRank" class="fade-down" />
             </el-aside>
           </el-container>
           <Footer />
@@ -128,8 +118,6 @@ export default {
 </script>
 
 <style scoped>
-@import "@/assets/css/animation.css";
-
 .common-layout {
   position: relative;
   height: 100vh;
@@ -138,13 +126,11 @@ export default {
 .page-main {
   align-items: center;
   text-align: center;
-  background: linear-gradient(
-      to bottom left,
+  background: linear-gradient(to bottom left,
       #d2eedb,
       transparent,
       transparent,
-      #d2eedb
-    ),
+      #d2eedb),
     linear-gradient(to bottom right, #d3d3fc, transparent, transparent, #d3d3fc);
 }
 
@@ -189,22 +175,7 @@ export default {
   max-width: 480px;
 }
 
-#pairing {
-  position: absolute;
-  z-index: 1000;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(128, 128, 128, 0.7);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-size: xx-large;
-  color: white;
-}
-
-#pairing #cancel-button {
-  margin: 2em;
+#cancel-button {
   width: 180px;
   height: 50px;
   font-size: 18px;

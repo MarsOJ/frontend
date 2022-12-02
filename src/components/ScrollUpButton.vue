@@ -1,12 +1,8 @@
 <template>
-  <a
-    class="scroll-up"
-    :class="{
-      'fade-in': display,
-      'fade-out': !display,
-    }"
-    @click="scrollUp()"
-  >
+  <a class="scroll-up" :class="{
+    'fade-in': display,
+    'fade-out': !display,
+  }" @click="scrollUp()">
     <img src="../assets/right-arrow.png" />
     <i class="fa fa-chevron-up"></i>
   </a>
@@ -27,8 +23,6 @@ export default {
 </script>
 
 <style scoped>
-@import "@/assets/css/animation.css";
-
 .scroll-up {
   display: inline;
   border-radius: 0px;

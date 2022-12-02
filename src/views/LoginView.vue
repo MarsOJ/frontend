@@ -3,43 +3,23 @@ import User from "@/models/user";
 </script>
 
 <template>
-  <main
-    v-loading="loading"
-    element-loading-text="Loading..."
-    element-loading-background=" rgba(80, 80, 80, 0.8)"
-  >
+  <LoadingBlock v-if="loading" :cond="[true]" :msg="['登录中……']" />
+  <main>
     <div class="wrapper">
       <img id="title" src="../assets/logo.png" />
       <div id="login-form" class="fade-down">
         <el-form ref="formRef" :model="user" :rules="rules">
           <el-form-item prop="username">
-            <el-input
-              v-model="user.username"
-              type="text"
-              placeholder="用户名"
-              clearable
-            />
+            <el-input v-model="user.username" type="text" placeholder="用户名" clearable />
           </el-form-item>
           <br />
           <el-form-item prop="password">
-            <el-input
-              v-model="user.password"
-              type="password"
-              placeholder="密码"
-              show-password
-            />
+            <el-input v-model="user.password" type="password" placeholder="密码" show-password />
           </el-form-item>
           <br />
           <el-form-item class="submit-btns">
-            <el-button round type="info" @click="$router.push('/register')"
-              >注册</el-button
-            >
-            <el-button
-              round
-              type="primary"
-              @click="submitForm(this.$refs.formRef)"
-              >登录</el-button
-            >
+            <el-button round type="info" @click="$router.push('/register')">注册</el-button>
+            <el-button round type="primary" @click="submitForm(this.$refs.formRef)">登录</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -75,7 +55,7 @@ export default {
         return;
       }
       this.loading = true;
-      console.log("Login:", this.user);
+      // console.log("Login:", this.user);
       await formEl.validate((valid, fields) => {
         if (valid) {
           this.$store.dispatch("auth/login", this.user).then(
@@ -113,8 +93,6 @@ export default {
 </script>
 
 <style scoped>
-@import "@/assets/css/animation.css";
-
 main {
   display: flex;
   flex-direction: column;

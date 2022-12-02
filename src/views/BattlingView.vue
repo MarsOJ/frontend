@@ -9,106 +9,102 @@ import { ref } from "vue";
 
 <template>
   <div class="common-layout">
-    <el-container direction="vertical">
-      <NaviBar />
-      <el-main class="main">
-        <el-container>
-          <el-aside v-for="player in players" width="4vw">
-            <div class="avatar">
-              <el-avatar :src="player.avatar" :size="80" />
-            </div>
-            <NumPlus :value="player.score" :time="4"></NumPlus>
-            <ScoreBar
-              :height="scoreBarHeight"
-              :width="scoreBarWidth"
-              :score="player.scoreBar"
-            />
-          </el-aside>
-          <el-main class="middle">
-            <el-progress
-              class="progress"
-              type="circle"
-              :percentage="progress"
-              :format="countdown"
-              :status="progressBarStatus"
-              :width="110"
-            />
-            <el-divider />
-            <div class="problem">
-              <div class="problem-content">
-                <div v-if="problem.type === 0">
-                  <span class="problem-text">{{ problem.content }}</span>
-                  <div
-                    class="answer"
-                    v-if="problem.subproblem[0].choice.length === 4"
+    <el-container direction="vertical" class="page">
+      <!-- <el-main class="main"> -->
+      <el-container class="main">
+        <el-aside v-for="player in players" width="4vw">
+          <div class="avatar">
+            <el-avatar :src="player.avatar" :size="80" />
+          </div>
+          <NumPlus :value="player.score" :time="4"></NumPlus>
+          <ScoreBar
+            :height="scoreBarHeight"
+            :width="scoreBarWidth"
+            :score="player.scoreBar"
+          />
+        </el-aside>
+        <el-main class="middle">
+          <el-progress
+            class="progress"
+            type="circle"
+            :percentage="progress"
+            :format="countdown"
+            :status="progressBarStatus"
+            :width="110"
+          />
+          <el-divider />
+          <div class="problem">
+            <div class="problem-content">
+              <div v-if="problem.type === 0">
+                <span class="problem-text">{{ problem.content }}</span>
+                <div
+                  class="answer"
+                  v-if="problem.subproblem[0].choice.length === 4"
+                >
+                  <el-radio-group
+                    v-model="problem.subproblem[0].radio"
+                    size="large"
                   >
-                    <el-radio-group
-                      v-model="problem.subproblem[0].radio"
-                      size="large"
-                    >
-                      <el-radio label="A">{{
-                        problem.subproblem[0].choice[0]
-                      }}</el-radio>
-                      <el-radio label="B">{{
-                        problem.subproblem[0].choice[1]
-                      }}</el-radio>
-                      <el-radio label="C">{{
-                        problem.subproblem[0].choice[2]
-                      }}</el-radio>
-                      <el-radio label="D">{{
-                        problem.subproblem[0].choice[3]
-                      }}</el-radio>
+                    <el-radio label="A">{{
+                      problem.subproblem[0].choice[0]
+                    }}</el-radio>
+                    <el-radio label="B">{{
+                      problem.subproblem[0].choice[1]
+                    }}</el-radio>
+                    <el-radio label="C">{{
+                      problem.subproblem[0].choice[2]
+                    }}</el-radio>
+                    <el-radio label="D">{{
+                      problem.subproblem[0].choice[3]
+                    }}</el-radio>
+                  </el-radio-group>
+                </div>
+                <div class="answer" v-else>
+                  <el-radio-group
+                    v-model="problem.subproblem[0].radio"
+                    size="large"
+                  >
+                    <el-radio label="A">正确</el-radio>
+                    <el-radio label="B">错误</el-radio>
+                  </el-radio-group>
+                </div>
+              </div>
+              <div v-else-if="problem.type === 1">
+                <span class="problem-text">{{ problem.content }}</span>
+                <div v-for="sp in problem.subproblem">
+                  <span class="problem-text">{{ sp.content }}</span>
+                  <div class="answer" v-if="sp.choice.length === 4">
+                    <el-radio-group v-model="sp.radio" size="large">
+                      <el-radio label="A">{{ sp.choice[0] }}</el-radio>
+                      <el-radio label="B">{{ sp.choice[1] }}</el-radio>
+                      <el-radio label="C">{{ sp.choice[2] }}</el-radio>
+                      <el-radio label="D">{{ sp.choice[3] }}</el-radio>
                     </el-radio-group>
                   </div>
                   <div class="answer" v-else>
-                    <el-radio-group
-                      v-model="problem.subproblem[0].radio"
-                      size="large"
-                    >
+                    <el-radio-group v-model="sp.radio" size="large">
                       <el-radio label="A">正确</el-radio>
                       <el-radio label="B">错误</el-radio>
                     </el-radio-group>
                   </div>
                 </div>
-                <div v-else-if="problem.type === 1">
-                  <span class="problem-text">{{ problem.content }}</span>
-                  <div v-for="sp in problem.subproblem">
-                    <span class="problem-text">{{ sp.content }}</span>
-                    <div class="answer" v-if="sp.choice.length === 4">
-                      <el-radio-group v-model="sp.radio" size="large">
-                        <el-radio label="A">{{ sp.choice[0] }}</el-radio>
-                        <el-radio label="B">{{ sp.choice[1] }}</el-radio>
-                        <el-radio label="C">{{ sp.choice[2] }}</el-radio>
-                        <el-radio label="D">{{ sp.choice[3] }}</el-radio>
-                      </el-radio-group>
-                    </div>
-                    <div class="answer" v-else>
-                      <el-radio-group v-model="sp.radio" size="large">
-                        <el-radio label="A">正确</el-radio>
-                        <el-radio label="B">错误</el-radio>
-                      </el-radio-group>
-                    </div>
-                  </div>
-                </div>
-                <div v-else></div>
               </div>
-              <div class="answer-submit">
-                <el-button
-                  type="primary"
-                  round
-                  size="large"
-                  @click="onSubmit"
-                  :disabled="submitted"
-                  >提交答案</el-button
-                >
-              </div>
+              <div v-else></div>
             </div>
-          </el-main>
-        </el-container>
-      </el-main>
-      <el-footer>
-        <Footer />
-      </el-footer>
+            <div class="answer-submit">
+              <el-button
+                type="primary"
+                round
+                size="large"
+                @click="onSubmit"
+                :disabled="submitted"
+                >提交答案</el-button
+              >
+            </div>
+          </div>
+        </el-main>
+      </el-container>
+      <!-- </el-main> -->
     </el-container>
   </div>
 </template>
@@ -238,13 +234,14 @@ export default {
         if (data.lastQuestion) {
           this.finished = true;
           // TODO: wait for a period of time
-          this.$router.dispatch("competition/removeHandler", {
+
+          this.$store.dispatch("competition/removeHandler", {
             type: "answer",
           });
-          this.$router.dispatch("competition/removeHandler", {
+          this.$store.dispatch("competition/removeHandler", {
             type: "problem",
           });
-          this.$router.dispatch("competition/removeHandler", { type: "next" });
+          this.$store.dispatch("competition/removeHandler", { type: "next" });
           this.$router.push("/battle/stats");
         } else {
           var answer = data.answer;
@@ -259,26 +256,36 @@ export default {
 </script>
 
 <style scoped>
-.main {
-  text-align: center;
-  padding-top: 3vh;
-  padding-left: 3vw;
-  padding-right: 3vw;
-  width: 100vw;
-  background-color: rgba(240, 245, 240, 0.549);
-}
-
 .common-layout {
   height: 100vh;
 }
 
-.progress {
-  padding: auto;
+.page {
+  /* text-align: center; */
+  /* padding-top: 3vh; */
+  /* padding-left: 3vw; */
+  /* padding-right: 3vw; */
+  width: 100vw;
+  /* padding: 5em; */
+  background-color: rgba(240, 245, 240, 0.549);
+  align-items: center;
+  justify-content: center;
+}
+
+.main {
+  height: 80%;
+  width: 80%;
+  min-width: 800px;
 }
 
 .middle {
   width: 100%;
   padding: 0;
+  text-align: center;
+}
+
+.progress {
+  padding: auto;
 }
 
 .problem {
