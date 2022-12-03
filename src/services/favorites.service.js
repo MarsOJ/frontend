@@ -16,9 +16,11 @@ class FavoriteService {
   }
 
   deleteFavorite(id) {
-    return axios.delete(API_URL + "list/", { id: id }).then((response) => {
-      return response.status;
-    });
+    return axios
+      .delete(API_URL + "list/", { data: { id: id } })
+      .then((response) => {
+        return response.status;
+      });
   }
 
   renameFavorite(id, name) {
@@ -37,16 +39,13 @@ class FavoriteService {
 
   getProblemScratch(page, itemPerPage, id) {
     return axios
-      .get(
-        API_URL +
-          "problem/" +
-          "?p=" +
-          page +
-          "&itemPerPage=" +
-          itemPerPage +
-          "&id=" +
-          id
-      )
+      .get(API_URL + "problem/", {
+        params: {
+          p: page,
+          itemPerPage: itemPerPage,
+          id: id,
+        },
+      })
       .then((response) => {
         return response.data;
       });
@@ -66,10 +65,13 @@ class FavoriteService {
   }
 
   deleteProblem(srcId, problemId) {
+    if (!(problemId instanceof Array)) problemId = [problemId];
     return axios
       .delete(API_URL + "problem/", {
-        sourceID: srcId,
-        problemID: problemId,
+        data: {
+          sourceID: srcId,
+          problemID: problemId,
+        },
       })
       .then((response) => {
         return response.status;
