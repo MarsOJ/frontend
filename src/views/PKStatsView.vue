@@ -16,7 +16,7 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
                 <div class="block" v-loading="loading">
                   <div class="title-result" v-if="stats">
                     <span class="title" v-if="userRank == 1">恭喜，你在比赛中取得胜利！</span>
-                    <span class="title" v-else>很遗憾，您在比赛中获得了第{{ userRank }}名。</span>
+                    <span class="title" v-else>很遗憾，您获得了第{{ userRank }}名。</span>
                     <span class="user">
                       <img class="user-pic" src="../assets/user.png" />
                       <div class="win" v-if="userRank == 1"></div>
@@ -167,13 +167,14 @@ export default {
   max-width: 480px;
 }
 
-/* 
+
 .block {
-  width: 800px;
-} */
+  width: 50vw;
+  /* width: 800px; */
+}
 
 .title {
-  font-size: xx-large;
+  font-size: 28px;
   font-weight: bolder;
 }
 
@@ -258,6 +259,10 @@ export default {
     flex-direction: column;
     align-items: center;
   }
+
+  .block {
+    width: 80vw;
+  }
 }
 
 @media (max-width: 640px) {
@@ -267,11 +272,11 @@ export default {
   }
 
   .title {
-    font-size: larger;
+    font-size: 24px;
   }
 }
 
-@media (max-width: 450px) {
+@media (max-width: 550px) {
   .page-main {
     padding-left: 0;
     padding-right: 0;
@@ -287,7 +292,7 @@ export default {
   }
 
   .title {
-    font-size: large;
+    font-size: 20px;
   }
 }
 </style>
@@ -305,7 +310,7 @@ export default {
   }
 }
 
-@media (max-width: 450px) {
+@media (max-width: 550px) {
   .el-collapse-item__header {
     font-size: 10px;
   }
