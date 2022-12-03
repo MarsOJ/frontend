@@ -39,7 +39,7 @@ class FavoriteService {
     return axios
       .get(
         API_URL +
-          "/problem/" +
+          "problem/" +
           "?p=" +
           page +
           "&itemPerPage=" +
@@ -54,7 +54,7 @@ class FavoriteService {
 
   moveProblem(srcId, destId, problemId, del) {
     return axios
-      .put(API_URL + "/problem", {
+      .put(API_URL + "problem/", {
         sourceID: srcId,
         destID: destId,
         problemID: problemId,
@@ -67,7 +67,7 @@ class FavoriteService {
 
   deleteProblem(srcId, problemId) {
     return axios
-      .delete(API_URL + "/problem", {
+      .delete(API_URL + "problem/", {
         sourceID: srcId,
         problemID: problemId,
       })
@@ -78,7 +78,7 @@ class FavoriteService {
 
   addProblem(destId, problemId) {
     return axios
-      .post(API_URL + "/problem", {
+      .post(API_URL + "problem/", {
         destID: destId,
         problemID: problemId,
       })

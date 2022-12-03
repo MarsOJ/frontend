@@ -187,8 +187,8 @@ import { ElMessage, ElMessageBox } from "element-plus";
                     label-width="70px"
                     style="width: 400px; margin-left: 50px"
                   >
-                    <el-form-item label="名字" prop="name">
-                      <el-input v-model="temp.title" />
+                    <el-form-item label="名称" prop="name">
+                      <el-input v-model="temp.name" />
                     </el-form-item>
                   </el-form>
                   <div class="dialog-footer">
@@ -219,22 +219,22 @@ export default {
     return {
       tableKey: 0,
       list: [
-        {
-          title: "test", //string
-          id: 1, //string
-          content: "This is a test problem", //20-30 characters
-          type: 1, //
-          date: "2022-09-19",
-        },
+        // {
+        //   title: "test", //string
+        //   id: 1, //string
+        //   content: "This is a test problem", //20-30 characters
+        //   type: 1, //
+        //   date: "2022-09-19",
+        // },
       ],
       listLoading: false,
       favoriteList: [
-        {
-          name: "默认收藏夹",
-          id: 0,
-        },
+        // {
+        //   name: "默认收藏夹",
+        //   id: "0",
+        // },
       ],
-      favoriteId: 0,
+      favoriteId: "0",
       total: 1,
       listQuery: {
         page: 1,
@@ -260,35 +260,40 @@ export default {
     };
   },
   created() {
-    //this.updateFavoriteList();
+    this.updateFavoriteList();
+    this.updateProblemList();
   },
   methods: {
     updateFavoriteList() {
-      var list = FavoriteService.getFavoriteList();
-      if (list == null) {
-        ElMessage({
-          message: "更新收藏夹列表发生错误",
-          type: "error",
-        });
-      } else {
-        this.problemList = list;
-      }
+      FavoriteService.getFavoriteList().then((list) => {
+        console.log(list);
+        if (list == null) {
+          ElMessage({
+            message: "更新收藏夹列表发生错误",
+            type: "error",
+          });
+        } else {
+          this.favoriteList = list;
+        }
+        console.log("updateFavoriteList()", this.favoriteList);
+      });
     },
     updateProblemList() {
       this.listLoading = true;
-      var list = FavoriteService.getProblemScratch(
+      FavoriteService.getProblemScratch(
         this.listQuery.page,
         this.listQuery.limit,
         this.favoriteId
-      );
-      if (list != null) {
-        this.list = list;
-      } else {
-        ElMessageBox.alert("加载题目列表失败！", "错误", {
-          confirmButtonText: "OK",
-        });
-      }
-      this.listLoading = false;
+      ).then((list) => {
+        if (list != null) {
+          this.list = list;
+        } else {
+          ElMessageBox.alert("加载题目列表失败！", "错误", {
+            confirmButtonText: "OK",
+          });
+        }
+        this.listLoading = false;
+      });
     },
     handleChangeFavorite() {
       this.updateProblemList();
@@ -315,34 +320,38 @@ export default {
       this.FavoriteDialogVisible = ref(true);
     },
     addFavorite() {
-      var code = FavoriteService.addFavorite(this.temp.name);
-      if (code == 200) {
-        ElMessage({
-          message: "创建成功！",
-          type: "success",
-        });
-      } else {
-        ElMessage({
-          message: "创建收藏夹失败！",
-          type: "error",
-        });
-      }
+      console.log("name", this.temp.name);
+      FavoriteService.addFavorite(this.temp.name).then((code) => {
+        if (code == 200) {
+          ElMessage({
+            message: "创建成功！",
+            type: "success",
+          });
+          this.updateFavoriteList();
+        } else {
+          ElMessage({
+            message: "创建收藏夹失败！",
+            type: "error",
+          });
+        }
+      });
     },
     handleDeleteFavorite() {
       ElMessageBox.alert("您确定要删除当前收藏夹吗？该操作不可恢复！", "警告", {
         cancelButtonText: "Cancel",
         confirmButtonText: "OK",
         callback: () => {
-          var code = FavoriteService.deleteFavorite(this.favoriteId);
-          if (code == 200) {
-            this.updateFavoriteList();
-            this.updateProblemList();
-          } else {
-            ElMessage({
-              type: "error",
-              message: "删除收藏夹时出错",
-            });
-          }
+          FavoriteService.deleteFavorite(this.favoriteId).then((code) => {
+            if (code == 200) {
+              this.updateFavoriteList();
+              this.updateProblemList();
+            } else {
+              ElMessage({
+                type: "error",
+                message: "删除收藏夹时出错",
+              });
+            }
+          });
         },
       });
     },
@@ -356,38 +365,40 @@ export default {
       console.log(this.problemId);
     },
     MoveProblem() {
-      var code = FavoriteService.moveProblem(
+      FavoriteService.moveProblem(
         this.srcId,
         this.dstId,
         this.problemId,
         true
-      );
-      if (code == 200) {
-        ElMessage({
-          message: "移动问题成功！",
-          type: "success",
-        });
-        this.updateProblemList();
-      } else {
-        ElMessage({
-          message: "移动问题失败！",
-          type: "error",
-        });
-      }
+      ).then((code) => {
+        if (code == 200) {
+          ElMessage({
+            message: "移动问题成功！",
+            type: "success",
+          });
+          this.updateProblemList();
+        } else {
+          ElMessage({
+            message: "移动问题失败！",
+            type: "error",
+          });
+        }
+      });
     },
     handleDelete(row) {
-      var code = FavoriteService.deleteProblem(this.favoriteId, row.id);
-      if (code === 200) {
-        ElMessage({
-          message: "删除成功！",
-          type: "success",
-        });
-      } else {
-        ElMessage({
-          message: "删除失败！",
-          type: "error",
-        });
-      }
+      FavoriteService.deleteProblem(this.favoriteId, row.id).then((code) => {
+        if (code === 200) {
+          ElMessage({
+            message: "删除成功！",
+            type: "success",
+          });
+        } else {
+          ElMessage({
+            message: "删除失败！",
+            type: "error",
+          });
+        }
+      });
     },
     getSortClass: function (key) {
       const sort = this.listQuery.sort;

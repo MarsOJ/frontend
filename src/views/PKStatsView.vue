@@ -2,6 +2,8 @@
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import LeaderSideBar from "@/components/LeaderSideBar.vue";
+import FavoriteService from "@/services/favorites.service";
+import { ElMessage } from "element-plus";
 </script>
 
 <template>
@@ -15,8 +17,12 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
               <el-scrollbar>
                 <div class="block" v-loading="loading">
                   <div class="title-result" v-if="stats">
-                    <span class="title" v-if="userRank == 1">恭喜，你在比赛中取得胜利！</span>
-                    <span class="title" v-else>很遗憾，您获得了第{{ userRank }}名。</span>
+                    <span class="title" v-if="userRank == 1"
+                      >恭喜，你在比赛中取得胜利！</span
+                    >
+                    <span class="title" v-else
+                      >很遗憾，您获得了第{{ userRank }}名。</span
+                    >
                     <span class="user">
                       <img class="user-pic" src="../assets/user.png" />
                       <div class="win" v-if="userRank == 1"></div>
@@ -33,20 +39,30 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
                       <div class="problem-title">题目</div>
                     </div>
                     <div v-for="problem in stats.problems" class="problem">
-                      <span class="score" :class="{
-                        correct: problem.correct,
-                        wrong: !problem.correct,
-                      }">
+                      <span
+                        class="score"
+                        :class="{
+                          correct: problem.correct,
+                          wrong: !problem.correct,
+                        }"
+                      >
                         {{ problem.userPoints }}
                       </span>
                       <div class="problem-title">
                         <el-collapse>
-                          <el-collapse-item :title="problem.title" :name="problem.num">
+                          <el-collapse-item
+                            :title="problem.title"
+                            :name="problem.num"
+                          >
                             <div class="problem-content">
                               <div class="question-box">题干在这里</div>
                               <div class="option-box">选项在这里</div>
                               <div class="button-box">
-                                <el-button type="primary">收藏习题</el-button>
+                                <el-button
+                                  type="primary"
+                                  @click="this.addToFavorite(problem.id)"
+                                  >收藏习题</el-button
+                                >
                               </div>
                             </div>
                           </el-collapse-item>
@@ -87,6 +103,22 @@ export default {
       types: ["单项选择题", "阅读程序题", "完善程序题"],
     };
   },
+  methods: {
+    addToFavorite(id) {
+      var code = FavoriteService.addProblem("0", [id]);
+      if (code == 200) {
+        ElMessage({
+          message: "收藏成功！",
+          type: "success",
+        });
+      } else {
+        ElMessage({
+          message: "收藏失败！",
+          type: "error",
+        });
+      }
+    },
+  },
   mounted() {
     this.$store.dispatch("competition/send", { type: "result" });
     this.$store.dispatch("competition/setHandlerOnce", {
@@ -100,12 +132,12 @@ export default {
           return a.points < b.points
             ? 1
             : b.points < a.points
-              ? -1
-              : a.isUser < b.isUser
-                ? 1
-                : a.isUser > b.isUser
-                  ? -1
-                  : 0;
+            ? -1
+            : a.isUser < b.isUser
+            ? 1
+            : a.isUser > b.isUser
+            ? -1
+            : 0;
         });
         data.points.forEach((user, i) => {
           if (user.isUser) {
@@ -166,7 +198,6 @@ export default {
   min-width: 356px;
   max-width: 480px;
 }
-
 
 .block {
   width: 50vw;
