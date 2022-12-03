@@ -5,9 +5,14 @@ const API_URL = "http://localhost:5000/favorite/";
 
 class FavoriteService {
   getFavoriteList() {
-    return axios.get(API_URL + "list/").then((response) => {
-      return response.data;
-    });
+    return axios
+      .get(API_URL + "list/")
+      .then((response) => {
+        return response.data;
+      })
+      .catch(() => {
+        return null;
+      });
   }
 
   deleteFavorite(id) {

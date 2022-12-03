@@ -35,7 +35,10 @@ import ScrollUpButton from "@/components/ScrollUpButton.vue";
             <el-main>
               <div class="info">
                 <div v-for="item in info">
-                  <div class="info-block fade-down" @click="showDetail(item.id)">
+                  <div
+                    class="info-block fade-down"
+                    @click="showDetail(item.id)"
+                  >
                     <div class="info-date">
                       <span>{{ item.date }}</span>
                     </div>
@@ -64,7 +67,7 @@ import ScrollUpButton from "@/components/ScrollUpButton.vue";
                 <div class="count-down">
                   据
                   <span style="color: grey; font-size: 16px">{{
-                      incomingCompetition
+                    incomingCompetition
                   }}</span>
                   还剩 {{ leavingDay }} 天
                 </div>

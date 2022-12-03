@@ -1,10 +1,11 @@
 <script setup>
-import { Edit, Search } from "@element-plus/icons-vue";
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import Pagination from "@/components/Pagination.vue";
 import FavoriteService from "@/services/favorites.service";
 import { ref } from "vue";
+import { Edit, Search, Delete } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 </script>
 
 <template>
@@ -17,6 +18,19 @@ import { ref } from "vue";
             <el-main>
               <div class="app-container">
                 <div class="filter-container">
+                  <el-select
+                    v-model="favoriteId"
+                    style="width: 140px"
+                    class="filter-item"
+                    @change="handleChangeFavorite"
+                  >
+                    <el-option
+                      v-for="item in favoriteList"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    />
+                  </el-select>
                   <el-input
                     v-model="listQuery.title"
                     placeholder="标题"
@@ -55,11 +69,21 @@ import { ref } from "vue";
                   >
                     新建
                   </el-button>
+                  <el-button
+                    class="filter-item"
+                    style="margin-left: 10px"
+                    type="danger"
+                    size="small"
+                    :icon="Delete"
+                    @click="handleDeleteFavorite"
+                  >
+                    删除
+                  </el-button>
                 </div>
 
                 <el-table
                   :key="tableKey"
-                  v-loading="problemLoading"
+                  v-loading="listLoading"
                   :data="list"
                   border
                   fit
@@ -129,21 +153,52 @@ import { ref } from "vue";
                   :total="total"
                   v-model:page="listQuery.page"
                   v-model:limit="listQuery.limit"
+                  @pagination="updateProblemList"
                 />
 
                 <el-dialog
                   title="移动问题至"
-                  v-model="dialogSelectVisible"
+                  v-model="ProblemDialogVisible"
                   :append-to-body="true"
                 >
                   <div class="dialog-footer">
                     <el-button
-                      @click="dialogSelectVisible = false"
+                      @click="ProblemDialogVisible = false"
                       size="small"
                     >
                       取消
                     </el-button>
                     <el-button type="primary" @click="MoveProblem" size="small">
+                      确定
+                    </el-button>
+                  </div>
+                </el-dialog>
+
+                <el-dialog
+                  title="创建新收藏夹"
+                  v-model="FavoriteDialogVisible"
+                  :append-to-body="true"
+                >
+                  <el-form
+                    ref="dataForm"
+                    :rules="rules"
+                    :model="temp"
+                    label-position="left"
+                    label-width="70px"
+                    style="width: 400px; margin-left: 50px"
+                  >
+                    <el-form-item label="名字" prop="name">
+                      <el-input v-model="temp.title" />
+                    </el-form-item>
+                  </el-form>
+                  <div class="dialog-footer">
+                    <el-button
+                      @click="FavoriteDialogVisible = false"
+                      size="small"
+                    >
+                      取消
+                    </el-button>
+                    <el-button type="primary" @click="addFavorite" size="small">
                       确定
                     </el-button>
                   </div>
@@ -172,9 +227,15 @@ export default {
           date: "2022-09-19",
         },
       ],
+      listLoading: false,
+      favoriteList: [
+        {
+          name: "默认收藏夹",
+          id: 0,
+        },
+      ],
       favoriteId: 0,
       total: 1,
-      problemLoading: false,
       listQuery: {
         page: 1,
         limit: 20,
@@ -186,41 +247,55 @@ export default {
         { label: "升序", key: "+id" },
         { label: "降序", key: "-id" },
       ],
+      temp: {
+        name: "",
+      },
       rules: {
-        type: [
-          { required: true, message: "type is required", trigger: "change" },
-        ],
-        timestamp: [
-          {
-            type: "date",
-            required: true,
-            message: "timestamp is required",
-            trigger: "change",
-          },
-        ],
-        title: [
-          { required: true, message: "title is required", trigger: "blur" },
+        name: [
+          { required: true, message: "请输入收藏夹名字", trigger: "change" },
         ],
       },
-      dialogSelectVisible: ref(false),
+      ProblemDialogVisible: ref(false),
+      FavoriteDialogVisible: ref(false),
     };
   },
   created() {
-    //FavoriteService.getFavoriteList().then(() => {});
-    this.updateProblemList();
+    //this.updateFavoriteList();
   },
   methods: {
-    updateProblemList() {},
+    updateFavoriteList() {
+      var list = FavoriteService.getFavoriteList();
+      if (list == null) {
+        ElMessage({
+          message: "更新收藏夹列表发生错误",
+          type: "error",
+        });
+      } else {
+        this.problemList = list;
+      }
+    },
+    updateProblemList() {
+      this.listLoading = true;
+      var list = FavoriteService.getProblemScratch(
+        this.listQuery.page,
+        this.listQuery.limit,
+        this.favoriteId
+      );
+      if (list != null) {
+        this.list = list;
+      } else {
+        ElMessageBox.alert("加载题目列表失败！", "错误", {
+          confirmButtonText: "OK",
+        });
+      }
+      this.listLoading = false;
+    },
+    handleChangeFavorite() {
+      this.updateProblemList();
+    },
     handleFilter() {
       this.listQuery.page = 1;
-      this.getList();
-    },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: "操作Success",
-        type: "success",
-      });
-      row.status = status;
+      this.updateProblemList();
     },
     sortChange(data) {
       const { prop, order } = data;
@@ -236,52 +311,83 @@ export default {
       }
       this.handleFilter();
     },
-    handleAddFavorite() {},
+    handleAddFavorite() {
+      this.FavoriteDialogVisible = ref(true);
+    },
+    addFavorite() {
+      var code = FavoriteService.addFavorite(this.temp.name);
+      if (code == 200) {
+        ElMessage({
+          message: "创建成功！",
+          type: "success",
+        });
+      } else {
+        ElMessage({
+          message: "创建收藏夹失败！",
+          type: "error",
+        });
+      }
+    },
+    handleDeleteFavorite() {
+      ElMessageBox.alert("您确定要删除当前收藏夹吗？该操作不可恢复！", "警告", {
+        cancelButtonText: "Cancel",
+        confirmButtonText: "OK",
+        callback: () => {
+          var code = FavoriteService.deleteFavorite(this.favoriteId);
+          if (code == 200) {
+            this.updateFavoriteList();
+            this.updateProblemList();
+          } else {
+            ElMessage({
+              type: "error",
+              message: "删除收藏夹时出错",
+            });
+          }
+        },
+      });
+    },
     handleCheck(row) {
+      //查看问题详情页面
       console.log(row);
     },
     handleMove(row) {
       this.problemId = row.id;
-      this.dialogSelectVisible = ref(true);
+      this.ProblemDialogVisible = ref(true);
       console.log(this.problemId);
     },
     MoveProblem() {
-      FavoriteService.moveProblem(
+      var code = FavoriteService.moveProblem(
         this.srcId,
         this.dstId,
         this.problemId,
         true
-      ).then((response) => {
-        if (response.status === "success") {
-          ElMessage({
-            message: "移动问题成功！",
-            type: "success",
-          });
-          this.updateProblemList();
-        } else {
-          ElMessage({
-            message: "移动问题失败！",
-            type: "success",
-          });
-        }
-      });
+      );
+      if (code == 200) {
+        ElMessage({
+          message: "移动问题成功！",
+          type: "success",
+        });
+        this.updateProblemList();
+      } else {
+        ElMessage({
+          message: "移动问题失败！",
+          type: "error",
+        });
+      }
     },
     handleDelete(row) {
-      FavoriteService.deleteProblem(this.favoriteId, row.id).then(
-        (response) => {
-          if (response.status === "success") {
-            ElMessage({
-              message: "删除成功！",
-              type: "success",
-            });
-          } else {
-            ElMessage({
-              message: "删除失败！",
-              type: "success",
-            });
-          }
-        }
-      );
+      var code = FavoriteService.deleteProblem(this.favoriteId, row.id);
+      if (code === 200) {
+        ElMessage({
+          message: "删除成功！",
+          type: "success",
+        });
+      } else {
+        ElMessage({
+          message: "删除失败！",
+          type: "error",
+        });
+      }
     },
     getSortClass: function (key) {
       const sort = this.listQuery.sort;

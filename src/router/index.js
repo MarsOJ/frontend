@@ -66,7 +66,7 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+/* router.beforeEach((to, from, next) => {
   // trying to access a restricted page + not logged in
   // redirect to login page
   // const loggedIn = localStorage.getItem("user");
@@ -89,6 +89,6 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
-});
+}); */
 
 export default router;

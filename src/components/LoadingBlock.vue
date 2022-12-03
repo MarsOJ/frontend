@@ -1,5 +1,4 @@
-<script setup>
-</script>
+<script setup></script>
 
 <template>
   <div id="loading" class="fade-in">
@@ -31,7 +30,7 @@ export default {
       required: true,
     },
   },
-}
+};
 </script>
 
 <style scoped>

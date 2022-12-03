@@ -8,9 +8,16 @@ import LoadingBlock from "@/components/LoadingBlock.vue";
 <template>
   <div class="common-layout">
     <!-- TODO: check whether there's an ongoing match (socketConnected) -->
-    <LoadingBlock v-if="pairing" :cond="[!socketConnected && !paired, socketConnected && !paired, paired]"
-      :msg="['连接服务器中……', '配对中……', '加载中……']">
-      <el-button v-if="!paired" id="cancel-button" @click="this.cancelPairing()">
+    <LoadingBlock
+      v-if="pairing"
+      :cond="[!socketConnected && !paired, socketConnected && !paired, paired]"
+      :msg="['连接服务器中……', '配对中……', '加载中……']"
+    >
+      <el-button
+        v-if="!paired"
+        id="cancel-button"
+        @click="this.cancelPairing()"
+      >
         取消匹配
       </el-button>
     </LoadingBlock>
@@ -36,7 +43,11 @@ import LoadingBlock from "@/components/LoadingBlock.vue";
               </div>
             </el-main>
             <el-aside class="aside">
-              <LeaderSideBar :data="leaderData" :userRank="userRank" class="fade-down" />
+              <LeaderSideBar
+                :data="leaderData"
+                :userRank="userRank"
+                class="fade-down"
+              />
             </el-aside>
           </el-container>
           <Footer />
@@ -126,11 +137,13 @@ export default {
 .page-main {
   align-items: center;
   text-align: center;
-  background: linear-gradient(to bottom left,
+  background: linear-gradient(
+      to bottom left,
       #d2eedb,
       transparent,
       transparent,
-      #d2eedb),
+      #d2eedb
+    ),
     linear-gradient(to bottom right, #d3d3fc, transparent, transparent, #d3d3fc);
 }
 

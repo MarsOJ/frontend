@@ -1,6 +1,9 @@
 <template>
   <div class="hair-salon-bar-container">
-    <div :style="{ width: `${width}px`, height: `${height}px`, '--score': score }" class="bar"></div>
+    <div
+      :style="{ width: `${width}px`, height: `${height}px`, '--score': score }"
+      class="bar"
+    ></div>
   </div>
 </template>
 
@@ -42,12 +45,15 @@ $sub-color: #c29292;
     left: 0;
     width: 200px;
     height: 1400px;
-    background: repeating-linear-gradient(45deg,
+    background: repeating-linear-gradient(
+        45deg,
         $sub-color,
         $sub-color 10px,
         transparent 11px,
         transparent 19px,
-        $sub-color 20px) no-repeat 0 0;
+        $sub-color 20px
+      )
+      no-repeat 0 0;
     animation: move 1s linear infinite;
   }
 }
