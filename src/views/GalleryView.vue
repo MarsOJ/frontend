@@ -1,6 +1,7 @@
 <script setup>
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
+import CountdownTimer from "@/components/CountdownTimer.vue";
 </script>
 
 <template>
@@ -9,13 +10,18 @@ import Footer from "@/components/PageFooter.vue";
       <el-scrollbar>
         <div ref="mainpage">
           <NaviBar />
-          <el-container class="page-main"> qwfqwfqwf </el-container>
+          <el-container class="page-main">
+            <CountdownTimer />
+          </el-container>
           <Footer />
         </div>
       </el-scrollbar>
     </el-container>
   </div>
 </template>
+
+<script>
+</script>
 
 <style scoped>
 .common-layout {

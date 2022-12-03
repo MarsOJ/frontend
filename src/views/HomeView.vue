@@ -62,7 +62,7 @@ import ScrollUpButton from "@/components/ScrollUpButton.vue";
                   <div class="week vertical-text">星期{{ week }}</div>
                 </div>
                 <div class="count-down">
-                  据
+                  距
                   <span style="color: grey; font-size: 16px">{{
                       incomingCompetition
                   }}</span>

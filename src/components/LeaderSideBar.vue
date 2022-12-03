@@ -13,7 +13,7 @@
         <img class="user-pic" src="../assets/user.png" />
         <div>{{ data[1].name }}</div>
       </div>
-      <div class="user-info" id="third-user">
+      <div class="user-info" id="third-user" v-if="(data.length >= 3)">
         <img class="user-pic" src="../assets/user.png" />
         <div>{{ data[2].name }}</div>
       </div>

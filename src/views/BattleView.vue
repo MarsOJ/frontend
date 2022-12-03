@@ -28,7 +28,7 @@ import LoadingBlock from "@/components/LoadingBlock.vue";
                   opportunities.
                 </div>
                 <el-button id="pk-button" @click="this.startPairing()">
-                  Start Pairing
+                  开始匹配
                 </el-button>
                 <div class="info">
                   当前等级：Level 5 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;钱：没有
@@ -124,6 +124,8 @@ export default {
 }
 
 .page-main {
+  padding-left: 2em;
+  padding-right: 2em;
   align-items: center;
   text-align: center;
   background: linear-gradient(to bottom left,
@@ -162,7 +164,7 @@ export default {
   font-size: 18px;
   font-weight: bold;
   color: white;
-  background-color: #068932;
+  background-color: #00a8b1;
 }
 
 .main .info {

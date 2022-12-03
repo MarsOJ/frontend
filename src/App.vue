@@ -8,6 +8,8 @@ import { RouterView } from "vue-router";
 
 <style>
 @import "@/assets/css/animation.css";
+@import url(https://fonts.googleapis.com/css?family=Nunito);
+@import url(https://fonts.googleapis.com/css?family=Lato);
 
 html,
 body {
@@ -16,7 +18,7 @@ body {
   padding: 0px;
   width: 100%;
   height: 100%;
-  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
+  font-family: Lato, Nunito, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
     Microsoft YaHei, \5fae\8f6f\96c5\9ed1, Arial, sans-serif;
 }
 

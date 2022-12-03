@@ -1,12 +1,6 @@
 <template>
   <span class="number-grow-warp">
-    <span
-      ref="numberGrow"
-      :data-time="time"
-      class="number-grow"
-      :data-value="value"
-      >0</span
-    >
+    <span ref="numberGrow" :data-time="time" class="number-grow" :data-value="value">0</span>
   </span>
 </template>
 
@@ -68,6 +62,7 @@ export default {
 
 <style lang="scss" scoped>
 .number-grow-warp {
+  width: 36px;
   transform: translateZ(0);
   font-size: 20px;
   font-weight: bold;
