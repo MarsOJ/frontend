@@ -2,7 +2,7 @@
 
 <template>
   <div id="loading" class="fade-in">
-    <div class="loading-block fade-in">
+    <div class="loading-block fade-in" v-if="showMsg">
       <div id="loading-image"></div>
       <div id="loading-info">
         <div v-for="(condition, index) in cond">
@@ -23,12 +23,16 @@ export default {
   props: {
     cond: {
       type: Array,
-      required: true,
+      default: [],
     },
     msg: {
       type: Array,
-      required: true,
+      default: [],
     },
+    showMsg: {
+      type: Boolean,
+      default: true,
+    }
   },
 };
 </script>
@@ -36,7 +40,7 @@ export default {
 <style scoped>
 #loading {
   position: absolute;
-  z-index: 1000;
+  z-index: 100;
   width: 100%;
   height: 100%;
   background-color: rgba(128, 128, 128, 0.4);
