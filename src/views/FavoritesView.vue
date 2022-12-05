@@ -6,6 +6,8 @@ import FavoriteService from "@/services/favorites.service";
 import { ref } from "vue";
 import { Edit, Search, Delete } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import "element-plus/theme-chalk/el-message.css";
+import "element-plus/theme-chalk/el-message-box.css";
 </script>
 
 <template>
@@ -161,6 +163,38 @@ import { ElMessage, ElMessageBox } from "element-plus";
                   v-model="ProblemDialogVisible"
                   :append-to-body="true"
                 >
+                  <el-form
+                    ref="dataForm"
+                    :model="moveFavoriteModel"
+                    label-position="left"
+                    label-width="70px"
+                    style="width: 400px; margin-left: 50px"
+                  >
+                    <el-form-item label="命名" prop="name">
+                      <el-select
+                        v-model="moveFavoriteModel.name"
+                        style="width: 140px"
+                        class="filter-item"
+                      >
+                        <el-option
+                          v-for="item in favoriteList"
+                          :key="item.id"
+                          :label="item.name"
+                          :value="item.id"
+                        />
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="是否复制" prop="shouldDelete">
+                      <el-select
+                        v-model="moveFavoriteModel.shouldDelete"
+                        style="width: 140px"
+                        class="filter-item"
+                      >
+                        <el-option :label="'是'" :value="true" />
+                        <el-option :label="'否'" :value="false" />
+                      </el-select>
+                    </el-form-item>
+                  </el-form>
                   <div class="dialog-footer">
                     <el-button
                       @click="ProblemDialogVisible = false"
@@ -250,6 +284,10 @@ export default {
       temp: {
         name: "",
       },
+      moveFavoriteModel: {
+        name: "0",
+        shouldDelete: true,
+      },
       rules: {
         name: [
           { required: true, message: "请输入收藏夹名字", trigger: "change" },
@@ -335,6 +373,7 @@ export default {
           });
         }
       });
+      this.FavoriteDialogVisible = ref(false);
     },
     handleDeleteFavorite() {
       ElMessageBox.alert("您确定要删除当前收藏夹吗？该操作不可恢复！", "警告", {
@@ -366,10 +405,10 @@ export default {
     },
     MoveProblem() {
       FavoriteService.moveProblem(
-        this.srcId,
-        this.dstId,
+        this.favoriteId,
+        this.moveFavoriteModel.name,
         this.problemId,
-        true
+        this.moveFavoriteModel.shouldDelete
       ).then((code) => {
         if (code == 200) {
           ElMessage({
@@ -384,6 +423,7 @@ export default {
           });
         }
       });
+      this.ProblemDialogVisible = ref(false);
     },
     handleDelete(row) {
       FavoriteService.deleteProblem(this.favoriteId, row.id).then((code) => {

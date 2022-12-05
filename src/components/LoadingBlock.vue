@@ -32,7 +32,7 @@ export default {
     showMsg: {
       type: Boolean,
       default: true,
-    }
+    },
   },
 };
 </script>

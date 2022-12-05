@@ -20,8 +20,7 @@ import CountdownTimer from "@/components/CountdownTimer.vue";
   </div>
 </template>
 
-<script>
-</script>
+<script></script>
 
 <style scoped>
 .common-layout {

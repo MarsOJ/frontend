@@ -27,24 +27,27 @@ export default {
   computed: {
     numbers() {
       return [...Array(this.value + 1).keys()].reverse();
-    }
+    },
   },
   mounted() {
-    const nums = document.querySelectorAll('.nums span');
-    const counter = document.querySelector('.counter');
-    const finalMessage = document.querySelector('.final');
+    const nums = document.querySelectorAll(".nums span");
+    const counter = document.querySelector(".counter");
+    const finalMessage = document.querySelector(".final");
     const penultimate = nums.length - 1;
-    nums[0].classList.add('in');
+    nums[0].classList.add("in");
     nums.forEach((num, idx) => {
-      num.addEventListener('animationend', (e) => {
-        if (e.animationName.startsWith('goIn') && idx !== penultimate) {
-          num.classList.remove('in');
-          num.classList.add('out');
-        } else if (e.animationName.startsWith('goOut') && num.nextElementSibling) {
-          num.nextElementSibling.classList.add('in');
+      num.addEventListener("animationend", (e) => {
+        if (e.animationName.startsWith("goIn") && idx !== penultimate) {
+          num.classList.remove("in");
+          num.classList.add("out");
+        } else if (
+          e.animationName.startsWith("goOut") &&
+          num.nextElementSibling
+        ) {
+          num.nextElementSibling.classList.add("in");
         } else {
-          counter.classList.add('hide');
-          finalMessage.classList.add('show');
+          counter.classList.add("hide");
+          finalMessage.classList.add("show");
           this.$emit("end");
         }
       });
@@ -89,7 +92,7 @@ export default {
 
 .counter.hide {
   transform: translate(-50%, -50%) scale(0);
-  animation: hide .2s ease-out;
+  animation: hide 0.2s ease-out;
 }
 
 @keyframes hide {
@@ -111,7 +114,7 @@ export default {
 
 .final.show {
   transform: translate(-50%, -50%) scale(1);
-  animation: show .3s ease-in;
+  animation: show 0.3s ease-in;
 }
 
 @keyframes show {
@@ -147,11 +150,11 @@ export default {
 
 .nums span.in {
   transform: translate(-50%, -50%) rotate(0deg);
-  animation: goIn .5s ease-in-out;
+  animation: goIn 0.5s ease-in-out;
 }
 
 .nums span.out {
-  animation: goOut .5s ease-in-out;
+  animation: goOut 0.5s ease-in-out;
 }
 
 @keyframes goIn {
@@ -171,11 +174,9 @@ export default {
   100% {
     transform: translate(-50%, -50%) rotate(0deg);
   }
-
 }
 
 @keyframes goOut {
-
   0%,
   30% {
     transform: translate(-50%, -50%) rotate(0deg);

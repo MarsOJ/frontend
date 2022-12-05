@@ -9,7 +9,7 @@ registerTheme("dark", dark);
 export default {
   name: "ScoreGraph",
   components: {
-    VChart
+    VChart,
   },
   props: {
     history: {
@@ -33,24 +33,23 @@ export default {
           type: "category",
           name: "题目",
           axisTick: {
-            alignWithLabel: true
+            alignWithLabel: true,
           },
           data: null,
         },
         yAxis: {
           type: "value",
-          name: "分数"
+          name: "分数",
         },
         series: [],
-      })
+      }),
     };
   },
   mounted() {
     this.history.forEach((element, index) => {
       if (index == 0) {
         this.option.xAxis.data = element;
-      }
-      else {
+      } else {
         this.option.series.push({
           name: this.users[index - 1],
           type: "line",

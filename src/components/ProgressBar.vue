@@ -1,12 +1,18 @@
 <template>
-  <div class="meter" :class="{
-    green: percentage >= 0.7,
-    orange: percentage >= 0.3 && percentage < 0.7,
-    red: percentage < 0.3,
-  }">
-    <span :class="{
-      enabled: enabled
-    }" :style="{ '--barWidth': `${barWidth}` }"></span>
+  <div
+    class="meter"
+    :class="{
+      green: percentage >= 0.7,
+      orange: percentage >= 0.3 && percentage < 0.7,
+      red: percentage < 0.3,
+    }"
+  >
+    <span
+      :class="{
+        enabled: enabled,
+      }"
+      :style="{ '--barWidth': `${barWidth}` }"
+    ></span>
   </div>
 </template>
 
@@ -21,7 +27,7 @@ export default {
     enabled: {
       type: Boolean,
       default: true,
-    }
+    },
   },
   computed: {
     barWidth() {
@@ -44,7 +50,7 @@ export default {
   box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.3);
 }
 
-.meter>span {
+.meter > span {
   display: block;
   height: 100%;
   width: 0;
@@ -57,26 +63,28 @@ export default {
   transition: width 1s ease-out;
 }
 
-.meter>span.enabled {
+.meter > span.enabled {
   width: var(--barWidth);
 }
 
-.meter>span:after,
-.animate>span>span {
+.meter > span:after,
+.animate > span > span {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-  background-image: linear-gradient(-45deg,
-      rgba(255, 255, 255, 0.2) 25%,
-      transparent 25%,
-      transparent 50%,
-      rgba(255, 255, 255, 0.2) 50%,
-      rgba(255, 255, 255, 0.2) 75%,
-      transparent 75%,
-      transparent);
+  background-image: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
   z-index: 1;
   background-size: 50px 50px;
   animation: move 2s linear infinite;
@@ -87,7 +95,7 @@ export default {
   overflow: hidden;
 }
 
-.animate>span:after {
+.animate > span:after {
   display: none;
 }
 
@@ -101,20 +109,20 @@ export default {
   }
 }
 
-.green>span {
+.green > span {
   background-image: linear-gradient(#84e863, #31b106);
 }
 
-.orange>span {
+.orange > span {
   background-image: linear-gradient(#f1a165, #f36d0a);
 }
 
-.red>span {
+.red > span {
   background-image: linear-gradient(#f0a3a3, #f42323);
 }
 
-.nostripes>span>span,
-.nostripes>span::after {
+.nostripes > span > span,
+.nostripes > span::after {
   background-image: none;
 }
 </style>
