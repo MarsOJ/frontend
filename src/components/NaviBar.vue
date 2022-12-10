@@ -6,27 +6,29 @@ import { RouterLink } from "vue-router";
   <el-affix>
     <nav>
       <RouterLink to="/home">
-        <img
-          src="../assets/main-logo.png"
-          @click="this.$router.push('/home')"
-        />
+        <img src="../assets/main-logo.png" @click="this.$router.push('/home')" />
       </RouterLink>
 
       <div class="fill"></div>
 
       <span class="links">
-        <RouterLink to="/battle">
+        <RouterLink to="/battle" class="link">
           <div>答题对战</div>
         </RouterLink>
-        <RouterLink to="/favorites">
+        <RouterLink to="/favorites" class="link">
           <div>收藏夹</div>
         </RouterLink>
-        <RouterLink to="/gallery">
+        <RouterLink to="/gallery" class="link">
           <div>礼品屋</div>
         </RouterLink>
-        <RouterLink to="/personal">
+        <RouterLink to="/personal" class="link" :class="{ 'router-link-active': $route.path.startsWith('/personal') }">
           <div>
             {{ username }}
+          </div>
+          <div class="dropdown-content" style="{'--num': 3}">
+            <RouterLink to="/personal">个人资料</RouterLink>
+            <RouterLink to="/personal/settings">设置</RouterLink>
+            <RouterLink to="/logout">登出</RouterLink>
           </div>
         </RouterLink>
       </span>
@@ -51,7 +53,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+$dropdown-height: 42px;
+
 * {
   margin: 0;
   padding: 0;
@@ -66,6 +70,7 @@ nav {
   background-size: cover;
   position: relative;
   z-index: 100;
+  box-shadow: 0 2px 10px rgba(34, 34, 34, 0.5);
 }
 
 nav img {
@@ -77,11 +82,9 @@ nav img {
 nav .fill {
   height: 100%;
   flex-grow: 1;
-  background-image: linear-gradient(
-    to right,
-    transparent,
-    rgba(0, 20, 18, 0.8)
-  );
+  background-image: linear-gradient(to right,
+      transparent,
+      rgba(0, 20, 18, 0.8));
 }
 
 nav .links {
@@ -95,16 +98,21 @@ nav .links {
   background: rgba(0, 20, 18, 0.8);
 }
 
-nav .links a {
+nav .links a.link {
   height: 100%;
+  min-width: 92px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 0 1rem;
+  position: relative;
   border-left: 0px solid var(--color-border);
+  border-bottom: transparent 5px solid;
+  border-top: transparent 5px solid;
 }
 
-nav .links a,
+nav .links a.link,
 .green {
   text-decoration: none;
   color: white;
@@ -112,19 +120,20 @@ nav .links a,
 }
 
 @media (hover: hover) {
-  nav .links a:hover {
+  nav .links a.link:hover {
     background-color: darkcyan;
   }
 }
 
-nav .links a.router-link-exact-active {
-  border-bottom: white 5px solid !important;
-  border-top: transparent 5px solid !important;
+nav .links a.link.router-link-active,
+nav .links a.link.router-link-exact-active {
+  border-bottom: white 5px solid;
+  border-top: transparent 5px solid;
 }
 
-nav .links a:first-of-type {
+/* nav .links a.link:first-of-type {
   border: 0;
-}
+} */
 
 @media (max-width: 800px) {
   nav {
@@ -134,5 +143,45 @@ nav .links a:first-of-type {
   .links {
     display: none !important;
   }
+}
+
+.dropdown-content {
+  width: 100%;
+  height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 55px;
+  right: 0;
+  background-color: #21202e;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  overflow: hidden;
+  transition: all 0.2s ease-out;
+}
+
+a.link:hover .dropdown-content {
+  height: calc(var(--num) * $dropdown-height);
+}
+
+.dropdown-content a {
+  width: 100%;
+  height: 0;
+  font-size: 14px;
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease-out;
+}
+
+.dropdown-content a:hover {
+  background-color: darkcyan;
+}
+
+a.link:hover .dropdown-content a {
+  height: $dropdown-height;
 }
 </style>

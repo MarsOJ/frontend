@@ -29,6 +29,14 @@ class AuthService {
     });
   }
 
+  changePwd(user, newPwd) {
+    return axios.post(API_URL + "change-password/", {
+      username: user.username,
+      password: user.password,
+      newPassword: newPwd,
+    });
+  }
+
   loginState() {
     return axios.get(API_URL + "state/").then((response) => {
       return response.data;
