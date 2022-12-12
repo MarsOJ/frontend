@@ -23,11 +23,11 @@ export default {
   props: {
     cond: {
       type: Array,
-      default: [],
+      default: () => [],
     },
     msg: {
       type: Array,
-      default: [],
+      default: () => [],
     },
     showMsg: {
       type: Boolean,
