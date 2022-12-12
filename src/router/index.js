@@ -56,6 +56,19 @@ const router = createRouter({
       name: "personal",
       component: () => import("../views/PersonalView.vue"),
       meta: { requiresAuth: true },
+      children: [
+        {
+          path: "history",
+          alias: [""],
+          name: "history",
+          component: () => import("../views/personal/PKHistoryView.vue"),
+        },
+        {
+          path: "settings",
+          name: "settings",
+          component: () => import("../views/personal/SettingsView.vue"),
+        },
+      ]
     },
     {
       path: "/home/news/:id",
