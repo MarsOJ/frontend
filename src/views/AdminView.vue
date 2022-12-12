@@ -1,0 +1,683 @@
+<script setup>
+import NaviBar from "@/components/NaviBar.vue";
+import Footer from "@/components/PageFooter.vue";
+import Pagination from "@/components/Pagination.vue";
+import FavoriteService from "@/services/favorites.service";
+import { ref } from "vue";
+import { Edit, Refresh, Delete, Download } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import "element-plus/theme-chalk/el-message.css";
+import "element-plus/theme-chalk/el-message-box.css";
+</script>
+
+<template>
+  <div class="common-layout">
+    <el-container direction="vertical">
+      <el-scrollbar>
+        <div ref="mainpage">
+          <NaviBar />
+          <el-container class="page-main">
+            <el-main>
+              <el-tabs v-model="activeName" class="demo-tabs">
+                <el-tab-pane label="资讯管理" name="info">
+                  <div class="app-container">
+                    <div class="filter-container">
+                      <el-button
+                        class="filter-item"
+                        type="danger"
+                        :icon="Delete"
+                        size="small"
+                        @click="handleFilter"
+                      >
+                        批量删除
+                      </el-button>
+                      <el-button
+                        class="filter-item"
+                        style="margin-left: 10px"
+                        type="primary"
+                        size="small"
+                        :icon="Edit"
+                        @click="handleAddFavorite"
+                      >
+                        添加
+                      </el-button>
+                    </div>
+
+                    <el-table
+                      :key="tableKey"
+                      v-loading="listLoading"
+                      ref="mutipleTableRef"
+                      :data="list"
+                      border
+                      fit
+                      highlight-current-row
+                      style="width: 100%"
+                      @sort-change="sortChange"
+                    >
+                      <el-table-column type="selection" width="55" />
+                      <el-table-column
+                        label="序号"
+                        prop="id"
+                        sortable="custom"
+                        align="center"
+                        width="80"
+                      >
+                        <template v-slot="{ $index }">
+                          <span>{{ $index + 1 }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="标题"
+                        min-width="150px"
+                        align="center"
+                      >
+                        <template v-slot="{ row }">
+                          <span>{{ row.title }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="日期"
+                        width="150px"
+                        align="center"
+                      >
+                        <template v-slot="{ row }">
+                          <span>{{ row.date }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="操作"
+                        align="center"
+                        width="330"
+                        class-name="small-padding fixed-width"
+                      >
+                        <template v-slot="{ row, $index }">
+                          <el-button type="primary" @click="handleCheck(row)">
+                            查看
+                          </el-button>
+                          <el-button
+                            type="danger"
+                            @click="handleDelete(row, $index)"
+                          >
+                            删除
+                          </el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+
+                    <pagination
+                      v-show="total > 0"
+                      :total="total"
+                      v-model:page="listQuery.page"
+                      v-model:limit="listQuery.limit"
+                      @pagination="updateProblemList"
+                    />
+
+                    <el-dialog
+                      title="移动问题至"
+                      v-model="ProblemDialogVisible"
+                      :append-to-body="true"
+                    >
+                      <el-form
+                        ref="dataForm"
+                        :model="moveFavoriteModel"
+                        label-position="left"
+                        label-width="70px"
+                        style="width: 400px; margin-left: 50px"
+                      >
+                        <el-form-item label="命名" prop="name">
+                          <el-select
+                            v-model="moveFavoriteModel.name"
+                            style="width: 140px"
+                            class="filter-item"
+                          >
+                            <el-option
+                              v-for="item in favoriteList"
+                              :key="item.id"
+                              :label="item.name"
+                              :value="item.id"
+                            />
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item label="是否复制" prop="shouldDelete">
+                          <el-select
+                            v-model="moveFavoriteModel.shouldDelete"
+                            style="width: 140px"
+                            class="filter-item"
+                          >
+                            <el-option :label="'是'" :value="true" />
+                            <el-option :label="'否'" :value="false" />
+                          </el-select>
+                        </el-form-item>
+                      </el-form>
+                      <div class="dialog-footer">
+                        <el-button
+                          @click="ProblemDialogVisible = false"
+                          size="small"
+                        >
+                          取消
+                        </el-button>
+                        <el-button
+                          type="primary"
+                          @click="MoveProblem"
+                          size="small"
+                        >
+                          确定
+                        </el-button>
+                      </div>
+                    </el-dialog>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="题库管理" name="problem">
+                  <div class="app-container">
+                    <div class="filter-container">
+                      <el-button
+                        class="filter-item"
+                        type="danger"
+                        :icon="Delete"
+                        size="small"
+                        @click="handleFilter"
+                      >
+                        批量删除
+                      </el-button>
+                      <el-button
+                        class="filter-item"
+                        style="margin-left: 10px"
+                        type="primary"
+                        size="small"
+                        :icon="Edit"
+                        @click="handleAddFavorite"
+                      >
+                        添加
+                      </el-button>
+                    </div>
+
+                    <el-table
+                      :key="tableKey"
+                      v-loading="listLoading"
+                      :data="list"
+                      border
+                      fit
+                      highlight-current-row
+                      style="width: 100%"
+                      @sort-change="sortChange"
+                    >
+                      <el-table-column
+                        label="序号"
+                        prop="id"
+                        sortable="custom"
+                        align="center"
+                        width="80"
+                      >
+                        <template v-slot="{ $index }">
+                          <span>{{ $index + 1 }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="日期"
+                        width="150px"
+                        align="center"
+                      >
+                        <template v-slot="{ row }">
+                          <span>{{ row.date }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="标题" width="150px">
+                        <template v-slot="{ row }">
+                          <span class="link-type">{{ row.title }}</span>
+                          <el-tag v-if="row.type === 1">单选题</el-tag>
+                          <el-tag v-else-if="row.type === 2">一般多选题</el-tag>
+                          <el-tag v-else-if="row.type === 3">程序多选题</el-tag>
+                          <el-tag v-else>其他题型</el-tag>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="内容"
+                        min-width="150px"
+                        align="center"
+                      >
+                        <template v-slot="{ row }">
+                          <span>{{ row.content }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="操作"
+                        align="center"
+                        width="330"
+                        class-name="small-padding fixed-width"
+                      >
+                        <template v-slot="{ row, $index }">
+                          <el-button type="primary" @click="handleCheck(row)">
+                            查看
+                          </el-button>
+                          <el-button
+                            type="danger"
+                            @click="handleDelete(row, $index)"
+                          >
+                            删除
+                          </el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+
+                    <pagination
+                      v-show="total > 0"
+                      :total="total"
+                      v-model:page="listQuery.page"
+                      v-model:limit="listQuery.limit"
+                      @pagination="updateProblemList"
+                    />
+
+                    <el-dialog
+                      title="移动问题至"
+                      v-model="ProblemDialogVisible"
+                      :append-to-body="true"
+                    >
+                      <el-form
+                        ref="dataForm"
+                        :model="moveFavoriteModel"
+                        label-position="left"
+                        label-width="70px"
+                        style="width: 400px; margin-left: 50px"
+                      >
+                        <el-form-item label="命名" prop="name">
+                          <el-select
+                            v-model="moveFavoriteModel.name"
+                            style="width: 140px"
+                            class="filter-item"
+                          >
+                            <el-option
+                              v-for="item in favoriteList"
+                              :key="item.id"
+                              :label="item.name"
+                              :value="item.id"
+                            />
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item label="是否复制" prop="shouldDelete">
+                          <el-select
+                            v-model="moveFavoriteModel.shouldDelete"
+                            style="width: 140px"
+                            class="filter-item"
+                          >
+                            <el-option :label="'是'" :value="true" />
+                            <el-option :label="'否'" :value="false" />
+                          </el-select>
+                        </el-form-item>
+                      </el-form>
+                      <div class="dialog-footer">
+                        <el-button
+                          @click="ProblemDialogVisible = false"
+                          size="small"
+                        >
+                          取消
+                        </el-button>
+                        <el-button
+                          type="primary"
+                          @click="MoveProblem"
+                          size="small"
+                        >
+                          确定
+                        </el-button>
+                      </div>
+                    </el-dialog>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="对战记录" name="battle">
+                  <div class="app-container">
+                    <div class="filter-container">
+                      <el-button
+                        class="filter-item"
+                        type="primary"
+                        :icon="Refresh"
+                        size="small"
+                        @click="handleFilter"
+                      >
+                        刷新
+                      </el-button>
+                    </div>
+
+                    <el-table
+                      :key="tableKey"
+                      v-loading="listLoading"
+                      :data="list"
+                      border
+                      fit
+                      highlight-current-row
+                      style="width: 100%"
+                      @sort-change="sortChange"
+                    >
+                      <el-table-column
+                        label="序号"
+                        prop="id"
+                        sortable="custom"
+                        align="center"
+                        width="80"
+                      >
+                        <template v-slot="{ $index }">
+                          <span>{{ $index + 1 }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="获胜方ID"
+                        min-width="150px"
+                        align="center"
+                      >
+                        <template v-slot="{ row }">
+                          <span>{{ row.winner_id }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="失败方ID"
+                        min-width="150px"
+                        align="center"
+                      >
+                        <template v-slot="{ row }">
+                          <span>{{ row.loser_id }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="比赛时间"
+                        width="150px"
+                        align="center"
+                      >
+                        <template v-slot="{ row }">
+                          <span>{{ row.date }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="比赛日志"
+                        align="center"
+                        width="330"
+                        class-name="small-padding fixed-width"
+                      >
+                        <template v-slot="{ row }">
+                          <el-button
+                            type="primary"
+                            @click="handleDownload(row)"
+                            :icon="Download"
+                          >
+                            下载
+                          </el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+
+                    <pagination
+                      v-show="total > 0"
+                      :total="total"
+                      v-model:page="listQuery.page"
+                      v-model:limit="listQuery.limit"
+                      @pagination="updateProblemList"
+                    />
+
+                    <el-dialog
+                      title="移动问题至"
+                      v-model="ProblemDialogVisible"
+                      :append-to-body="true"
+                    >
+                      <el-form
+                        ref="dataForm"
+                        :model="moveFavoriteModel"
+                        label-position="left"
+                        label-width="70px"
+                        style="width: 400px; margin-left: 50px"
+                      >
+                        <el-form-item label="命名" prop="name">
+                          <el-select
+                            v-model="moveFavoriteModel.name"
+                            style="width: 140px"
+                            class="filter-item"
+                          >
+                            <el-option
+                              v-for="item in favoriteList"
+                              :key="item.id"
+                              :label="item.name"
+                              :value="item.id"
+                            />
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item label="是否复制" prop="shouldDelete">
+                          <el-select
+                            v-model="moveFavoriteModel.shouldDelete"
+                            style="width: 140px"
+                            class="filter-item"
+                          >
+                            <el-option :label="'是'" :value="true" />
+                            <el-option :label="'否'" :value="false" />
+                          </el-select>
+                        </el-form-item>
+                      </el-form>
+                      <div class="dialog-footer">
+                        <el-button
+                          @click="ProblemDialogVisible = false"
+                          size="small"
+                        >
+                          取消
+                        </el-button>
+                        <el-button
+                          type="primary"
+                          @click="MoveProblem"
+                          size="small"
+                        >
+                          确定
+                        </el-button>
+                      </div>
+                    </el-dialog>
+                  </div>
+                </el-tab-pane>
+              </el-tabs>
+            </el-main>
+          </el-container>
+          <Footer />
+        </div>
+      </el-scrollbar>
+    </el-container>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      activeName: ref("info"),
+      mutipleTableRef: ref([0]),
+      tableKey: 0,
+      list: [
+        // {
+        //   title: "test", //string
+        //   id: 1, //string
+        //   content: "This is a test problem", //20-30 characters
+        //   type: 1, //
+        //   date: "2022-09-19",
+        // },
+      ],
+      listLoading: false,
+      favoriteList: [
+        // {
+        //   name: "默认收藏夹",
+        //   id: "0",
+        // },
+      ],
+      favoriteId: "0",
+      total: 1,
+      listQuery: {
+        page: 1,
+        limit: 20,
+        title: undefined,
+        type: undefined,
+        sort: "+id",
+      },
+      sortOptions: [
+        { label: "升序", key: "+id" },
+        { label: "降序", key: "-id" },
+      ],
+      temp: {
+        name: "",
+      },
+      moveFavoriteModel: {
+        name: "0",
+        shouldDelete: true,
+      },
+      rules: {
+        name: [
+          { required: true, message: "请输入收藏夹名字", trigger: "change" },
+        ],
+      },
+      ProblemDialogVisible: ref(false),
+      FavoriteDialogVisible: ref(false),
+    };
+  },
+  created() {
+    this.updateFavoriteList();
+    this.updateProblemList();
+  },
+  methods: {
+    updateFavoriteList() {
+      FavoriteService.getFavoriteList().then((list) => {
+        console.log(list);
+        if (list == null) {
+          ElMessage({
+            message: "更新收藏夹列表发生错误",
+            type: "error",
+          });
+        } else {
+          this.favoriteList = list;
+        }
+        console.log("updateFavoriteList()", this.favoriteList);
+      });
+    },
+    updateProblemList() {
+      this.listLoading = true;
+      FavoriteService.getProblemScratch(
+        this.listQuery.page,
+        this.listQuery.limit,
+        this.favoriteId
+      ).then((list) => {
+        if (list != null) {
+          this.list = list;
+        } else {
+          ElMessageBox.alert("加载题目列表失败！", "错误", {
+            confirmButtonText: "OK",
+          });
+        }
+        this.listLoading = false;
+      });
+    },
+    handleChangeFavorite() {
+      this.updateProblemList();
+    },
+    handleFilter() {
+      this.listQuery.page = 1;
+      this.updateProblemList();
+    },
+    sortChange(data) {
+      const { prop, order } = data;
+      if (prop === "id") {
+        this.sortByID(order);
+      }
+    },
+    sortByID(order) {
+      if (order === "ascending") {
+        this.listQuery.sort = "+id";
+      } else {
+        this.listQuery.sort = "-id";
+      }
+      this.handleFilter();
+    },
+    handleAddFavorite() {
+      this.FavoriteDialogVisible = ref(true);
+    },
+    addFavorite() {
+      console.log("name", this.temp.name);
+      FavoriteService.addFavorite(this.temp.name).then((code) => {
+        if (code == 200) {
+          ElMessage({
+            message: "创建成功！",
+            type: "success",
+          });
+          this.updateFavoriteList();
+        } else {
+          ElMessage({
+            message: "创建收藏夹失败！",
+            type: "error",
+          });
+        }
+      });
+      this.FavoriteDialogVisible = ref(false);
+    },
+    handleDeleteFavorite() {
+      ElMessageBox.alert("您确定要删除当前收藏夹吗？该操作不可恢复！", "警告", {
+        cancelButtonText: "Cancel",
+        confirmButtonText: "OK",
+        callback: () => {
+          FavoriteService.deleteFavorite(this.favoriteId).then((code) => {
+            if (code == 200) {
+              this.updateFavoriteList();
+              this.updateProblemList();
+            } else {
+              ElMessage({
+                type: "error",
+                message: "删除收藏夹时出错",
+              });
+            }
+          });
+        },
+      });
+    },
+    handleCheck(row) {
+      //查看问题详情页面
+      console.log(row);
+    },
+    handleMove(row) {
+      this.problemId = row.id;
+      this.ProblemDialogVisible = ref(true);
+      console.log(this.problemId);
+    },
+    MoveProblem() {
+      FavoriteService.moveProblem(
+        this.favoriteId,
+        this.moveFavoriteModel.name,
+        this.problemId,
+        this.moveFavoriteModel.shouldDelete
+      ).then((code) => {
+        if (code == 200) {
+          ElMessage({
+            message: "移动问题成功！",
+            type: "success",
+          });
+          this.updateProblemList();
+        } else {
+          ElMessage({
+            message: "移动问题失败！",
+            type: "error",
+          });
+        }
+      });
+      this.ProblemDialogVisible = ref(false);
+    },
+    handleDelete(row) {
+      FavoriteService.deleteProblem(this.favoriteId, row.id).then((code) => {
+        if (code === 200) {
+          ElMessage({
+            message: "删除成功！",
+            type: "success",
+          });
+        } else {
+          ElMessage({
+            message: "删除失败！",
+            type: "error",
+          });
+        }
+      });
+    },
+    getSortClass: function (key) {
+      const sort = this.listQuery.sort;
+      return sort === `+${key}` ? "ascending" : "descending";
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+@import "@/styles/index.scss";
+</style>
