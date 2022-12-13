@@ -20,11 +20,29 @@ class InfoService {
     });
   }
 
-  addNews(news) {}
+  addNews(title, content, source) {
+    return axios
+      .post(API_URL + "insert/", {
+        title: title,
+        content: content,
+        source: source,
+      })
+      .then((response) => {
+        return response.status;
+      });
+  }
 
   modifyNews(news) {}
 
-  deleteNews(news) {}
+  deleteNews(news_id) {
+    return axios
+      .delete(API_URL + "delete/", {
+        id: news_id,
+      })
+      .then((response) => {
+        return response.status;
+      });
+  }
 }
 
 export default new InfoService();

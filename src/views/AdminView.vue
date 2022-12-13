@@ -3,7 +3,6 @@ import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import Pagination from "@/components/Pagination.vue";
 import InfoService from "@/services/info.service";
-import FavoriteService from "@/services/favorites.service";
 import ProblemService from "@/services/problem.service";
 import BattleFileService from "@/services/battlefile.service";
 import { ref } from "vue";
@@ -47,9 +46,8 @@ import "element-plus/theme-chalk/el-message-box.css";
                     </div>
 
                     <el-table
-                      :key="tableKey"
                       v-loading="listLoading"
-                      ref="mutipleTableRef"
+                      ref="mutipleInfoRef"
                       :data="list"
                       border
                       fit
@@ -190,8 +188,8 @@ import "element-plus/theme-chalk/el-message-box.css";
                     </div>
 
                     <el-table
-                      :key="tableKey"
                       v-loading="listLoading"
+                      ref="mutipleProblemRef"
                       :data="list"
                       border
                       fit
@@ -199,6 +197,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                       style="width: 100%"
                       @sort-change="sortChange"
                     >
+                      <el-table-column type="selection" width="55" />
                       <el-table-column
                         label="序号"
                         prop="id"
@@ -356,7 +355,6 @@ import "element-plus/theme-chalk/el-message-box.css";
                     </div>
 
                     <el-table
-                      :key="tableKey"
                       v-loading="listLoading"
                       :data="list"
                       border
@@ -499,8 +497,8 @@ export default {
   data() {
     return {
       activeName: ref("info"),
-      mutipleTableRef: ref([0]),
-      tableKey: 0,
+      mutipleInfoRef: ref([0]),
+      mutipleProblemRef: ref([0]),
       list: [
         // {
         //   title: "test", //string
@@ -524,7 +522,7 @@ export default {
         { label: "降序", key: "-id" },
       ],
       InfoModel: {
-        title: "0",
+        title: "",
         content: "",
         top: false,
         rules: [],
@@ -532,7 +530,7 @@ export default {
       },
       ProblemModel: {
         title: "",
-        content: "This is a test problem",
+        content: "",
         options: [],
         answer: ref("A"),
         type: 1, //
@@ -551,19 +549,8 @@ export default {
         case "info":
           break;
         case "problem":
-          FavoriteService.getProblemScratch(
-            this.listQuery.page,
-            this.listQuery.limit,
-            this.favoriteId
-          ).then((list) => {
-            if (list != null) {
-              this.list = list;
-            } else {
-              ElMessageBox.alert("加载题目列表失败！", "错误", {
-                confirmButtonText: "OK",
-              });
-            }
-            this.listLoading = false;
+          ProblemService.getProblemDetail().then((data) => {
+            this.list = data;
           });
           break;
         case "battle":
@@ -571,6 +558,7 @@ export default {
         default:
           break;
       }
+      this.listLoading = false;
     },
     sortChange(data) {
       const { prop, order } = data;
@@ -621,7 +609,23 @@ export default {
     createInfo() {
       //TODO: row -> param
       if (this.InfoModel.create) {
-        InfoService.addNews().then();
+        InfoService.addNews(
+          this.InfoModel.title,
+          this.InfoModel.content,
+          this.InfoModel.source
+        ).then((status) => {
+          if (status == 200) {
+            ElMessage({
+              message: "添加资讯成功",
+              type: "success",
+            });
+          } else {
+            ElMessage({
+              message: "添加失败",
+              type: "error",
+            });
+          }
+        });
       } else {
         InfoService.modifyNews().then();
       }
@@ -644,8 +648,19 @@ export default {
       });
     },
     deleteInfo(row) {
-      //TODO: row -> param
-      InfoService.deleteNews(row).then();
+      InfoService.deleteNews(row.id).then((status) => {
+        if (status == 200) {
+          ElMessage({
+            message: "成功删除",
+            type: "success",
+          });
+        } else {
+          ElMessage({
+            message: "删除失败",
+            type: "error",
+          });
+        }
+      });
     },
     addProblem() {
       this.ProblemModel = {
@@ -659,35 +674,61 @@ export default {
       this.ProblemDialogVisible = true;
     },
     createProblem() {
-      //TODO: row -> param
+      var problem = this.ProblemModel;
       if (this.ProblemModel.create) {
-        ProblemService.addProblem().then();
+        ProblemService.addProblem(problem).then((status) => {
+          if (status == 200) {
+            ElMessage({
+              message: "成功创建题目",
+              type: "success",
+            });
+          } else {
+            ElMessage({
+              message: "添加失败",
+              type: "error",
+            });
+          }
+        });
       } else {
-        ProblemService.modifyProblem().then();
+        ProblemService.modifyProblem(problem).then((status) => {
+          if (status == 200) {
+            ElMessage({
+              message: "成功修改题目",
+              type: "success",
+            });
+          } else {
+            ElMessage({
+              message: "修改失败",
+              type: "error",
+            });
+          }
+        });
       }
     },
     checkProblem(row) {
-      //TODO: row -> param
-      ProblemService.getProblemDetail(row).then((detail) => {
-        if (detail == null) {
-          ElMessage({
-            message: "获取题目详情发生错误",
-            type: "error",
-          });
-        } else {
-          this.ProblemModel.title = detail.title;
-          this.ProblemModel.content = detail.content;
-          this.ProblemModel.type = detail.type;
-          this.ProblemModel.options = detail.subproblem;
-          this.ProblemModel.answer = detail.answer;
-          this.ProblemModel.create = false;
-          this.ProblemDialogVisible = true;
-        }
-      });
+      this.ProblemModel.title = row.title;
+      this.ProblemModel.content = row.content;
+      this.ProblemModel.type = row.type;
+      this.ProblemModel.options = row.subproblem;
+      this.ProblemModel.answer = row.answer;
+      this.ProblemModel.create = false;
+      this.ProblemDialogVisible = true;
     },
     deleteProblem(row) {
       //TODO: row -> param
-      ProblemService.deleteProblem(row).then();
+      ProblemService.deleteProblem(row.id).then((status) => {
+        if (status == 200) {
+          ElMessage({
+            message: "成功删除",
+            type: "success",
+          });
+        } else {
+          ElMessage({
+            message: "删除失败",
+            type: "error",
+          });
+        }
+      });
     },
     handleDownload(row) {
       //TODO: row -> param

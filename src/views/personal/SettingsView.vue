@@ -69,7 +69,7 @@ import AuthService from "@/services/auth.service";
       <h2>管理权限</h2>
       <div class="settings-item">
         <div class="label">网站内容管理</div>
-        <a class="action" @click="$router.push('/home')">进入后台</a>
+        <a class="action" @click="$router.push('/admin')">进入后台</a>
       </div>
     </div>
   </div>
