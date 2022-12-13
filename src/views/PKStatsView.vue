@@ -105,18 +105,19 @@ export default {
   },
   methods: {
     addToFavorite(id) {
-      var code = FavoriteService.addProblem("0", [id]);
-      if (code == 200) {
-        ElMessage({
-          message: "收藏成功！",
-          type: "success",
-        });
-      } else {
-        ElMessage({
-          message: "收藏失败！",
-          type: "error",
-        });
-      }
+      FavoriteService.addProblem("0", id).then((code) => {
+        if (code == 200) {
+          ElMessage({
+            message: "收藏成功！",
+            type: "success",
+          });
+        } else {
+          ElMessage({
+            message: "收藏失败！",
+            type: "error",
+          });
+        }
+      });
     },
   },
   mounted() {
