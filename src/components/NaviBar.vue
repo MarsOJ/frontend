@@ -27,8 +27,8 @@ import { RouterLink } from "vue-router";
           </div>
           <div class="dropdown-content" style="{'--num': 3}">
             <RouterLink to="/personal">个人资料</RouterLink>
-            <RouterLink to="/personal/settings">设置</RouterLink>
-            <RouterLink to="/logout">登出</RouterLink>
+            <RouterLink to="/personal/settings">账户设置</RouterLink>
+            <RouterLink to="/logout">退出登录</RouterLink>
           </div>
         </RouterLink>
       </span>

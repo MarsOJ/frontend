@@ -32,6 +32,7 @@ const router = createRouter({
       path: "/battle/battling",
       name: "battling",
       component: () => import("../views/BattlingView.vue"),
+      meta: { requiresAuth: true },
     },
     {
       path: "/battle/stats",
@@ -80,6 +81,12 @@ const router = createRouter({
       path: "/personal/admin",
       name: "admin",
       component: () => import("../views/AdminView.vue"),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/logout",
+      name: "logout",
+      component: () => import("../views/LogoutView.vue"),
       meta: { requiresAuth: true },
     },
   ],

@@ -10,22 +10,23 @@ class AuthService {
         password: user.password,
       })
       .then((response) => {
-        // if (response.data.accessToken) {
-        //   localStorage.setItem("user", JSON.stringify(response.data));
-        // }
         return response.data;
       });
   }
 
   logout() {
     // localStorage.removeItem("user");
-    return axios.post(API_URL + "logout/");
+    return axios.post(API_URL + "logout/").then((response) => {
+      return response.data;
+    });
   }
 
   register(user) {
     return axios.post(API_URL + "register/", {
       username: user.username,
       password: user.password,
+    }).then((response) => {
+      return response.data;
     });
   }
 
@@ -34,11 +35,41 @@ class AuthService {
       username: user.username,
       password: user.password,
       newPassword: newPwd,
+    }).then((response) => {
+      return response.data;
     });
   }
 
   loginState() {
     return axios.get(API_URL + "state/").then((response) => {
+      return response.data;
+    });
+  }
+
+  userInfo() {
+    return axios.get(API_URL + "info/").then((response) => {
+      return response.data;
+    });
+  }
+
+  userProfile() {
+    return axios.get(API_URL + "profile/").then((response) => {
+      return response.data;
+    });
+  }
+
+  changeProfile(profile) {
+    return axios.post(API_URL + "profile/", {
+      profile: profile,
+    }).then((response) => {
+      return response.data;
+    });
+  }
+
+  changeSignature(signature) {
+    return axios.post(API_URL + "signature/", {
+      signature: signature,
+    }).then((response) => {
       return response.data;
     });
   }

@@ -30,30 +30,30 @@ import InfoService from "@/services/info.service";
         <table class="stats-table">
           <tr>
             <td class="label">参与PK场次</td>
-            <td class="value">341</td>
+            <td class="value">{{ user.totalCompetitionsNum }}</td>
           </tr>
           <tr>
             <td class="label">PK胜场数</td>
-            <td class="value">212</td>
+            <td class="value">{{ user.totalCompetitionsNum }}</td>
           </tr>
           <tr>
             <td class="label">PK胜率</td>
-            <td class="value">72%</td>
+            <td class="value">{{ user.vicRate }}</td>
           </tr>
         </table>
         <hr class="stats-hr" />
         <table class="stats-table">
           <tr>
             <td class="label">总答题数</td>
-            <td class="value">1211</td>
+            <td class="value">{{ user.totalAnswersNum }}</td>
           </tr>
           <tr>
             <td class="label">正确题数</td>
-            <td class="value">793</td>
+            <td class="value">{{ user.correctAnswersNum }}</td>
           </tr>
           <tr>
             <td class="label">正确率</td>
-            <td class="value">63%</td>
+            <td class="value">{{ user.correctRate }}</td>
           </tr>
         </table>
       </div>
@@ -65,6 +65,7 @@ import InfoService from "@/services/info.service";
 export default {
   name: "PKHistoryView",
   props: {
+    user: Object,
     update: {
       type: Boolean,
       required: true,

@@ -11,8 +11,9 @@ import "cropperjs/dist/cropper.css";
         <VueCropper ref="cropper" :aspectRatio="1" :src="imgSrc" />
       </div>
       <div>
-        <el-button @click="browseFile">上传图片</el-button>
-        <el-button @click="cropAvatar">确定</el-button>
+        <el-button @click="browseFile" type="info">上传图片</el-button>
+        <el-button @click="cropAvatar" type="primary">确定</el-button>
+        <el-button @click="cancel" type="danger">取消</el-button>
       </div>
     </div>
   </div>
@@ -40,7 +41,7 @@ export default {
       immediate: true,
     },
   },
-  emits: ["submit"],
+  emits: ["submit", "cancel"],
   methods: {
     cropAvatar() {
       this.$emit("submit", this.$refs.cropper.getCroppedCanvas().toDataURL());
@@ -65,6 +66,9 @@ export default {
       else {
         alert('Sorry, FileReader API not supported');
       }
+    },
+    cancel() {
+      this.$emit("cancel");
     },
   },
 };
