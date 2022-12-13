@@ -52,6 +52,7 @@ class FavoriteService {
   }
 
   moveProblem(srcId, destId, problemId, del) {
+    if (!(problemId instanceof Array)) problemId = [problemId];
     return axios
       .put(API_URL + "problem/", {
         sourceID: srcId,
@@ -79,6 +80,7 @@ class FavoriteService {
   }
 
   addProblem(destId, problemId) {
+    if (!(problemId instanceof Array)) problemId = [problemId];
     return axios
       .post(API_URL + "problem/", {
         destID: destId,

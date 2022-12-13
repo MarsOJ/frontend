@@ -1,5 +1,5 @@
 <script setup>
-import ImageCropper from "@/components/ImageCropper.vue"
+import ImageCropper from "@/components/ImageCropper.vue";
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import ScrollUpButton from "@/components/ScrollUpButton.vue";
@@ -341,16 +341,16 @@ export default {
   border-radius: 4px;
   border: none;
   box-shadow: none;
-  color: hsla(0, 0%, 100%, .8);
+  color: hsla(0, 0%, 100%, 0.8);
   transition: all 0.3s;
 }
 
 #signature::placeholder {
-  color: hsla(0, 0%, 100%, .8);
+  color: hsla(0, 0%, 100%, 0.8);
 }
 
 #signature:hover {
-  background: hsla(0, 0%, 100%, .2);
+  background: hsla(0, 0%, 100%, 0.2);
   box-shadow: 0 0 0 1px hsl(0deg 0% 100% / 50%);
 }
 

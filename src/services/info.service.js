@@ -19,6 +19,12 @@ class InfoService {
       return response.data;
     });
   }
+
+  addNews(news) {}
+
+  modifyNews(news) {}
+
+  deleteNews(news) {}
 }
 
 export default new InfoService();

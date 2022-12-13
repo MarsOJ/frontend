@@ -69,7 +69,7 @@ const router = createRouter({
           name: "settings",
           component: () => import("../views/personal/SettingsView.vue"),
         },
-      ]
+      ],
     },
     {
       path: "/home/news/:id",

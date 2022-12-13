@@ -2,7 +2,10 @@
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import Pagination from "@/components/Pagination.vue";
+import InfoService from "@/services/info.service";
 import FavoriteService from "@/services/favorites.service";
+import ProblemService from "@/services/problem.service";
+import BattleFileService from "@/services/battlefile.service";
 import { ref } from "vue";
 import { Edit, Refresh, Delete, Download } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -27,7 +30,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                         type="danger"
                         :icon="Delete"
                         size="small"
-                        @click="handleFilter"
+                        @click="handleBatchDelete"
                       >
                         批量删除
                       </el-button>
@@ -37,7 +40,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                         type="primary"
                         size="small"
                         :icon="Edit"
-                        @click="handleAddFavorite"
+                        @click="addInfo"
                       >
                         添加
                       </el-button>
@@ -90,14 +93,11 @@ import "element-plus/theme-chalk/el-message-box.css";
                         width="330"
                         class-name="small-padding fixed-width"
                       >
-                        <template v-slot="{ row, $index }">
-                          <el-button type="primary" @click="handleCheck(row)">
+                        <template v-slot="{ row }">
+                          <el-button type="primary" @click="checkInfo(row)">
                             查看
                           </el-button>
-                          <el-button
-                            type="danger"
-                            @click="handleDelete(row, $index)"
-                          >
+                          <el-button type="danger" @click="deleteInfo(row)">
                             删除
                           </el-button>
                         </template>
@@ -113,52 +113,50 @@ import "element-plus/theme-chalk/el-message-box.css";
                     />
 
                     <el-dialog
-                      title="移动问题至"
-                      v-model="ProblemDialogVisible"
+                      title="新建资讯"
+                      v-model="InfoDialogVisible"
                       :append-to-body="true"
                     >
                       <el-form
                         ref="dataForm"
-                        :model="moveFavoriteModel"
+                        :model="InfoModel"
                         label-position="left"
                         label-width="70px"
                         style="width: 400px; margin-left: 50px"
                       >
-                        <el-form-item label="命名" prop="name">
-                          <el-select
-                            v-model="moveFavoriteModel.name"
+                        <el-form-item label="标题" prop="title">
+                          <el-input
+                            v-model="InfoModel.title"
                             style="width: 140px"
                             class="filter-item"
-                          >
-                            <el-option
-                              v-for="item in favoriteList"
-                              :key="item.id"
-                              :label="item.name"
-                              :value="item.id"
-                            />
-                          </el-select>
+                          />
                         </el-form-item>
-                        <el-form-item label="是否复制" prop="shouldDelete">
-                          <el-select
-                            v-model="moveFavoriteModel.shouldDelete"
+                        <el-form-item label="内容" prop="content">
+                          <el-input
+                            v-model="InfoModel.content"
+                            :autosize="{ minRows: 6, maxRows: 10 }"
+                            type="textarea"
                             style="width: 140px"
                             class="filter-item"
-                          >
-                            <el-option :label="'是'" :value="true" />
-                            <el-option :label="'否'" :value="false" />
-                          </el-select>
+                          />
+                        </el-form-item>
+                        <el-form-item label="置顶" prop="top">
+                          <el-switch
+                            v-model="InfoModel.top"
+                            class="filter-item"
+                          />
                         </el-form-item>
                       </el-form>
                       <div class="dialog-footer">
                         <el-button
-                          @click="ProblemDialogVisible = false"
+                          @click="InfoDialogVisible = false"
                           size="small"
                         >
                           取消
                         </el-button>
                         <el-button
                           type="primary"
-                          @click="MoveProblem"
+                          @click="createInfo"
                           size="small"
                         >
                           确定
@@ -175,7 +173,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                         type="danger"
                         :icon="Delete"
                         size="small"
-                        @click="handleFilter"
+                        @click="handleBatchDelete"
                       >
                         批量删除
                       </el-button>
@@ -185,7 +183,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                         type="primary"
                         size="small"
                         :icon="Edit"
-                        @click="handleAddFavorite"
+                        @click="addProblem"
                       >
                         添加
                       </el-button>
@@ -245,14 +243,11 @@ import "element-plus/theme-chalk/el-message-box.css";
                         width="330"
                         class-name="small-padding fixed-width"
                       >
-                        <template v-slot="{ row, $index }">
-                          <el-button type="primary" @click="handleCheck(row)">
+                        <template v-slot="{ row }">
+                          <el-button type="primary" @click="checkProblem(row)">
                             查看
                           </el-button>
-                          <el-button
-                            type="danger"
-                            @click="handleDelete(row, $index)"
-                          >
+                          <el-button type="danger" @click="deleteProblem(row)">
                             删除
                           </el-button>
                         </template>
@@ -268,40 +263,64 @@ import "element-plus/theme-chalk/el-message-box.css";
                     />
 
                     <el-dialog
-                      title="移动问题至"
+                      title="题目"
                       v-model="ProblemDialogVisible"
                       :append-to-body="true"
                     >
                       <el-form
                         ref="dataForm"
-                        :model="moveFavoriteModel"
+                        :model="ProblemModel"
                         label-position="left"
                         label-width="70px"
                         style="width: 400px; margin-left: 50px"
                       >
-                        <el-form-item label="命名" prop="name">
+                        <el-form-item label="题目类型" prop="type">
                           <el-select
-                            v-model="moveFavoriteModel.name"
+                            v-model="ProblemModel.type"
                             style="width: 140px"
                             class="filter-item"
                           >
-                            <el-option
-                              v-for="item in favoriteList"
-                              :key="item.id"
-                              :label="item.name"
-                              :value="item.id"
-                            />
+                            <el-option :label="单选题" :value="0" />
+                            <el-option :label="一般多选题" :value="1" />
+                            <el-option :label="程序多选题" :value="2" />
                           </el-select>
                         </el-form-item>
-                        <el-form-item label="是否复制" prop="shouldDelete">
-                          <el-select
-                            v-model="moveFavoriteModel.shouldDelete"
+                        <el-form-item label="标题" prop="title">
+                          <el-input
+                            v-model="ProblemModel.title"
+                            style="width: 140px"
+                            class="filter-item"
+                          />
+                        </el-form-item>
+                        <el-form-item label="题目" prop="content">
+                          <el-input
+                            v-model="ProblemModel.content"
+                            :autosize="{ minRows: 6, maxRows: 10 }"
+                            type="textarea"
+                            style="width: 140px"
+                            class="filter-item"
+                          />
+                        </el-form-item>
+                        <el-form-item label="选项" prop="options">
+                          <el-radio-group
+                            v-model="ProblemModel.answer"
+                            size="large"
                             style="width: 140px"
                             class="filter-item"
                           >
-                            <el-option :label="'是'" :value="true" />
-                            <el-option :label="'否'" :value="false" />
-                          </el-select>
+                            <el-radio label="A">{{
+                              ProblemModel.options[0]
+                            }}</el-radio>
+                            <el-radio label="B">{{
+                              ProblemModel.options[1]
+                            }}</el-radio>
+                            <el-radio label="C">{{
+                              ProblemModel.options[2]
+                            }}</el-radio>
+                            <el-radio label="D">{{
+                              ProblemModel.options[3]
+                            }}</el-radio>
+                          </el-radio-group>
                         </el-form-item>
                       </el-form>
                       <div class="dialog-footer">
@@ -313,7 +332,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                         </el-button>
                         <el-button
                           type="primary"
-                          @click="MoveProblem"
+                          @click="createProblem"
                           size="small"
                         >
                           确定
@@ -330,7 +349,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                         type="primary"
                         :icon="Refresh"
                         size="small"
-                        @click="handleFilter"
+                        @click="updateList"
                       >
                         刷新
                       </el-button>
@@ -492,13 +511,6 @@ export default {
         // },
       ],
       listLoading: false,
-      favoriteList: [
-        // {
-        //   name: "默认收藏夹",
-        //   id: "0",
-        // },
-      ],
-      favoriteId: "0",
       total: 1,
       listQuery: {
         page: 1,
@@ -511,64 +523,54 @@ export default {
         { label: "升序", key: "+id" },
         { label: "降序", key: "-id" },
       ],
-      temp: {
-        name: "",
+      InfoModel: {
+        title: "0",
+        content: "",
+        top: false,
+        rules: [],
+        create: false,
       },
-      moveFavoriteModel: {
-        name: "0",
-        shouldDelete: true,
+      ProblemModel: {
+        title: "",
+        content: "This is a test problem",
+        options: [],
+        answer: ref("A"),
+        type: 1, //
       },
-      rules: {
-        name: [
-          { required: true, message: "请输入收藏夹名字", trigger: "change" },
-        ],
-      },
-      ProblemDialogVisible: ref(false),
-      FavoriteDialogVisible: ref(false),
+      InfoDialogVisible: false,
+      ProblemDialogVisible: false,
     };
   },
   created() {
-    this.updateFavoriteList();
-    this.updateProblemList();
+    this.updateList();
   },
   methods: {
-    updateFavoriteList() {
-      FavoriteService.getFavoriteList().then((list) => {
-        console.log(list);
-        if (list == null) {
-          ElMessage({
-            message: "更新收藏夹列表发生错误",
-            type: "error",
-          });
-        } else {
-          this.favoriteList = list;
-        }
-        console.log("updateFavoriteList()", this.favoriteList);
-      });
-    },
-    updateProblemList() {
+    updateList() {
       this.listLoading = true;
-      FavoriteService.getProblemScratch(
-        this.listQuery.page,
-        this.listQuery.limit,
-        this.favoriteId
-      ).then((list) => {
-        if (list != null) {
-          this.list = list;
-        } else {
-          ElMessageBox.alert("加载题目列表失败！", "错误", {
-            confirmButtonText: "OK",
+      switch (this.activeName) {
+        case "info":
+          break;
+        case "problem":
+          FavoriteService.getProblemScratch(
+            this.listQuery.page,
+            this.listQuery.limit,
+            this.favoriteId
+          ).then((list) => {
+            if (list != null) {
+              this.list = list;
+            } else {
+              ElMessageBox.alert("加载题目列表失败！", "错误", {
+                confirmButtonText: "OK",
+              });
+            }
+            this.listLoading = false;
           });
-        }
-        this.listLoading = false;
-      });
-    },
-    handleChangeFavorite() {
-      this.updateProblemList();
-    },
-    handleFilter() {
-      this.listQuery.page = 1;
-      this.updateProblemList();
+          break;
+        case "battle":
+          break;
+        default:
+          break;
+      }
     },
     sortChange(data) {
       const { prop, order } = data;
@@ -584,95 +586,112 @@ export default {
       }
       this.handleFilter();
     },
-    handleAddFavorite() {
-      this.FavoriteDialogVisible = ref(true);
-    },
-    addFavorite() {
-      console.log("name", this.temp.name);
-      FavoriteService.addFavorite(this.temp.name).then((code) => {
-        if (code == 200) {
-          ElMessage({
-            message: "创建成功！",
-            type: "success",
-          });
-          this.updateFavoriteList();
-        } else {
-          ElMessage({
-            message: "创建收藏夹失败！",
-            type: "error",
-          });
-        }
-      });
-      this.FavoriteDialogVisible = ref(false);
-    },
-    handleDeleteFavorite() {
-      ElMessageBox.alert("您确定要删除当前收藏夹吗？该操作不可恢复！", "警告", {
+    handleBatchDelete() {
+      ElMessageBox.alert("您确定要删除所选项目吗？该操作不可恢复！", "警告", {
         cancelButtonText: "Cancel",
         confirmButtonText: "OK",
         callback: () => {
-          FavoriteService.deleteFavorite(this.favoriteId).then((code) => {
-            if (code == 200) {
-              this.updateFavoriteList();
-              this.updateProblemList();
-            } else {
-              ElMessage({
-                type: "error",
-                message: "删除收藏夹时出错",
-              });
-            }
-          });
+          switch (this.activeName) {
+            case "info":
+              break;
+            case "problem":
+              break;
+            case "battle":
+              break;
+            default:
+              break;
+          }
         },
-      });
-    },
-    handleCheck(row) {
-      //查看问题详情页面
-      console.log(row);
-    },
-    handleMove(row) {
-      this.problemId = row.id;
-      this.ProblemDialogVisible = ref(true);
-      console.log(this.problemId);
-    },
-    MoveProblem() {
-      FavoriteService.moveProblem(
-        this.favoriteId,
-        this.moveFavoriteModel.name,
-        this.problemId,
-        this.moveFavoriteModel.shouldDelete
-      ).then((code) => {
-        if (code == 200) {
-          ElMessage({
-            message: "移动问题成功！",
-            type: "success",
-          });
-          this.updateProblemList();
-        } else {
-          ElMessage({
-            message: "移动问题失败！",
-            type: "error",
-          });
-        }
-      });
-      this.ProblemDialogVisible = ref(false);
-    },
-    handleDelete(row) {
-      FavoriteService.deleteProblem(this.favoriteId, row.id).then((code) => {
-        if (code === 200) {
-          ElMessage({
-            message: "删除成功！",
-            type: "success",
-          });
-        } else {
-          ElMessage({
-            message: "删除失败！",
-            type: "error",
-          });
-        }
       });
     },
     getSortClass: function (key) {
       const sort = this.listQuery.sort;
       return sort === `+${key}` ? "ascending" : "descending";
+    },
+    addInfo() {
+      this.InfoModel = {
+        title: "0",
+        content: "",
+        top: false,
+        rules: [],
+        create: true,
+      };
+      this.InfoDialogVisible = true;
+    },
+    createInfo() {
+      //TODO: row -> param
+      if (this.InfoModel.create) {
+        InfoService.addNews().then();
+      } else {
+        InfoService.modifyNews().then();
+      }
+    },
+    checkInfo(row) {
+      //TODO: row -> param
+      InfoService.getNewsDetail(row).then((detail) => {
+        if (detail == null) {
+          ElMessage({
+            message: "获取资讯详情发生错误",
+            type: "error",
+          });
+        } else {
+          this.InfoModel.title = detail.title;
+          this.InfoModel.content = detail.content;
+          this.InfoModel.top = detail.top;
+          this.InfoModel.create = false;
+          this.InfoDialogVisible = true;
+        }
+      });
+    },
+    deleteInfo(row) {
+      //TODO: row -> param
+      InfoService.deleteNews(row).then();
+    },
+    addProblem() {
+      this.ProblemModel = {
+        title: "",
+        content: "",
+        options: ["", "", "", ""],
+        answer: ref("A"),
+        type: 0, //
+        create: true,
+      };
+      this.ProblemDialogVisible = true;
+    },
+    createProblem() {
+      //TODO: row -> param
+      if (this.ProblemModel.create) {
+        ProblemService.addProblem().then();
+      } else {
+        ProblemService.modifyProblem().then();
+      }
+    },
+    checkProblem(row) {
+      //TODO: row -> param
+      ProblemService.getProblemDetail(row).then((detail) => {
+        if (detail == null) {
+          ElMessage({
+            message: "获取题目详情发生错误",
+            type: "error",
+          });
+        } else {
+          this.ProblemModel.title = detail.title;
+          this.ProblemModel.content = detail.content;
+          this.ProblemModel.type = detail.type;
+          this.ProblemModel.options = detail.subproblem;
+          this.ProblemModel.answer = detail.answer;
+          this.ProblemModel.create = false;
+          this.ProblemDialogVisible = true;
+        }
+      });
+    },
+    deleteProblem(row) {
+      //TODO: row -> param
+      ProblemService.deleteProblem(row).then();
+    },
+    handleDownload(row) {
+      //TODO: row -> param
+      BattleFileService.download().then();
     },
   },
 };

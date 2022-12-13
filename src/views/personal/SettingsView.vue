@@ -1,6 +1,6 @@
 <script setup>
 import User from "@/models/user";
-import AuthService from "@/services/auth.service"
+import AuthService from "@/services/auth.service";
 </script>
 
 <template>
@@ -137,7 +137,7 @@ export default {
               this.loading = false;
               ElMessage({
                 message: "密码修改成功！",
-                type: 'success',
+                type: "success",
               });
             },
             (error) => {
