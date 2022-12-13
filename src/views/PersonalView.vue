@@ -178,8 +178,10 @@ export default {
     AuthService.userInfo().then(
       (content) => {
         this.user = content;
-        this.avatar = content.profile;
         this.signature = content.signature;
+        if (content.profile != "") {
+          this.avatar = content.profile;
+        }
 
         if (this.user.totalCompetitionsNum) {
           this.user.vicRate = Math.round(this.user.victoriesNum / this.user.totalCompetitionsNum * 100) + "%";

@@ -8,11 +8,7 @@ import { ref } from "vue";
 <template>
   <div class="common-layout">
     <CountdownTimer v-if="waiting" @end="endOfCountdown" />
-    <div
-      class="sidebar-bg fade-in"
-      @click="toggleSidebar()"
-      v-if="showRanking"
-    ></div>
+    <div class="sidebar-bg fade-in" @click="toggleSidebar()" v-if="showRanking"></div>
     <el-container direction="vertical" class="page">
       <img id="logo" src="@/assets/main-logo.png" />
       <div class="main">
@@ -45,33 +41,24 @@ import { ref } from "vue";
               <div class="block-content">
                 <div v-if="problem.type === 0">
                   <span class="problem-text">{{ problem.content }}</span>
-                  <div
-                    class="answer"
-                    v-if="problem.subproblem[0].choice.length === 4"
-                  >
-                    <el-radio-group
-                      v-model="problem.subproblem[0].radio"
-                      size="large"
-                    >
+                  <div class="answer" v-if="problem.subproblem[0].choice.length === 4">
+                    <el-radio-group v-model="problem.subproblem[0].radio" size="large">
                       <el-radio label="A">{{
-                        problem.subproblem[0].choice[0]
+                          problem.subproblem[0].choice[0]
                       }}</el-radio>
                       <el-radio label="B">{{
-                        problem.subproblem[0].choice[1]
+                          problem.subproblem[0].choice[1]
                       }}</el-radio>
                       <el-radio label="C">{{
-                        problem.subproblem[0].choice[2]
+                          problem.subproblem[0].choice[2]
                       }}</el-radio>
                       <el-radio label="D">{{
-                        problem.subproblem[0].choice[3]
+                          problem.subproblem[0].choice[3]
                       }}</el-radio>
                     </el-radio-group>
                   </div>
                   <div class="answer" v-else>
-                    <el-radio-group
-                      v-model="problem.subproblem[0].radio"
-                      size="large"
-                    >
+                    <el-radio-group v-model="problem.subproblem[0].radio" size="large">
                       <el-radio label="A">正确</el-radio>
                       <el-radio label="B">错误</el-radio>
                     </el-radio-group>
@@ -100,41 +87,21 @@ import { ref } from "vue";
                 <div v-else></div>
               </div>
             </el-scrollbar>
-            <div
-              id="new-msg"
-              class="prompt hidden fade-in"
-              :class="{ enabled: showPrompt }"
-              v-if="answer[2]"
-            >
+            <div id="new-msg" class="prompt hidden fade-in" :class="{ enabled: showPrompt }" v-if="answer[2]">
               <div class="icon">&#9872;</div>
               新的习题！
             </div>
-            <div
-              id="timeout-msg"
-              class="prompt hidden fade-in"
-              :class="{ enabled: showPrompt }"
-              v-else-if="answer[1]"
-            >
+            <div id="timeout-msg" class="prompt hidden fade-in" :class="{ enabled: showPrompt }" v-else-if="answer[1]">
               <div class="icon">&times;</div>
               回答超时！
             </div>
-            <div
-              id="correct-msg"
-              class="prompt hidden fade-in"
-              :class="{ enabled: showPrompt }"
-              v-else-if="answer[0]"
-            >
+            <div id="correct-msg" class="prompt hidden fade-in" :class="{ enabled: showPrompt }" v-else-if="answer[0]">
               <div class="icon">
                 <div id="tick"></div>
               </div>
               回答正确！
             </div>
-            <div
-              id="wrong-msg"
-              class="prompt hidden fade-in"
-              :class="{ enabled: showPrompt }"
-              v-else
-            >
+            <div id="wrong-msg" class="prompt hidden fade-in" :class="{ enabled: showPrompt }" v-else>
               <div class="icon">&times;</div>
               回答错误！
             </div>
@@ -144,12 +111,9 @@ import { ref } from "vue";
       <div class="top left button enabled" @click="onExit">
         <span>退出</span>
       </div>
-      <div
-        class="top right button disabled-button"
-        :class="{
-          enabled: !submitted,
-        }"
-      >
+      <div class="top right button disabled-button" :class="{
+        enabled: !submitted,
+      }">
         <span :class="`${progressBarStatus}`">
           <div class="pie" :style="{ '--percentage': `${progress}%` }"></div>
           <div>
@@ -157,22 +121,15 @@ import { ref } from "vue";
           </div>
         </span>
       </div>
-      <div
-        class="top right button disabled-button"
-        :class="{
-          enabled: getAnswer,
-        }"
-      >
-        <span v-if="answer">回答正确！</span>
+      <div class="top right button disabled-button" :class="{
+        enabled: getAnswer,
+      }">
+        <span v-if="answer[0]">回答正确！</span>
         <span v-else>回答错误！</span>
       </div>
-      <div
-        class="bottom right button"
-        :class="{
-          enabled: !submitted,
-        }"
-        @click="onSubmit"
-      >
+      <div class="bottom right button" :class="{
+        enabled: !submitted,
+      }" @click="onSubmit">
         <span>提交</span>
       </div>
       <div id="ranking" class="sidebar" :class="{ enabled: showRanking }">
@@ -181,23 +138,14 @@ import { ref } from "vue";
             <h2>实时排行</h2>
             <RealTimeScoreboard :players="players" :enabled="showRanking" />
             <h2>分数走势</h2>
-            <ScoreGraph
-              v-if="players.length"
-              :history="scoreHistory"
-              :users="users"
-            />
+            <ScoreGraph v-if="players.length" :history="scoreHistory" :users="users" />
           </div>
         </el-scrollbar>
         <div v-if="!waiting" id="toggle-btn" @click="toggleSidebar()">
           当前第{{ players[userIndex].rank + 1 }}名
         </div>
       </div>
-      <div
-        v-if="!waiting"
-        id="rank-up-msg"
-        class="info-message pos"
-        :class="{ enabled: showRankDiff[0] }"
-      >
+      <div v-if="!waiting" id="rank-up-msg" class="info-message pos" :class="{ enabled: showRankDiff[0] }">
         <div class="inner-box">
           <div class="arrow-animation">
             <div class="arrow-sliding">
@@ -210,12 +158,7 @@ import { ref } from "vue";
           排名上升至第{{ players[userIndex].rank + 1 }}位，继续保持！
         </div>
       </div>
-      <div
-        v-if="!waiting"
-        id="rank-down-msg"
-        class="info-message neg"
-        :class="{ enabled: showRankDiff[1] }"
-      >
+      <div v-if="!waiting" id="rank-down-msg" class="info-message neg" :class="{ enabled: showRankDiff[1] }">
         <div class="inner-box">
           <div class="arrow-animation neg">
             <div class="arrow-sliding">
@@ -316,12 +259,12 @@ export default {
         return this.players[a].score < this.players[b].score
           ? 1
           : this.players[b].score < this.players[a].score
-          ? -1
-          : (a === this.userIndex) < (b === this.userIndex)
-          ? 1
-          : (a === this.userIndex) > (b === this.userIndex)
-          ? -1
-          : 0;
+            ? -1
+            : (a === this.userIndex) < (b === this.userIndex)
+              ? 1
+              : (a === this.userIndex) > (b === this.userIndex)
+                ? -1
+                : 0;
       });
       indices.forEach((id, i) => {
         this.players[id].rank = i;
@@ -775,10 +718,8 @@ div.pie {
   height: 32px;
   margin-right: 12px;
   border-radius: 50%;
-  background-image: conic-gradient(
-    transparent var(--percentage),
-    white var(--percentage)
-  );
+  background-image: conic-gradient(transparent var(--percentage),
+      white var(--percentage));
   background-color: #21202e;
   border: 2px solid #21202e;
   transition: background-image 1s ease-in-out;

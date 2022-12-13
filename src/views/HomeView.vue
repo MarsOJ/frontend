@@ -35,10 +35,7 @@ import ScrollUpButton from "@/components/ScrollUpButton.vue";
             <el-main>
               <div class="info">
                 <div v-for="item in info">
-                  <div
-                    class="info-block fade-down"
-                    @click="showDetail(item.id)"
-                  >
+                  <div class="info-block fade-down" @click="showDetail(item.id)">
                     <div class="info-date">
                       <span>{{ item.date }}</span>
                     </div>
@@ -50,8 +47,11 @@ import ScrollUpButton from "@/components/ScrollUpButton.vue";
                     </div>
                   </div>
                 </div>
-                <div class="loading info-block fade-down" v-loading="loading">
+                <div class="loading info-block fade-down" v-loading="loading" v-if="!end">
                   下拉加载更多
+                </div>
+                <div class="loading info-block fade-down" v-else>
+                  没有更多了
                 </div>
                 <!-- <div class="loading info-block" v-loading="loading"></div> -->
               </div>
@@ -67,7 +67,7 @@ import ScrollUpButton from "@/components/ScrollUpButton.vue";
                 <div class="count-down">
                   距
                   <span style="color: grey; font-size: 16px">{{
-                    incomingCompetition
+                      incomingCompetition
                   }}</span>
                   还剩 {{ leavingDay }} 天
                 </div>
@@ -108,6 +108,7 @@ export default {
   },
   data() {
     return {
+      end: false,
       month: "十月",
       day: 31,
       week: "一",
@@ -201,7 +202,12 @@ export default {
           this.loading = true;
           InfoService.getLastestNews(this.lastNewsId).then(
             (content) => {
-              this.info = this.info.concat(content);
+              if (content.length == 0) {
+                this.end = true;
+              }
+              else {
+                this.info = this.info.concat(content);
+              }
               this.loading = false;
             },
             (error) => {
@@ -228,7 +234,12 @@ export default {
   mounted() {
     InfoService.getLastestNews("").then(
       (content) => {
-        this.info = content;
+        if (content.length == 0) {
+          this.end = true;
+        }
+        else {
+          this.info = content;
+        }
         this.loading = false;
       },
       (error) => {

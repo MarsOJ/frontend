@@ -1,25 +1,28 @@
 <script setup>
-import InfoService from "@/services/info.service";
+import RecordService from "@/services/record.service";
 </script>
 
 <template>
   <el-main>
     <div class="history">
       <div v-for="item in history">
-        <div class="history-block fade-down" @click="showDetail(item.id)">
+        <div class="history-block fade-down">
           <div class="history-date">
             <span>{{ item.date }}</span>
           </div>
           <div class="history-detail">
-            <div class="history-title">{{ item.title }}</div>
-            <div class="history-src">
-              来源：<strong>{{ item.source }}</strong>
-            </div>
+            <div class="history-title">{{ item.rank }}</div>
+            <!-- <div class="history-src">
+              排名：<strong>{{ item.rank }}</strong>
+            </div> -->
           </div>
         </div>
       </div>
-      <div class="loading history-block fade-down" v-loading="loading">
+      <div class="loading history-block fade-down" v-loading="loading" v-if="!end">
         下拉加载更多
+      </div>
+      <div class="loading history-block fade-down" v-else>
+        没有更多了
       </div>
     </div>
   </el-main>
@@ -80,6 +83,7 @@ export default {
   },
   data() {
     return {
+      end: false,
       loading: true,
       history: [],
       lastHistoryId: "",
@@ -87,28 +91,40 @@ export default {
   },
   methods: {
     load() {
-      this.lastHistoryId = this.history[this.history.length - 1]["id"];
-      this.loading = true;
-      InfoService.getLastestNews(this.lastHistoryId).then(
-        (content) => {
-          this.history = this.history.concat(content);
-          this.loading = false;
-        },
-        (error) => {
-          var content =
-            (error.response && error.response.data) ||
-            error.message ||
-            error.toString();
-          console.log(content);
-          this.loading = false;
-        }
-      );
+      if (this.history.length >= 1) {
+        this.lastHistoryId = this.history[this.history.length - 1]["id"];
+        this.loading = true;
+        RecordService.getPersonalRecords(this.lastHistoryId).then(
+          (content) => {
+            if (content.length == 0) {
+              this.end = true;
+            }
+            else {
+              this.history = this.history.concat(content);
+            }
+            this.loading = false;
+          },
+          (error) => {
+            var content =
+              (error.response && error.response.data) ||
+              error.message ||
+              error.toString();
+            console.log(content);
+            this.loading = false;
+          }
+        );
+      }
     },
   },
   mounted() {
-    InfoService.getLastestNews("").then(
+    RecordService.getPersonalRecords("").then(
       (content) => {
-        this.history = content;
+        if (content.length == 0) {
+          this.end = true;
+        }
+        else {
+          this.history = content;
+        }
         this.loading = false;
       },
       (error) => {
@@ -226,6 +242,7 @@ export default {
 .el-aside {
   padding-right: 0;
   padding-top: 2em;
+  margin-bottom: 2em;
 }
 
 .stats-table {
