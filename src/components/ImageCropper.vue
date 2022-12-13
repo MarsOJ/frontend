@@ -1,12 +1,19 @@
 <script setup>
-import VueCropper from "vue-cropperjs"
+import VueCropper from "vue-cropperjs";
 import "cropperjs/dist/cropper.css";
 </script>
 
 <template>
   <div id="cropper" class="fade-in">
     <div class="cropper-block fade-in">
-      <input id="file-browser" ref="input" type="file" name="image" accept="image/*" @change="setImage" />
+      <input
+        id="file-browser"
+        ref="input"
+        type="file"
+        name="image"
+        accept="image/*"
+        @change="setImage"
+      />
       <div class="cropper-wrapper">
         <VueCropper ref="cropper" :aspectRatio="1" :src="imgSrc" />
       </div>
@@ -50,20 +57,19 @@ export default {
     },
     setImage(e) {
       const file = e.target.files[0];
-      if (file.type.indexOf('image/') === -1) {
-        alert('Please select an image file');
+      if (file.type.indexOf("image/") === -1) {
+        alert("Please select an image file");
         return;
       }
-      if (typeof FileReader === 'function') {
+      if (typeof FileReader === "function") {
         const reader = new FileReader();
         reader.onload = (event) => {
           this.imgSrc = event.target.result;
           this.$refs.cropper.replace(this.imgSrc);
         };
         reader.readAsDataURL(file);
-      }
-      else {
-        alert('Sorry, FileReader API not supported');
+      } else {
+        alert("Sorry, FileReader API not supported");
       }
     },
   },
