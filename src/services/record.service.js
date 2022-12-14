@@ -28,15 +28,7 @@ class RecordService {
         return response.data;
       });
   }
-}
 
-export default new RecordService();
-import axios from "@/axios";
-
-// const API_URL = "http://127.0.0.1:8080/info/";
-const API_URL = "http://localhost:5000/record/";
-
-class RecordService {
   getRecordList(page, itemPerPage) {
     return axios
       .get(API_URL + "all/", {
