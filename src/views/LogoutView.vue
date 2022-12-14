@@ -1,5 +1,5 @@
 <script setup>
-import AuthService from '@/services/auth.service';
+import AuthService from "@/services/auth.service";
 </script>
 
 <script>
@@ -33,4 +33,3 @@ export default {
   },
 };
 </script>
-

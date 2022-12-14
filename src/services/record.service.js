@@ -19,16 +19,6 @@ class RecordService {
       });
   }
 
-  getAllRecords() {
-    return axios
-      .post(API_URL + "all/", {
-        lastID: lastId,
-      })
-      .then((response) => {
-        return response.data;
-      });
-  }
-
   getRecordList(page, itemPerPage) {
     return axios
       .get(API_URL + "all/", {

@@ -22,22 +22,26 @@ class AuthService {
   }
 
   register(user) {
-    return axios.post(API_URL + "register/", {
-      username: user.username,
-      password: user.password,
-    }).then((response) => {
-      return response.data;
-    });
+    return axios
+      .post(API_URL + "register/", {
+        username: user.username,
+        password: user.password,
+      })
+      .then((response) => {
+        return response.data;
+      });
   }
 
   changePwd(user, newPwd) {
-    return axios.post(API_URL + "change-password/", {
-      username: user.username,
-      password: user.password,
-      newPassword: newPwd,
-    }).then((response) => {
-      return response.data;
-    });
+    return axios
+      .post(API_URL + "change-password/", {
+        username: user.username,
+        password: user.password,
+        newPassword: newPwd,
+      })
+      .then((response) => {
+        return response.data;
+      });
   }
 
   loginState() {
@@ -59,19 +63,23 @@ class AuthService {
   }
 
   changeProfile(profile) {
-    return axios.post(API_URL + "profile/", {
-      profile: profile,
-    }).then((response) => {
-      return response.data;
-    });
+    return axios
+      .post(API_URL + "profile/", {
+        profile: profile,
+      })
+      .then((response) => {
+        return response.data;
+      });
   }
 
   changeSignature(signature) {
-    return axios.post(API_URL + "signature/", {
-      signature: signature,
-    }).then((response) => {
-      return response.data;
-    });
+    return axios
+      .post(API_URL + "signature/", {
+        signature: signature,
+      })
+      .then((response) => {
+        return response.data;
+      });
   }
 }
 

@@ -18,12 +18,14 @@ import RecordService from "@/services/record.service";
           </div>
         </div>
       </div>
-      <div class="loading history-block fade-down" v-loading="loading" v-if="!end">
+      <div
+        class="loading history-block fade-down"
+        v-loading="loading"
+        v-if="!end"
+      >
         下拉加载更多
       </div>
-      <div class="loading history-block fade-down" v-else>
-        没有更多了
-      </div>
+      <div class="loading history-block fade-down" v-else>没有更多了</div>
     </div>
   </el-main>
   <el-aside width="360px">
@@ -98,8 +100,7 @@ export default {
           (content) => {
             if (content.length == 0) {
               this.end = true;
-            }
-            else {
+            } else {
               this.history = this.history.concat(content);
             }
             this.loading = false;
@@ -121,8 +122,7 @@ export default {
       (content) => {
         if (content.length == 0) {
           this.end = true;
-        }
-        else {
+        } else {
           this.history = content;
         }
         this.loading = false;

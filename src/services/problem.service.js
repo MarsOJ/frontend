@@ -5,7 +5,7 @@ const API_URL = "http://localhost:5000/question/";
 class ProblemService {
   addProblem(problem) {
     return axios.post(API_URL + "insert/", problem).then((response) => {
-      return response.status;
+      return response.data;
     });
   }
 
@@ -14,13 +14,13 @@ class ProblemService {
       .delete(API_URL + "delete/", { data: { problemID: problem_id } })
       .then((response) => {
         console.log(response.data);
-        return response.status;
+        return response.data;
       });
   }
 
   modifyProblem(problem) {
     return axios.post(API_URL + "update/", problem).then((response) => {
-      return response.status;
+      return response.data;
     });
   }
 

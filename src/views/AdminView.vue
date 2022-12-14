@@ -690,36 +690,40 @@ export default {
           if (removeList.length == 0) return;
           switch (this.activeName) {
             case "info":
-              InfoService.deleteNews(removeList).then((status) => {
-                if (status == 200) {
+              InfoService.deleteNews(removeList).then(
+                () => {
                   ElMessage({
                     message: "批量删除成功",
                     type: "success",
                   });
                   this.updateList();
-                } else {
+                },
+                (error) => {
                   ElMessage({
                     message: "批量删除失败",
                     type: "error",
                   });
+                  console.log(error);
                 }
-              });
+              );
               break;
             case "problem":
-              ProblemService.deleteProblem(removeList).then((status) => {
-                if (status == 200) {
+              ProblemService.deleteProblem(removeList).then(
+                () => {
                   ElMessage({
                     message: "批量删除成功",
                     type: "success",
                   });
                   this.updateList();
-                } else {
+                },
+                (error) => {
                   ElMessage({
                     message: "批量删除失败",
                     type: "error",
                   });
+                  console.log(error);
                 }
-              });
+              );
               break;
             default:
               break;
@@ -747,40 +751,44 @@ export default {
           this.InfoModel.title,
           this.InfoModel.content,
           this.InfoModel.source
-        ).then((status) => {
-          if (status == 200) {
+        ).then(
+          () => {
             ElMessage({
               message: "添加资讯成功",
               type: "success",
             });
             this.updateList();
-          } else {
+          },
+          (error) => {
             ElMessage({
               message: "添加失败",
               type: "error",
             });
+            console.log(error);
           }
-        });
+        );
       } else {
         InfoService.modifyNews({
           id: this.InfoModel.id,
           title: this.InfoModel.title,
           content: this.InfoModel.content,
           source: this.InfoModel.source,
-        }).then((status) => {
-          if (status == 200) {
+        }).then(
+          () => {
             ElMessage({
               message: "修改资讯成功",
               type: "success",
             });
             this.updateList();
-          } else {
+          },
+          (error) => {
             ElMessage({
               message: "修改资讯失败",
               type: "error",
             });
+            console.log(error);
           }
-        });
+        );
       }
       this.InfoDialogVisible = false;
     },
@@ -802,20 +810,22 @@ export default {
       });
     },
     deleteInfo(row) {
-      InfoService.deleteNews([row.id]).then((status) => {
-        if (status == 200) {
+      InfoService.deleteNews([row.id]).then(
+        () => {
           ElMessage({
             message: "成功删除",
             type: "success",
           });
           this.updateList();
-        } else {
+        },
+        (error) => {
           ElMessage({
             message: "删除失败",
             type: "error",
           });
+          console.log(error);
         }
-      });
+      );
     },
     addProblem() {
       this.ProblemModel = {
@@ -833,35 +843,39 @@ export default {
     createProblem() {
       var problem = this.ProblemModel;
       if (this.create) {
-        ProblemService.addProblem(problem).then((status) => {
-          if (status == 200) {
+        ProblemService.addProblem(problem).then(
+          () => {
             ElMessage({
               message: "成功创建题目",
               type: "success",
             });
             this.updateList();
-          } else {
+          },
+          (error) => {
             ElMessage({
               message: "添加失败",
               type: "error",
             });
+            console.error(error);
           }
-        });
+        );
       } else {
-        ProblemService.modifyProblem(problem).then((status) => {
-          if (status == 200) {
+        ProblemService.modifyProblem(problem).then(
+          () => {
             ElMessage({
               message: "成功修改题目",
               type: "success",
             });
             this.updateList();
-          } else {
+          },
+          (error) => {
             ElMessage({
               message: "修改失败",
               type: "error",
             });
+            console.log(error);
           }
-        });
+        );
       }
       this.ProblemDialogVisible = false;
     },
@@ -881,20 +895,22 @@ export default {
       });
     },
     deleteProblem(row) {
-      ProblemService.deleteProblem(row.id).then((status) => {
-        if (status == 200) {
+      ProblemService.deleteProblem(row.id).then(
+        () => {
           ElMessage({
             message: "成功删除",
             type: "success",
           });
           this.updateList();
-        } else {
+        },
+        (error) => {
           ElMessage({
             message: "删除失败",
             type: "error",
           });
+          console.log(error);
         }
-      });
+      );
     },
     addSubproblem() {
       this.ProblemModel.subproblem.push({

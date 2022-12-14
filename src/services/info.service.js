@@ -27,13 +27,13 @@ class InfoService {
         source: source,
       })
       .then((response) => {
-        return response.status;
+        return response.data;
       });
   }
 
   modifyNews(news) {
     return axios.post(API_URL + "update/", news).then((response) => {
-      return response.status;
+      return response.data;
     });
   }
 
@@ -45,7 +45,7 @@ class InfoService {
         },
       })
       .then((response) => {
-        return response.status;
+        return response.data;
       });
   }
 
