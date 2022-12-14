@@ -17,7 +17,9 @@ import RecordService from "@/services/record.service";
               <tr v-for="line in record.points" :class="{ 'highlight': line.isUser }">
                 <td width="48px">{{ line.rank + 1 }}</td>
                 <td width="162px">
-                  <span class="link">{{ line.username }}</span>
+                  <span class="link" @click="$emit('checkUser', line.username);">
+                    {{ line.username }}
+                  </span>
                 </td>
                 <td width="72px">{{ line.score }}</td>
               </tr>
@@ -72,6 +74,7 @@ import RecordService from "@/services/record.service";
 <script>
 export default {
   name: "PKHistoryView",
+  emits: ["checkUser"],
   props: {
     user: Object,
     update: {
@@ -258,9 +261,9 @@ export default {
   text-align: center;
 }
 
-/* .history-tb tr td .link {
+.history-tb tr td .link {
   cursor: pointer;
-} */
+}
 
 .block {
   /* display: inline-block; */

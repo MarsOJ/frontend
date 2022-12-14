@@ -54,6 +54,7 @@ import AuthService from "@/services/auth.service";
 <script>
 export default {
   name: "SettingsView",
+  emits: ["checkUser"],
   props: {
     user: Object,
     update: Boolean,
