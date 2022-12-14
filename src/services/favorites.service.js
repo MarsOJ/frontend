@@ -87,7 +87,7 @@ class FavoriteService {
         problemID: problemId,
       })
       .then((response) => {
-        return response.status;
+        return response.data;
       });
   }
 }

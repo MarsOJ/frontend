@@ -5,16 +5,23 @@ import RecordService from "@/services/record.service";
 <template>
   <el-main>
     <div class="history">
-      <div v-for="item in history">
+      <div v-for="record in history">
         <div class="history-block fade-down">
+          <img v-if="record.rank == 0" id="medal" src="@/assets/win.png" />
           <div class="history-date">
-            <span>{{ item.date }}</span>
+            <span>{{ record.date }}</span>
           </div>
           <div class="history-detail">
-            <div class="history-title">{{ item.rank }}</div>
-            <!-- <div class="history-src">
-              排名：<strong>{{ item.rank }}</strong>
-            </div> -->
+            <div class="history-title">在PK中获得了第{{ record.rank + 1 }}名（{{ record.points[record.rank].score }}分） </div>
+            <table class="history-tb">
+              <tr v-for="line in record.points" :class="{ 'highlight': line.isUser }">
+                <td width="48px">{{ line.rank + 1 }}</td>
+                <td width="162px">
+                  <span class="link">{{ line.username }}</span>
+                </td>
+                <td width="72px">{{ line.score }}</td>
+              </tr>
+            </table>
           </div>
         </div>
       </div>
@@ -37,7 +44,7 @@ import RecordService from "@/services/record.service";
           </tr>
           <tr>
             <td class="label">PK胜场数</td>
-            <td class="value">{{ user.totalCompetitionsNum }}</td>
+            <td class="value">{{ user.victoriesNum }}</td>
           </tr>
           <tr>
             <td class="label">PK胜率</td>
@@ -90,8 +97,37 @@ export default {
     };
   },
   methods: {
+    sortRankings(record) {
+      record.points = [];
+      record.rank.forEach((element, index) => {
+        record.points.push({
+          score: record.scores[index],
+          username: element,
+          isUser: element === this.$store.state.auth.user,
+        });
+      });
+      record.points.sort((a, b) => {
+        return a.score < b.score
+          ? 1
+          : b.score < a.score
+            ? -1
+            : a.isUser < b.isUser
+              ? 1
+              : a.isUser > b.isUser
+                ? -1
+                : 0;
+      });
+      var userRank = 0;
+      record.points.forEach((user, i) => {
+        user.rank = i;
+        if (user.isUser) {
+          userRank = i;
+        }
+      });
+      return userRank;
+    },
     load() {
-      if (this.history.length >= 1) {
+      if (!this.end) {
         this.lastHistoryId = this.history[this.history.length - 1]["id"];
         this.loading = true;
         RecordService.getPersonalRecords(this.lastHistoryId).then(
@@ -100,6 +136,9 @@ export default {
               this.end = true;
             }
             else {
+              content.forEach(element => {
+                element.rank = this.sortRankings(element);
+              });
               this.history = this.history.concat(content);
             }
             this.loading = false;
@@ -123,6 +162,9 @@ export default {
           this.end = true;
         }
         else {
+          content.forEach(element => {
+            element.rank = this.sortRankings(element);
+          });
           this.history = content;
         }
         this.loading = false;
@@ -142,6 +184,7 @@ export default {
 
 <style scoped>
 .history-block {
+  position: relative;
   background-color: #ffffff;
   border: 1px solid #e9e9e9;
   border-radius: 0;
@@ -150,8 +193,12 @@ export default {
   transition: all 0.2s ease-in-out;
 }
 
-.history-block:hover {
-  transform: scale(1.02);
+.history-block #medal {
+  position: absolute;
+  top: -2px;
+  right: 16px;
+  width: 64px;
+  height: 64px;
 }
 
 .history-block.loading {
@@ -165,7 +212,8 @@ export default {
 }
 
 .history-date {
-  font-size: 0.875rem;
+  font-size: 16px;
+  font-weight: bold;
   text-align: left;
 }
 
@@ -173,8 +221,6 @@ export default {
   padding: 2px 10px;
   color: white;
   background-color: #003235;
-  font-weight: bold;
-  font-size: small;
 }
 
 .history-detail {
@@ -188,16 +234,35 @@ export default {
   margin: 16px 0px;
 }
 
-.history-src {
-  text-align: left;
-  font-weight: normal;
-  font-size: 14px;
-  color: #b9b9b9;
+.history-tb {
+  width: 90%;
+  max-width: 500px;
+  border-spacing: 0;
+  border-top: #d9d7d7a7 1px solid;
 }
 
-.history-src strong {
-  color: #9f9f9f;
+.history-tb tr {
+  transition: background-color 0.3s ease-in-out;
 }
+
+.history-tb tr:hover {
+  background-color: #b9b9b9;
+}
+
+.history-tb tr.highlight {
+  font-weight: bold;
+  background-color: gainsboro;
+}
+
+.history-tb tr td {
+  padding: 8px 0;
+  border-bottom: #d9d7d7a7 1px solid;
+  text-align: center;
+}
+
+/* .history-tb tr td .link {
+  cursor: pointer;
+} */
 
 .block {
   /* display: inline-block; */

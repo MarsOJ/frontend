@@ -10,7 +10,7 @@ import AuthService from "@/services/auth.service";
       <h2>账号安全</h2>
       <div class="settings-item">
         <div class="label">用户类型</div>
-        <div class="action" v-if="newUser.authority">管理员</div>
+        <div class="action" v-if="user.authority">管理员用户</div>
         <div class="action" v-else>普通用户</div>
       </div>
       <div class="settings-item">
@@ -27,7 +27,7 @@ import AuthService from "@/services/auth.service";
         <div class="settings-item">
           <div class="label">新密码</div>
           <el-form-item prop="newPwd">
-            <el-input v-model="form.newPwd" type="password" placeholder="新密码" />
+            <el-input v-model="form.newPwd" type="password" placeholder="新密码" show-password />
           </el-form-item>
         </div>
         <div class="settings-item">
@@ -206,6 +206,10 @@ a {
 
 .settings #password-edit .settings-item {
   width: 100%;
+}
+
+.settings #password-edit .settings-item .el-input {
+  width: 200px;
 }
 
 .submit-btns {

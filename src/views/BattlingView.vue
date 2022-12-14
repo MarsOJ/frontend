@@ -124,8 +124,13 @@ import { ref } from "vue";
       <div class="top right button disabled-button" :class="{
         enabled: getAnswer,
       }">
-        <span v-if="answer[0]">回答正确！</span>
-        <span v-else>回答错误！</span>
+        <span>
+          <div class="result-btn">
+            <div v-if="answer[0]">回答正确！</div>
+            <div v-else>回答错误！</div>
+            <small>等待其他玩家结束</small>
+          </div>
+        </span>
       </div>
       <div class="bottom right button" :class="{
         enabled: !submitted,
@@ -138,7 +143,9 @@ import { ref } from "vue";
             <h2>实时排行</h2>
             <RealTimeScoreboard :players="players" :enabled="showRanking" />
             <h2>分数走势</h2>
-            <ScoreGraph v-if="players.length" :history="scoreHistory" :users="users" />
+            <div style="height: 300px;">
+              <ScoreGraph v-if="players.length" :history="scoreHistory" :users="users" />
+            </div>
           </div>
         </el-scrollbar>
         <div v-if="!waiting" id="toggle-btn" @click="toggleSidebar()">
@@ -559,6 +566,10 @@ export default {
   margin: 20px;
 }
 
+.content .block-content {
+  font-size: 18px;
+}
+
 .log-ready {
   color: blue;
 }
@@ -651,6 +662,13 @@ export default {
 
 .button span {
   display: flex;
+}
+
+.button span div.result-btn {
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .button span.warning {

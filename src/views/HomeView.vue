@@ -190,36 +190,38 @@ export default {
       this.$router.push("/home/news/" + newsId);
     },
     scrollEvent(scrollTop) {
-      this.top = scrollTop.scrollTop < 256;
-      if (
-        scrollTop.scrollTop + document.body.offsetHeight + 3 >=
-        this.$refs.mainpage.clientHeight
-      ) {
-        // 防抖节流
-        clearInterval(this.timer);
-        this.timer = setTimeout(() => {
-          this.lastNewsId = this.info[this.info.length - 1]["id"];
-          this.loading = true;
-          InfoService.getLastestNews(this.lastNewsId).then(
-            (content) => {
-              if (content.length == 0) {
-                this.end = true;
+      if (!this.end) {
+        this.top = scrollTop.scrollTop < 256;
+        if (
+          scrollTop.scrollTop + document.body.offsetHeight + 3 >=
+          this.$refs.mainpage.clientHeight
+        ) {
+          // 防抖节流
+          clearInterval(this.timer);
+          this.timer = setTimeout(() => {
+            this.lastNewsId = this.info[this.info.length - 1]["id"];
+            this.loading = true;
+            InfoService.getLastestNews(this.lastNewsId).then(
+              (content) => {
+                if (content.length == 0) {
+                  this.end = true;
+                }
+                else {
+                  this.info = this.info.concat(content);
+                }
+                this.loading = false;
+              },
+              (error) => {
+                var content =
+                  (error.response && error.response.data) ||
+                  error.message ||
+                  error.toString();
+                console.log(content);
+                this.loading = false;
               }
-              else {
-                this.info = this.info.concat(content);
-              }
-              this.loading = false;
-            },
-            (error) => {
-              var content =
-                (error.response && error.response.data) ||
-                error.message ||
-                error.toString();
-              console.log(content);
-              this.loading = false;
-            }
-          );
-        }, 200);
+            );
+          }, 200);
+        }
       }
     },
     scrollUpMsg() {

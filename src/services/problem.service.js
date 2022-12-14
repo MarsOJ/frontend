@@ -23,8 +23,8 @@ class ProblemService {
     });
   }
 
-  getProblemDetail() {
-    return axios.get(API_URL + "/details").then((response) => {
+  getProblemDetail(problem_id) {
+    return axios.get(API_URL + "/details/" + problem_id).then((response) => {
       return response.data;
     });
   }

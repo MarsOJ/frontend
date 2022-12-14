@@ -2,6 +2,8 @@
 import AuthService from '@/services/auth.service';
 </script>
 
+<template></template>
+
 <script>
 export default {
   methods: {
@@ -12,7 +14,7 @@ export default {
     },
   },
   created() {
-    AuthService.logout().then(
+    this.$store.dispatch("auth/logout").then(
       () => {
         // Logout successful
         console.log("Successful");

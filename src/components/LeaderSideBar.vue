@@ -2,14 +2,16 @@
 
 <template>
   <div id="leaderboard">
-    <div class="title">排行榜</div>
+    <div class="title">
+      <slot></slot>
+    </div>
     <div class="podium">
       <img class="podium-pic" src="../assets/podium.png" />
-      <div class="user-info" id="first-user">
+      <div class="user-info" id="first-user" v-if="data.length >= 1">
         <img class="user-pic" src="../assets/user.png" />
         <div>{{ data[0].name }}</div>
       </div>
-      <div class="user-info" id="second-user">
+      <div class="user-info" id="second-user" v-if="data.length >= 2">
         <img class="user-pic" src="../assets/user.png" />
         <div>{{ data[1].name }}</div>
       </div>
@@ -18,15 +20,9 @@
         <div>{{ data[2].name }}</div>
       </div>
     </div>
-    <el-table
-      id="leader-table"
-      :data="data"
-      table-layout="auto"
-      :row-class-name="tableRowClassName"
-    >
+    <el-table id="leader-table" :data="data" table-layout="auto" :row-class-name="tableRowClassName">
       <el-table-column type="index" label="名次" align="center" width="80" />
-      <el-table-column prop="name" label="用户名" align="center" />
-      <el-table-column prop="points" label="积分" align="center" />
+      <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :width="col.width" align="center" />
     </el-table>
   </div>
 </template>
@@ -35,6 +31,10 @@
 export default {
   props: {
     data: Object,
+    columns: {
+      type: Array,
+      required: true,
+    },
   },
   methods: {
     tableRowClassName(row) {

@@ -66,7 +66,7 @@ export default {
 </template>
 
 <style>
-.chart {
+/* .chart {
   height: 300px;
-}
+} */
 </style>
