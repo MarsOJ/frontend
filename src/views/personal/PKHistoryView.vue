@@ -1,25 +1,28 @@
 <script setup>
-import InfoService from "@/services/info.service";
+import RecordService from "@/services/record.service";
 </script>
 
 <template>
   <el-main>
     <div class="history">
       <div v-for="item in history">
-        <div class="history-block fade-down" @click="showDetail(item.id)">
+        <div class="history-block fade-down">
           <div class="history-date">
             <span>{{ item.date }}</span>
           </div>
           <div class="history-detail">
-            <div class="history-title">{{ item.title }}</div>
-            <div class="history-src">
-              来源：<strong>{{ item.source }}</strong>
-            </div>
+            <div class="history-title">{{ item.rank }}</div>
+            <!-- <div class="history-src">
+              排名：<strong>{{ item.rank }}</strong>
+            </div> -->
           </div>
         </div>
       </div>
-      <div class="loading history-block fade-down" v-loading="loading">
+      <div class="loading history-block fade-down" v-loading="loading" v-if="!end">
         下拉加载更多
+      </div>
+      <div class="loading history-block fade-down" v-else>
+        没有更多了
       </div>
     </div>
   </el-main>
@@ -30,30 +33,30 @@ import InfoService from "@/services/info.service";
         <table class="stats-table">
           <tr>
             <td class="label">参与PK场次</td>
-            <td class="value">341</td>
+            <td class="value">{{ user.totalCompetitionsNum }}</td>
           </tr>
           <tr>
             <td class="label">PK胜场数</td>
-            <td class="value">212</td>
+            <td class="value">{{ user.totalCompetitionsNum }}</td>
           </tr>
           <tr>
             <td class="label">PK胜率</td>
-            <td class="value">72%</td>
+            <td class="value">{{ user.vicRate }}</td>
           </tr>
         </table>
         <hr class="stats-hr" />
         <table class="stats-table">
           <tr>
             <td class="label">总答题数</td>
-            <td class="value">1211</td>
+            <td class="value">{{ user.totalAnswersNum }}</td>
           </tr>
           <tr>
             <td class="label">正确题数</td>
-            <td class="value">793</td>
+            <td class="value">{{ user.correctAnswersNum }}</td>
           </tr>
           <tr>
             <td class="label">正确率</td>
-            <td class="value">63%</td>
+            <td class="value">{{ user.correctRate }}</td>
           </tr>
         </table>
       </div>
@@ -65,6 +68,7 @@ import InfoService from "@/services/info.service";
 export default {
   name: "PKHistoryView",
   props: {
+    user: Object,
     update: {
       type: Boolean,
       required: true,
@@ -79,6 +83,7 @@ export default {
   },
   data() {
     return {
+      end: false,
       loading: true,
       history: [],
       lastHistoryId: "",
@@ -86,28 +91,40 @@ export default {
   },
   methods: {
     load() {
-      this.lastHistoryId = this.history[this.history.length - 1]["id"];
-      this.loading = true;
-      InfoService.getLastestNews(this.lastHistoryId).then(
-        (content) => {
-          this.history = this.history.concat(content);
-          this.loading = false;
-        },
-        (error) => {
-          var content =
-            (error.response && error.response.data) ||
-            error.message ||
-            error.toString();
-          console.log(content);
-          this.loading = false;
-        }
-      );
+      if (this.history.length >= 1) {
+        this.lastHistoryId = this.history[this.history.length - 1]["id"];
+        this.loading = true;
+        RecordService.getPersonalRecords(this.lastHistoryId).then(
+          (content) => {
+            if (content.length == 0) {
+              this.end = true;
+            }
+            else {
+              this.history = this.history.concat(content);
+            }
+            this.loading = false;
+          },
+          (error) => {
+            var content =
+              (error.response && error.response.data) ||
+              error.message ||
+              error.toString();
+            console.log(content);
+            this.loading = false;
+          }
+        );
+      }
     },
   },
   mounted() {
-    InfoService.getLastestNews("").then(
+    RecordService.getPersonalRecords("").then(
       (content) => {
-        this.history = content;
+        if (content.length == 0) {
+          this.end = true;
+        }
+        else {
+          this.history = content;
+        }
         this.loading = false;
       },
       (error) => {
@@ -225,6 +242,7 @@ export default {
 .el-aside {
   padding-right: 0;
   padding-top: 2em;
+  margin-bottom: 2em;
 }
 
 .stats-table {

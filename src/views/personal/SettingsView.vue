@@ -10,62 +10,38 @@ import AuthService from "@/services/auth.service";
       <h2>账号安全</h2>
       <div class="settings-item">
         <div class="label">用户类型</div>
-        <div class="action" v-if="admin">管理员</div>
+        <div class="action" v-if="newUser.authority">管理员</div>
         <div class="action" v-else>普通用户</div>
       </div>
       <div class="settings-item">
         <div class="label">设置密码</div>
         <a class="action" @click="pwdEdit">修改密码</a>
       </div>
-      <el-form
-        id="password-edit"
-        class="fade-down"
-        v-if="pwdEnabled"
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-      >
+      <el-form id="password-edit" class="fade-down" v-if="pwdEnabled" ref="formRef" :model="form" :rules="rules">
         <div class="settings-item">
           <div class="label">原密码</div>
           <el-form-item prop="oldPwd">
-            <el-input
-              v-model="form.oldPwd"
-              type="password"
-              placeholder="原密码"
-            />
+            <el-input v-model="form.oldPwd" type="password" placeholder="原密码" />
           </el-form-item>
         </div>
         <div class="settings-item">
           <div class="label">新密码</div>
           <el-form-item prop="newPwd">
-            <el-input
-              v-model="form.newPwd"
-              type="password"
-              placeholder="新密码"
-            />
+            <el-input v-model="form.newPwd" type="password" placeholder="新密码" />
           </el-form-item>
         </div>
         <div class="settings-item">
           <div class="label">重复输入密码</div>
           <el-form-item prop="newPwd2">
-            <el-input
-              v-model="form.newPwd2"
-              type="password"
-              placeholder="重复输入密码"
-            />
+            <el-input v-model="form.newPwd2" type="password" placeholder="重复输入密码" />
           </el-form-item>
         </div>
         <el-form-item class="submit-btns">
-          <el-button
-            round
-            type="primary"
-            @click="submitForm(this.$refs.formRef)"
-            >修改密码</el-button
-          >
+          <el-button round type="primary" @click="submitForm(this.$refs.formRef)">修改密码</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <div class="settings fade-down" v-if="admin">
+    <div class="settings fade-down" v-if="user.authority">
       <h2>管理权限</h2>
       <div class="settings-item">
         <div class="label">网站内容管理</div>
@@ -79,19 +55,19 @@ import AuthService from "@/services/auth.service";
 export default {
   name: "SettingsView",
   props: {
+    user: Object,
     update: Boolean,
   },
   data() {
     return {
       loading: false,
-      admin: true,
       pwdEnabled: false,
       form: {
         oldPwd: "",
         newPwd: "",
         newPwd2: "",
       },
-      user: new User("", ""),
+      newUser: new User("", ""),
       rules: {
         oldPwd: [
           { required: true, message: "请输入原始密码", trigger: "blur" },
@@ -149,12 +125,15 @@ export default {
       this.loading = true;
       await formEl.validate((valid, fields) => {
         if (valid) {
-          this.user.username = this.$store.state.auth.user;
-          this.user.password = this.form.oldPwd;
-          AuthService.changePwd(this.user, this.form.newPwd).then(
+          this.newUser.username = this.$store.state.auth.newUser;
+          this.newUser.password = this.form.oldPwd;
+          AuthService.changePwd(this.newUser, this.form.newPwd).then(
             () => {
-              // Register successful: login now
+              // Change successful
               console.log("Successful");
+              this.form.oldPwd = "";
+              this.form.newPwd = "";
+              this.form.newPwd2 = "";
               this.loading = false;
               ElMessage({
                 message: "密码修改成功！",
@@ -162,8 +141,11 @@ export default {
               });
             },
             (error) => {
-              // Register failed
-              console.log("Error information!", this.user);
+              // Failed
+              console.log("Error information!", this.newUser);
+              this.form.oldPwd = "";
+              this.form.newPwd = "";
+              this.form.newPwd2 = "";
               this.loading = false;
               var msg =
                 (error.response && error.response.data) ||
