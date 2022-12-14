@@ -1,6 +1,5 @@
 import axios from "@/axios";
 
-// const API_URL = "http://127.0.0.1:8080/info/";
 const API_URL = "http://localhost:5000/info/";
 
 class InfoService {
@@ -28,20 +27,45 @@ class InfoService {
         source: source,
       })
       .then((response) => {
-        return response.status;
+        return response.data;
       });
   }
 
-  modifyNews(news) {}
+  modifyNews(news) {
+    return axios.post(API_URL + "update/", news).then((response) => {
+      return response.data;
+    });
+  }
 
   deleteNews(news_id) {
     return axios
       .delete(API_URL + "delete/", {
-        id: news_id,
+        data: {
+          id: news_id,
+        },
       })
       .then((response) => {
-        return response.status;
+        return response.data;
       });
+  }
+
+  getNewsList(page, itemPerPage) {
+    return axios
+      .get(API_URL + "list/", {
+        params: {
+          p: page,
+          itemPerPage: itemPerPage,
+        },
+      })
+      .then((response) => {
+        return response.data;
+      });
+  }
+
+  getNewsCount() {
+    return axios.get(API_URL + "count/").then((response) => {
+      return response.data.count;
+    });
   }
 }
 

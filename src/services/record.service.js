@@ -19,14 +19,29 @@ class RecordService {
       });
   }
 
-  getAllRecords() {
+  getRecordList(page, itemPerPage) {
     return axios
-      .post(API_URL + "all/", {
-        lastID: lastId,
+      .get(API_URL + "all/", {
+        params: {
+          p: page,
+          itemPerPage: itemPerPage,
+        },
       })
       .then((response) => {
         return response.data;
       });
+  }
+
+  getRecordFile(id) {
+    return axios.get(API_URL + "download/" + id).then((response) => {
+      return response.data.file;
+    });
+  }
+
+  getRecordCount() {
+    return axios.get(API_URL + "count/").then((response) => {
+      return response.data.count;
+    });
   }
 }
 

@@ -238,8 +238,7 @@ export default {
       (content) => {
         if (content.length == 0) {
           this.end = true;
-        }
-        else {
+        } else {
           this.info = content;
         }
         this.loading = false;

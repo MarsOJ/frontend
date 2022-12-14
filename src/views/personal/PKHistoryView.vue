@@ -28,9 +28,7 @@ import RecordService from "@/services/record.service";
       <div class="loading history-block fade-down" v-loading="loading" v-if="!end">
         下拉加载更多
       </div>
-      <div class="loading history-block fade-down" v-else>
-        没有更多了
-      </div>
+      <div class="loading history-block fade-down" v-else>没有更多了</div>
     </div>
   </el-main>
   <el-aside width="360px">

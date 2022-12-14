@@ -4,9 +4,16 @@ import Footer from "@/components/PageFooter.vue";
 import Pagination from "@/components/Pagination.vue";
 import InfoService from "@/services/info.service";
 import ProblemService from "@/services/problem.service";
-import BattleFileService from "@/services/battlefile.service";
+import RecordService from "@/services/record.service";
 import { ref } from "vue";
-import { Edit, Refresh, Delete, Download } from "@element-plus/icons-vue";
+import {
+  Edit,
+  Refresh,
+  Delete,
+  Download,
+  Plus,
+  Minus,
+} from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 import "element-plus/theme-chalk/el-message-box.css";
@@ -47,13 +54,13 @@ import "element-plus/theme-chalk/el-message-box.css";
 
                     <el-table
                       v-loading="listLoading"
-                      ref="mutipleInfoRef"
-                      :data="list"
+                      ref="infoRef"
+                      :data="infoList"
                       border
                       fit
                       highlight-current-row
                       style="width: 100%"
-                      @sort-change="sortChange"
+                      @selection-change="handleSelectionChange"
                     >
                       <el-table-column type="selection" width="55" />
                       <el-table-column
@@ -64,16 +71,9 @@ import "element-plus/theme-chalk/el-message-box.css";
                         width="80"
                       >
                         <template v-slot="{ $index }">
-                          <span>{{ $index + 1 }}</span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column
-                        label="标题"
-                        min-width="150px"
-                        align="center"
-                      >
-                        <template v-slot="{ row }">
-                          <span>{{ row.title }}</span>
+                          <span>{{
+                            (listQuery.page - 1) * listQuery.limit + $index + 1
+                          }}</span>
                         </template>
                       </el-table-column>
                       <el-table-column
@@ -83,6 +83,33 @@ import "element-plus/theme-chalk/el-message-box.css";
                       >
                         <template v-slot="{ row }">
                           <span>{{ row.date }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="标题"
+                        width="200px"
+                        align="center"
+                      >
+                        <template v-slot="{ row }">
+                          <span class="link-type">{{ row.title }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="来源"
+                        width="150px"
+                        align="center"
+                      >
+                        <template v-slot="{ row }">
+                          <span>{{ row.source }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="内容"
+                        min-width="150px"
+                        align="center"
+                      >
+                        <template v-slot="{ row }">
+                          <span>{{ row.content }}</span>
                         </template>
                       </el-table-column>
                       <el-table-column
@@ -103,15 +130,15 @@ import "element-plus/theme-chalk/el-message-box.css";
                     </el-table>
 
                     <pagination
-                      v-show="total > 0"
-                      :total="total"
+                      v-show="infoTotal > 0"
+                      :total="infoTotal"
                       v-model:page="listQuery.page"
                       v-model:limit="listQuery.limit"
-                      @pagination="updateProblemList"
+                      @pagination="updateList"
                     />
 
                     <el-dialog
-                      title="新建资讯"
+                      title="资讯"
                       v-model="InfoDialogVisible"
                       :append-to-body="true"
                     >
@@ -119,13 +146,18 @@ import "element-plus/theme-chalk/el-message-box.css";
                         ref="dataForm"
                         :model="InfoModel"
                         label-position="left"
-                        label-width="70px"
-                        style="width: 400px; margin-left: 50px"
+                        label-width="80px"
+                        style="margin-left: 50px; margin-right: 50px"
                       >
                         <el-form-item label="标题" prop="title">
                           <el-input
                             v-model="InfoModel.title"
-                            style="width: 140px"
+                            class="filter-item"
+                          />
+                        </el-form-item>
+                        <el-form-item label="来源" prop="source">
+                          <el-input
+                            v-model="InfoModel.source"
                             class="filter-item"
                           />
                         </el-form-item>
@@ -134,13 +166,6 @@ import "element-plus/theme-chalk/el-message-box.css";
                             v-model="InfoModel.content"
                             :autosize="{ minRows: 6, maxRows: 10 }"
                             type="textarea"
-                            style="width: 140px"
-                            class="filter-item"
-                          />
-                        </el-form-item>
-                        <el-form-item label="置顶" prop="top">
-                          <el-switch
-                            v-model="InfoModel.top"
                             class="filter-item"
                           />
                         </el-form-item>
@@ -189,13 +214,13 @@ import "element-plus/theme-chalk/el-message-box.css";
 
                     <el-table
                       v-loading="listLoading"
-                      ref="mutipleProblemRef"
-                      :data="list"
+                      ref="problemRef"
+                      :data="problemList"
                       border
                       fit
                       highlight-current-row
                       style="width: 100%"
-                      @sort-change="sortChange"
+                      @selection-change="handleSelectionChange"
                     >
                       <el-table-column type="selection" width="55" />
                       <el-table-column
@@ -206,7 +231,9 @@ import "element-plus/theme-chalk/el-message-box.css";
                         width="80"
                       >
                         <template v-slot="{ $index }">
-                          <span>{{ $index + 1 }}</span>
+                          <span>{{
+                            (listQuery.page - 1) * listQuery.limit + $index + 1
+                          }}</span>
                         </template>
                       </el-table-column>
                       <el-table-column
@@ -218,12 +245,18 @@ import "element-plus/theme-chalk/el-message-box.css";
                           <span>{{ row.date }}</span>
                         </template>
                       </el-table-column>
-                      <el-table-column label="标题" width="150px">
+                      <el-table-column label="标题" width="200px">
                         <template v-slot="{ row }">
                           <span class="link-type">{{ row.title }}</span>
-                          <el-tag v-if="row.type === 1">单选题</el-tag>
-                          <el-tag v-else-if="row.type === 2">一般多选题</el-tag>
-                          <el-tag v-else-if="row.type === 3">程序多选题</el-tag>
+                          <el-tag v-if="row.classification === 0"
+                            >单选题</el-tag
+                          >
+                          <el-tag v-else-if="row.classification === 1"
+                            >一般多选题</el-tag
+                          >
+                          <el-tag v-else-if="row.classification === 2"
+                            >程序多选题</el-tag
+                          >
                           <el-tag v-else>其他题型</el-tag>
                         </template>
                       </el-table-column>
@@ -254,11 +287,11 @@ import "element-plus/theme-chalk/el-message-box.css";
                     </el-table>
 
                     <pagination
-                      v-show="total > 0"
-                      :total="total"
+                      v-show="problemTotal > 0"
+                      :total="problemTotal"
                       v-model:page="listQuery.page"
                       v-model:limit="listQuery.limit"
-                      @pagination="updateProblemList"
+                      @pagination="updateList"
                     />
 
                     <el-dialog
@@ -270,56 +303,148 @@ import "element-plus/theme-chalk/el-message-box.css";
                         ref="dataForm"
                         :model="ProblemModel"
                         label-position="left"
-                        label-width="70px"
-                        style="width: 400px; margin-left: 50px"
+                        label-width="80px"
+                        style="margin-left: 50px; margin-right: 50px"
                       >
                         <el-form-item label="题目类型" prop="type">
                           <el-select
-                            v-model="ProblemModel.type"
+                            v-model="ProblemModel.classification"
                             style="width: 140px"
                             class="filter-item"
                           >
-                            <el-option :label="单选题" :value="0" />
-                            <el-option :label="一般多选题" :value="1" />
-                            <el-option :label="程序多选题" :value="2" />
+                            <el-option :key="0" :label="'单选题'" :value="0" />
+                            <el-option
+                              :key="1"
+                              :label="'一般多选题'"
+                              :value="1"
+                            />
+                            <el-option
+                              :key="2"
+                              :label="'程序多选题'"
+                              :value="2"
+                            />
                           </el-select>
                         </el-form-item>
-                        <el-form-item label="标题" prop="title">
+                        <el-form-item label="创建者" prop="owner">
                           <el-input
-                            v-model="ProblemModel.title"
+                            v-model="ProblemModel.owner"
                             style="width: 140px"
                             class="filter-item"
+                            disabled
                           />
                         </el-form-item>
                         <el-form-item label="题目" prop="content">
                           <el-input
                             v-model="ProblemModel.content"
-                            :autosize="{ minRows: 6, maxRows: 10 }"
+                            :autosize="{ minRows: 3, maxRows: 5 }"
                             type="textarea"
-                            style="width: 140px"
                             class="filter-item"
                           />
                         </el-form-item>
-                        <el-form-item label="选项" prop="options">
-                          <el-radio-group
-                            v-model="ProblemModel.answer"
-                            size="large"
-                            style="width: 140px"
+                        <div v-if="ProblemModel.classification === 0">
+                          <el-form-item label="选项A">
+                            <el-input
+                              v-model="ProblemModel.subproblem[0].choice[0]"
+                              class="filter-item"
+                            />
+                          </el-form-item>
+                          <el-form-item label="选项B">
+                            <el-input
+                              v-model="ProblemModel.subproblem[0].choice[1]"
+                              class="filter-item"
+                            />
+                          </el-form-item>
+                          <el-form-item label="选项C">
+                            <el-input
+                              v-model="ProblemModel.subproblem[0].choice[2]"
+                              class="filter-item"
+                            />
+                          </el-form-item>
+                          <el-form-item label="选项D">
+                            <el-input
+                              v-model="ProblemModel.subproblem[0].choice[3]"
+                              class="filter-item"
+                            />
+                          </el-form-item>
+                          <el-form-item label="答案">
+                            <el-radio-group
+                              v-model="ProblemModel.answer[0]"
+                              size="large"
+                            >
+                              <el-radio-button label="A" />
+                              <el-radio-button label="B" />
+                              <el-radio-button label="C" />
+                              <el-radio-button label="D" />
+                            </el-radio-group>
+                          </el-form-item>
+                        </div>
+                        <div v-if="ProblemModel.classification > 0">
+                          <div v-for="(sp, index) in ProblemModel.subproblem">
+                            <el-form-item label="子问题">
+                              <el-input
+                                v-model="sp.content"
+                                :autosize="{ minRows: 3, maxRows: 5 }"
+                                type="textarea"
+                                class="filter-item"
+                              />
+                            </el-form-item>
+                            <el-form-item label="选项A">
+                              <el-input
+                                v-model="sp.choice[0]"
+                                class="filter-item"
+                              />
+                            </el-form-item>
+                            <el-form-item label="选项B">
+                              <el-input
+                                v-model="sp.choice[1]"
+                                class="filter-item"
+                              />
+                            </el-form-item>
+                            <el-form-item label="选项C">
+                              <el-input
+                                v-model="sp.choice[2]"
+                                class="filter-item"
+                              />
+                            </el-form-item>
+                            <el-form-item label="选项D">
+                              <el-input
+                                v-model="sp.choice[3]"
+                                class="filter-item"
+                              />
+                            </el-form-item>
+                            <el-form-item label="答案">
+                              <el-radio-group
+                                v-model="ProblemModel.answer[index]"
+                              >
+                                <el-radio-button label="A" />
+                                <el-radio-button label="B" />
+                                <el-radio-button label="C" />
+                                <el-radio-button label="D" />
+                              </el-radio-group>
+                            </el-form-item>
+                          </div>
+                          <el-form-item :inline="true">
+                            <el-button
+                              type="primary"
+                              :icon="Plus"
+                              circle
+                              @click="addSubproblem"
+                            />
+                            <el-button
+                              type="primary"
+                              :icon="Minus"
+                              circle
+                              @click="removeSubproblem"
+                            />
+                          </el-form-item>
+                        </div>
+                        <el-form-item label="解析" prop="explanation">
+                          <el-input
+                            v-model="ProblemModel.explanation"
+                            :autosize="{ minRows: 6, maxRows: 10 }"
+                            type="textarea"
                             class="filter-item"
-                          >
-                            <el-radio label="A">{{
-                              ProblemModel.options[0]
-                            }}</el-radio>
-                            <el-radio label="B">{{
-                              ProblemModel.options[1]
-                            }}</el-radio>
-                            <el-radio label="C">{{
-                              ProblemModel.options[2]
-                            }}</el-radio>
-                            <el-radio label="D">{{
-                              ProblemModel.options[3]
-                            }}</el-radio>
-                          </el-radio-group>
+                          />
                         </el-form-item>
                       </el-form>
                       <div class="dialog-footer">
@@ -340,7 +465,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                     </el-dialog>
                   </div>
                 </el-tab-pane>
-                <el-tab-pane label="对战记录" name="battle">
+                <el-tab-pane label="对战记录" name="record">
                   <div class="app-container">
                     <div class="filter-container">
                       <el-button
@@ -356,7 +481,7 @@ import "element-plus/theme-chalk/el-message-box.css";
 
                     <el-table
                       v-loading="listLoading"
-                      :data="list"
+                      :data="recordList"
                       border
                       fit
                       highlight-current-row
@@ -371,34 +496,29 @@ import "element-plus/theme-chalk/el-message-box.css";
                         width="80"
                       >
                         <template v-slot="{ $index }">
-                          <span>{{ $index + 1 }}</span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column
-                        label="获胜方ID"
-                        min-width="150px"
-                        align="center"
-                      >
-                        <template v-slot="{ row }">
-                          <span>{{ row.winner_id }}</span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column
-                        label="失败方ID"
-                        min-width="150px"
-                        align="center"
-                      >
-                        <template v-slot="{ row }">
-                          <span>{{ row.loser_id }}</span>
+                          <span>{{
+                            (listQuery.page - 1) * listQuery.limit + $index + 1
+                          }}</span>
                         </template>
                       </el-table-column>
                       <el-table-column
                         label="比赛时间"
-                        width="150px"
+                        width="200px"
                         align="center"
                       >
                         <template v-slot="{ row }">
                           <span>{{ row.date }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="排名"
+                        min-width="150px"
+                        align="center"
+                      >
+                        <template v-slot="{ row }">
+                          <el-tag v-for="player in row.rank">{{
+                            player
+                          }}</el-tag>
                         </template>
                       </el-table-column>
                       <el-table-column
@@ -420,66 +540,12 @@ import "element-plus/theme-chalk/el-message-box.css";
                     </el-table>
 
                     <pagination
-                      v-show="total > 0"
-                      :total="total"
+                      v-show="recordTotal > 0"
+                      :total="recordTotal"
                       v-model:page="listQuery.page"
                       v-model:limit="listQuery.limit"
-                      @pagination="updateProblemList"
+                      @pagination="updateList"
                     />
-
-                    <el-dialog
-                      title="移动问题至"
-                      v-model="ProblemDialogVisible"
-                      :append-to-body="true"
-                    >
-                      <el-form
-                        ref="dataForm"
-                        :model="moveFavoriteModel"
-                        label-position="left"
-                        label-width="70px"
-                        style="width: 400px; margin-left: 50px"
-                      >
-                        <el-form-item label="命名" prop="name">
-                          <el-select
-                            v-model="moveFavoriteModel.name"
-                            style="width: 140px"
-                            class="filter-item"
-                          >
-                            <el-option
-                              v-for="item in favoriteList"
-                              :key="item.id"
-                              :label="item.name"
-                              :value="item.id"
-                            />
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item label="是否复制" prop="shouldDelete">
-                          <el-select
-                            v-model="moveFavoriteModel.shouldDelete"
-                            style="width: 140px"
-                            class="filter-item"
-                          >
-                            <el-option :label="'是'" :value="true" />
-                            <el-option :label="'否'" :value="false" />
-                          </el-select>
-                        </el-form-item>
-                      </el-form>
-                      <div class="dialog-footer">
-                        <el-button
-                          @click="ProblemDialogVisible = false"
-                          size="small"
-                        >
-                          取消
-                        </el-button>
-                        <el-button
-                          type="primary"
-                          @click="MoveProblem"
-                          size="small"
-                        >
-                          确定
-                        </el-button>
-                      </div>
-                    </el-dialog>
                   </div>
                 </el-tab-pane>
               </el-tabs>
@@ -497,19 +563,14 @@ export default {
   data() {
     return {
       activeName: ref("info"),
-      mutipleInfoRef: ref([0]),
-      mutipleProblemRef: ref([0]),
-      list: [
-        // {
-        //   title: "test", //string
-        //   id: 1, //string
-        //   content: "This is a test problem", //20-30 characters
-        //   type: 1, //
-        //   date: "2022-09-19",
-        // },
-      ],
+      infoList: [],
+      problemList: [],
+      recordList: [],
+      multiSelection: [],
       listLoading: false,
-      total: 1,
+      infoTotal: 1,
+      problemTotal: 1,
+      recordTotal: 1,
       listQuery: {
         page: 1,
         limit: 20,
@@ -524,67 +585,145 @@ export default {
       InfoModel: {
         title: "",
         content: "",
-        top: false,
+        source: "",
+        id: 0,
         rules: [],
         create: false,
       },
       ProblemModel: {
-        title: "",
+        id: 0,
         content: "",
-        options: [],
-        answer: ref("A"),
-        type: 1, //
+        answer: ["A"],
+        subproblem: [{ content: "", choice: "" }],
+        source: "",
+        difficultyInt: 1,
+        classification: 0, //
       },
       InfoDialogVisible: false,
       ProblemDialogVisible: false,
     };
   },
   created() {
-    this.updateList();
+    InfoService.getNewsCount().then((count) => {
+      this.infoTotal = count;
+    });
+    ProblemService.getProblemCount().then((count) => {
+      this.problemTotal = count;
+    });
+    RecordService.getRecordCount().then((count) => {
+      this.recordTotal = count;
+    });
+    InfoService.getNewsList(this.listQuery.page, this.listQuery.limit).then(
+      (data) => {
+        this.infoList = data;
+      }
+    );
+    ProblemService.getProblemList(
+      this.listQuery.page,
+      this.listQuery.limit
+    ).then((data) => {
+      this.problemList = data;
+    });
+    RecordService.getRecordList(this.listQuery.page, this.listQuery.limit).then(
+      (data) => {
+        this.recordList = data;
+      }
+    );
   },
   methods: {
     updateList() {
       this.listLoading = true;
       switch (this.activeName) {
         case "info":
+          InfoService.getNewsCount().then((count) => {
+            this.infoTotal = count;
+          });
+          InfoService.getNewsList(
+            this.listQuery.page,
+            this.listQuery.limit
+          ).then((data) => {
+            this.infoList = data;
+          });
+
           break;
         case "problem":
-          ProblemService.getProblemDetail().then((data) => {
-            this.list = data;
+          ProblemService.getProblemCount().then((count) => {
+            this.problemTotal = count;
           });
+          ProblemService.getProblemList(
+            this.listQuery.page,
+            this.listQuery.limit
+          ).then((data) => {
+            this.problemList = data;
+          });
+
           break;
-        case "battle":
+        case "record":
+          RecordService.getRecordCount().then((count) => {
+            this.recordTotal = count;
+          });
+          RecordService.getRecordList(
+            this.listQuery.page,
+            this.listQuery.limit
+          ).then((data) => {
+            this.recordList = data;
+          });
           break;
         default:
           break;
       }
       this.listLoading = false;
     },
-    sortChange(data) {
-      const { prop, order } = data;
-      if (prop === "id") {
-        this.sortByID(order);
-      }
-    },
-    sortByID(order) {
-      if (order === "ascending") {
-        this.listQuery.sort = "+id";
-      } else {
-        this.listQuery.sort = "-id";
-      }
-      this.handleFilter();
+    handleSelectionChange(val) {
+      this.multiSelection = val;
+      console.log(val);
     },
     handleBatchDelete() {
       ElMessageBox.alert("您确定要删除所选项目吗？该操作不可恢复！", "警告", {
         cancelButtonText: "Cancel",
         confirmButtonText: "OK",
         callback: () => {
+          var removeList = [];
+          for (const el of this.multiSelection) {
+            removeList.push(el.id);
+          }
+          if (removeList.length == 0) return;
           switch (this.activeName) {
             case "info":
+              InfoService.deleteNews(removeList).then(
+                () => {
+                  ElMessage({
+                    message: "批量删除成功",
+                    type: "success",
+                  });
+                  this.updateList();
+                },
+                (error) => {
+                  ElMessage({
+                    message: "批量删除失败",
+                    type: "error",
+                  });
+                  console.log(error);
+                }
+              );
               break;
             case "problem":
-              break;
-            case "battle":
+              ProblemService.deleteProblem(removeList).then(
+                () => {
+                  ElMessage({
+                    message: "批量删除成功",
+                    type: "success",
+                  });
+                  this.updateList();
+                },
+                (error) => {
+                  ElMessage({
+                    message: "批量删除失败",
+                    type: "error",
+                  });
+                  console.log(error);
+                }
+              );
               break;
             default:
               break;
@@ -598,7 +737,7 @@ export default {
     },
     addInfo() {
       this.InfoModel = {
-        title: "0",
+        title: "",
         content: "",
         top: false,
         rules: [],
@@ -607,32 +746,54 @@ export default {
       this.InfoDialogVisible = true;
     },
     createInfo() {
-      //TODO: row -> param
       if (this.InfoModel.create) {
         InfoService.addNews(
           this.InfoModel.title,
           this.InfoModel.content,
           this.InfoModel.source
-        ).then((status) => {
-          if (status == 200) {
+        ).then(
+          () => {
             ElMessage({
               message: "添加资讯成功",
               type: "success",
             });
-          } else {
+            this.updateList();
+          },
+          (error) => {
             ElMessage({
               message: "添加失败",
               type: "error",
             });
+            console.log(error);
           }
-        });
+        );
       } else {
-        InfoService.modifyNews().then();
+        InfoService.modifyNews({
+          id: this.InfoModel.id,
+          title: this.InfoModel.title,
+          content: this.InfoModel.content,
+          source: this.InfoModel.source,
+        }).then(
+          () => {
+            ElMessage({
+              message: "修改资讯成功",
+              type: "success",
+            });
+            this.updateList();
+          },
+          (error) => {
+            ElMessage({
+              message: "修改资讯失败",
+              type: "error",
+            });
+            console.log(error);
+          }
+        );
       }
+      this.InfoDialogVisible = false;
     },
     checkInfo(row) {
-      //TODO: row -> param
-      InfoService.getNewsDetail(row).then((detail) => {
+      InfoService.getNewsDetail(row.id).then((detail) => {
         if (detail == null) {
           ElMessage({
             message: "获取资讯详情发生错误",
@@ -641,98 +802,129 @@ export default {
         } else {
           this.InfoModel.title = detail.title;
           this.InfoModel.content = detail.content;
-          this.InfoModel.top = detail.top;
+          this.InfoModel.source = detail.source;
+          this.InfoModel.id = detail.id;
           this.InfoModel.create = false;
           this.InfoDialogVisible = true;
         }
       });
     },
     deleteInfo(row) {
-      InfoService.deleteNews(row.id).then((status) => {
-        if (status == 200) {
+      InfoService.deleteNews([row.id]).then(
+        () => {
           ElMessage({
             message: "成功删除",
             type: "success",
           });
-        } else {
+          this.updateList();
+        },
+        (error) => {
           ElMessage({
             message: "删除失败",
             type: "error",
           });
+          console.log(error);
         }
-      });
+      );
     },
     addProblem() {
       this.ProblemModel = {
-        title: "",
+        id: 0,
         content: "",
-        options: ["", "", "", ""],
-        answer: ref("A"),
-        type: 0, //
-        create: true,
+        answer: ["A"],
+        subproblem: [{ content: "", choice: ["", "", "", ""] }],
+        source: "",
+        difficultyInt: 1,
+        classification: 1, //
       };
+      this.create = true;
       this.ProblemDialogVisible = true;
     },
     createProblem() {
       var problem = this.ProblemModel;
-      if (this.ProblemModel.create) {
-        ProblemService.addProblem(problem).then((status) => {
-          if (status == 200) {
+      if (this.create) {
+        ProblemService.addProblem(problem).then(
+          () => {
             ElMessage({
               message: "成功创建题目",
               type: "success",
             });
-          } else {
+            this.updateList();
+          },
+          (error) => {
             ElMessage({
               message: "添加失败",
               type: "error",
             });
+            console.error(error);
           }
-        });
+        );
       } else {
-        ProblemService.modifyProblem(problem).then((status) => {
-          if (status == 200) {
+        ProblemService.modifyProblem(problem).then(
+          () => {
             ElMessage({
               message: "成功修改题目",
               type: "success",
             });
-          } else {
+            this.updateList();
+          },
+          (error) => {
             ElMessage({
               message: "修改失败",
               type: "error",
             });
+            console.log(error);
           }
-        });
+        );
       }
+      this.ProblemDialogVisible = false;
     },
     checkProblem(row) {
-      this.ProblemModel.title = row.title;
-      this.ProblemModel.content = row.content;
-      this.ProblemModel.type = row.type;
-      this.ProblemModel.options = row.subproblem;
-      this.ProblemModel.answer = row.answer;
-      this.ProblemModel.create = false;
-      this.ProblemDialogVisible = true;
+      ProblemService.getProblemDetail(row.id).then((detail) => {
+        if (detail == null) {
+          ElMessage({
+            message: "获取题目详情发生错误",
+            type: "error",
+          });
+        } else {
+          this.ProblemModel = detail;
+          this.create = false;
+          this.type = row.type;
+          this.ProblemDialogVisible = true;
+        }
+      });
     },
     deleteProblem(row) {
-      //TODO: row -> param
-      ProblemService.deleteProblem(row.id).then((status) => {
-        if (status == 200) {
+      ProblemService.deleteProblem(row.id).then(
+        () => {
           ElMessage({
             message: "成功删除",
             type: "success",
           });
-        } else {
+          this.updateList();
+        },
+        (error) => {
           ElMessage({
             message: "删除失败",
             type: "error",
           });
+          console.log(error);
         }
+      );
+    },
+    addSubproblem() {
+      this.ProblemModel.subproblem.push({
+        content: "",
+        choice: ["", "", "", ""],
       });
+      this.ProblemModel.answer.push("");
+    },
+    removeSubproblem() {
+      this.ProblemModel.subproblem.pop();
+      this.ProblemModel.answer.pop();
     },
     handleDownload(row) {
-      //TODO: row -> param
-      BattleFileService.download().then();
+      RecordService.getRecordFile(row.id).then((file) => {});
     },
   },
 };
