@@ -31,8 +31,9 @@ import RecordService from "@/services/record.service";
                 <el-button id="pk-button" @click="this.startPairing()">
                   开始匹配
                 </el-button>
-                <div class="info">
-                  当前等级：Level 5 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;钱：没有
+                <div class="info" v-if="score">
+                  当前积 {{ score }} 分&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;位于总榜第 {{ userRank }} 名
+                  <!-- 当前等级：Level 5 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;钱：没有 -->
                 </div>
               </div>
             </el-main>
@@ -67,6 +68,7 @@ export default {
       socket: null,
       pairing: false,
       paired: false,
+      score: null,
     };
   },
   methods: {
@@ -112,10 +114,14 @@ export default {
   mounted() {
     RecordService.getRankings().then(
       (content) => {
-        content.forEach(element => {
+        content.forEach((element, index) => {
           element.name = element.username;
           element.points = element.score;
           element.isUser = (element.name === this.$store.state.auth.user);
+          if (element.isUser) {
+            this.score = element.points;
+            this.userRank = index + 1;
+          }
         });
         this.leaderData = content;
         this.loading = false;

@@ -1,29 +1,35 @@
-<script setup></script>
+<script setup>
+import UserInfo from "@/components/UserInfo.vue";
+</script>
 
 <template>
   <div id="leaderboard">
-    <div class="title">
-      <slot></slot>
+    <UserInfo :username="checkUser" v-if="showCheckUser" @close="this.showCheckUser = false;" />
+    <div class="wrapper">
+      <div class="title">
+        <slot></slot>
+      </div>
+      <div class="podium">
+        <img class="podium-pic" src="../assets/podium.png" />
+        <div class="user-info" id="first-user" v-if="data.length >= 1">
+          <img class="user-pic" src="../assets/user.png" />
+          <div>{{ data[0].name }}</div>
+        </div>
+        <div class="user-info" id="second-user" v-if="data.length >= 2">
+          <img class="user-pic" src="../assets/user.png" />
+          <div>{{ data[1].name }}</div>
+        </div>
+        <div class="user-info" id="third-user" v-if="data.length >= 3">
+          <img class="user-pic" src="../assets/user.png" />
+          <div>{{ data[2].name }}</div>
+        </div>
+      </div>
+      <el-table id="leader-table" :data="data" table-layout="auto" :row-class-name="tableRowClassName"
+        @row-click="rowClicked">
+        <el-table-column type="index" label="名次" align="center" width="80" />
+        <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :width="col.width" align="center" />
+      </el-table>
     </div>
-    <div class="podium">
-      <img class="podium-pic" src="../assets/podium.png" />
-      <div class="user-info" id="first-user" v-if="data.length >= 1">
-        <img class="user-pic" src="../assets/user.png" />
-        <div>{{ data[0].name }}</div>
-      </div>
-      <div class="user-info" id="second-user" v-if="data.length >= 2">
-        <img class="user-pic" src="../assets/user.png" />
-        <div>{{ data[1].name }}</div>
-      </div>
-      <div class="user-info" id="third-user" v-if="data.length >= 3">
-        <img class="user-pic" src="../assets/user.png" />
-        <div>{{ data[2].name }}</div>
-      </div>
-    </div>
-    <el-table id="leader-table" :data="data" table-layout="auto" :row-class-name="tableRowClassName">
-      <el-table-column type="index" label="名次" align="center" width="80" />
-      <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :width="col.width" align="center" />
-    </el-table>
   </div>
 </template>
 
@@ -36,12 +42,22 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      checkUser: "",
+      showCheckUser: false,
+    };
+  },
   methods: {
     tableRowClassName(row) {
       if (row.row.isUser) {
         return "user-row";
       }
       return "";
+    },
+    rowClicked(row) {
+      this.checkUser = row.name;
+      this.showCheckUser = true;
     },
   },
 };
@@ -54,15 +70,19 @@ export default {
 }
 
 #leaderboard {
+  position: relative;
   margin: 2em 0px 2em;
-  padding: 2em;
   border: gray 3px solid;
   border-radius: 28px;
-  width: 80%;
+  background-color: white;
+  overflow: hidden;
+}
+
+#leaderboard .wrapper {
+  padding: 2em;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: white;
 }
 
 .podium {
@@ -123,7 +143,15 @@ export default {
 </style>
 
 <style>
-.el-table .user-row {
+.el-table .cell {
+  white-space: nowrap;
+}
+
+.el-table .el-table__row {
+  cursor: pointer;
+}
+
+.el-table .el-table__row.user-row {
   font-weight: bold;
   background-color: gainsboro;
 }

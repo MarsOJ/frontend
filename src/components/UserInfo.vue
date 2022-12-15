@@ -126,7 +126,7 @@ export default {
   width: 100%;
   height: 100%;
   /* background-color: rgba(128, 128, 128, 0.4); */
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -135,7 +135,7 @@ export default {
 
 .userinfo-image {
   position: relative;
-  bottom: -32px;
+  bottom: -16px;
   width: 64px;
   height: 64px;
   border-radius: 50%;
@@ -147,7 +147,8 @@ export default {
 
 .userinfo-block {
   position: relative;
-  width: 300px;
+  top: -16px;
+  width: 198px;
   padding: 32px;
   color: #21202e;
   background-color: white;
@@ -188,6 +189,8 @@ export default {
 .userinfo-info #signature {
   font-size: 14px;
   color: #6e6e6e;
+  max-width: 100%;
+  word-wrap: break-word;
 }
 
 .userinfo-info hr.title-hr {
@@ -200,16 +203,17 @@ export default {
   border: none;
   /* border-top: 1px dashed #64646d; */
   height: 0;
-  width: 80%;
+  width: 100%;
+  margin: 4px 0;
 }
 
 .stats-table {
   margin: auto;
-  width: 70%;
+  width: 80%;
 }
 
 .stats-table .label {
-  width: 60%;
+  width: 100px;
 }
 
 .stats-table .value {

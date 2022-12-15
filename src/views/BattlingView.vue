@@ -2,11 +2,13 @@
 import CountdownTimer from "@/components/CountdownTimer.vue";
 import RealTimeScoreboard from "@/components/RealTimeScoreboard.vue";
 import ScoreGraph from "@/components/ScoreGraph.vue";
+import UserInfo from "@/components/UserInfo.vue";
 import { ref } from "vue";
 </script>
 
 <template>
   <div class="common-layout">
+    <UserInfo :username="checkUser" v-if="showCheckUser" @close="this.showCheckUser = false;" />
     <CountdownTimer v-if="waiting" @end="endOfCountdown" />
     <div class="sidebar-bg fade-in" @click="toggleSidebar()" v-if="showRanking"></div>
     <el-container direction="vertical" class="page">
@@ -141,9 +143,9 @@ import { ref } from "vue";
         <el-scrollbar>
           <div class="sidebar-content">
             <h2>实时排行</h2>
-            <RealTimeScoreboard :players="players" :enabled="showRanking" />
+            <RealTimeScoreboard :players="players" :enabled="showRanking" @checkUser="checkUserInfo" />
             <h2>分数走势</h2>
-            <div style="height: 300px;">
+            <div style="width: 100%; height: 300px;">
               <ScoreGraph v-if="players.length" :history="scoreHistory" :users="users" />
             </div>
           </div>
@@ -211,6 +213,8 @@ export default {
       logs: [],
       scoreHistory: [[0]],
       exiting: false,
+      checkUser: "",
+      showCheckUser: false,
     };
   },
   methods: {
@@ -293,6 +297,10 @@ export default {
           }, 3000);
         }
       }
+    },
+    checkUserInfo(username) {
+      this.checkUser = username;
+      this.showCheckUser = true;
     },
     onExit() {
       ElMessageBox.confirm("您确定要退出本场对局吗？中途退出会被视为一次失败。")

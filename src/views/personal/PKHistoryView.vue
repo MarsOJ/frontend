@@ -14,12 +14,13 @@ import RecordService from "@/services/record.service";
           <div class="history-detail">
             <div class="history-title">在PK中获得了第{{ record.rank + 1 }}名（{{ record.points[record.rank].score }}分） </div>
             <table class="history-tb">
-              <tr v-for="line in record.points" :class="{ 'highlight': line.isUser }">
+              <tr v-for="line in record.points" :class="{ 'highlight': line.isUser }" class="link"
+                @click="$emit('checkUser', line.username);">
                 <td width="48px">{{ line.rank + 1 }}</td>
                 <td width="162px">
-                  <span class="link" @click="$emit('checkUser', line.username);">
-                    {{ line.username }}
-                  </span>
+                  <!-- <span> -->
+                  {{ line.username }}
+                  <!-- </span> -->
                 </td>
                 <td width="72px">{{ line.score }}</td>
               </tr>
@@ -261,7 +262,7 @@ export default {
   text-align: center;
 }
 
-.history-tb tr td .link {
+.history-tb tr.link {
   cursor: pointer;
 }
 
