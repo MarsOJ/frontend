@@ -845,6 +845,7 @@ export default {
         source: "",
         difficultyInt: 1,
         classification: 1, //
+        explanation: "",
       };
       this.create = true;
       this.ProblemDialogVisible = true;
@@ -936,8 +937,11 @@ export default {
       RecordService.getRecordFile(row.id).then((url) => {
         console.log(url);
         window.open(url);
+        ElMessage({
+          message: "开始下载",
+          type: "success",
+        });
       });
-      // window.open(url);
     },
   },
 };
