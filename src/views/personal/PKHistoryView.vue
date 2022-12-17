@@ -256,6 +256,10 @@ export default {
   background-color: gainsboro;
 }
 
+.history-tb tr.highlight:hover {
+  background-color: #b9b9b9;
+}
+
 .history-tb tr td {
   padding: 8px 0;
   border-bottom: #d9d7d7a7 1px solid;
