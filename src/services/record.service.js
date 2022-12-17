@@ -33,8 +33,16 @@ class RecordService {
   }
 
   getRecordFile(id) {
-    return axios.get(API_URL + "download/" + id).then((response) => {
-      return response.data.file;
+    // return axios.get(API_URL + "download/" + id).then((response) => {
+    //   return response.data.file;
+    // });
+    if (id === undefined) {
+      return new Promise((resolve) => {
+        resolve(API_URL + "download-all/");
+      });
+    }
+    return new Promise((resolve) => {
+      resolve(API_URL + "download/" + id);
     });
   }
 
