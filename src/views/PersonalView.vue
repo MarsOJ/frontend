@@ -184,7 +184,7 @@ export default {
     },
   },
   created() {
-    AuthService.userInfo().then(
+    AuthService.userInfo(this.$store.state.auth.user).then(
       (content) => {
         this.user = content;
         this.signature = content.signature;
