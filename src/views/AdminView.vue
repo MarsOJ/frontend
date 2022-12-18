@@ -471,6 +471,15 @@ import "element-plus/theme-chalk/el-message-box.css";
                       <el-button
                         class="filter-item"
                         type="primary"
+                        size="small"
+                        :icon="Download"
+                        @click="handleDownload({ id: undefined })"
+                      >
+                        下载全部 </el-button
+                      ><el-button
+                        class="filter-item"
+                        style="margin-left: 15px"
+                        type="third"
                         :icon="Refresh"
                         size="small"
                         @click="updateList"
@@ -836,6 +845,7 @@ export default {
         source: "",
         difficultyInt: 1,
         classification: 1, //
+        explanation: "",
       };
       this.create = true;
       this.ProblemDialogVisible = true;
@@ -924,7 +934,14 @@ export default {
       this.ProblemModel.answer.pop();
     },
     handleDownload(row) {
-      RecordService.getRecordFile(row.id).then((file) => {});
+      RecordService.getRecordFile(row.id).then((url) => {
+        console.log(url);
+        window.open(url);
+        ElMessage({
+          message: "开始下载",
+          type: "success",
+        });
+      });
     },
   },
 };
