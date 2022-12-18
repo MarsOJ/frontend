@@ -60,8 +60,12 @@ class AuthService {
     });
   }
 
-  userProfile() {
-    return axios.get(API_URL + "profile/").then((response) => {
+  userProfile(username) {
+    return axios.get(API_URL + "profile/", {
+      params: {
+        username: username,
+      },
+    }).then((response) => {
       return response.data;
     });
   }

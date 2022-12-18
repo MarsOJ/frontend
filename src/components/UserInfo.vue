@@ -131,6 +131,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: initial;
 }
 
 .userinfo-image {
