@@ -4,6 +4,7 @@ import CountdownTimer from "@/components/CountdownTimer.vue";
 import RealTimeScoreboard from "@/components/RealTimeScoreboard.vue";
 import ScoreGraph from "@/components/ScoreGraph.vue";
 import UserInfo from "@/components/UserInfo.vue";
+import { marked } from "marked";
 import { ref } from "vue";
 </script>
 
@@ -44,6 +45,7 @@ import { ref } from "vue";
               <div class="block-content">
                 <div v-if="problem.type === 0">
                   <span class="problem-text">{{ problem.content }}</span>
+                  <div v-html="codeHtml"></div>
                   <div class="answer" v-if="problem.subproblem[0].choice.length === 4">
                     <el-radio-group v-model="problem.subproblem[0].radio" size="large">
                       <el-radio label="A">{{
@@ -71,6 +73,7 @@ import { ref } from "vue";
                   <span class="problem-text">{{ problem.content }}</span>
                   <div v-for="sp in problem.subproblem">
                     <span class="problem-text">{{ sp.content }}</span>
+                    <div v-html="codeHtml"></div>
                     <div class="answer" v-if="sp.choice.length === 4">
                       <el-radio-group v-model="sp.radio" size="large">
                         <el-radio label="A">{{ sp.choice[0] }}</el-radio>
@@ -195,6 +198,14 @@ export default {
     },
     userIndex() {
       return this.$store.state.competition.index;
+    },
+    codeHtml() {
+      if (this.problem.code) {
+        return marked.parse(this.problem.code);
+      }
+      else {
+        return "";
+      }
     },
   },
   data() {
