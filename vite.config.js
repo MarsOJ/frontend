@@ -28,4 +28,14 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 1500,
   },
+  // proxy: {
+  //   "/api": {
+  //     target: process.env.BASE_URL,
+  //     changeOrigin: true,
+  //     ws: true,
+  //     pathRewrite: {
+  //       "^/api": "",
+  //     },
+  //   },
+  // },
 });
