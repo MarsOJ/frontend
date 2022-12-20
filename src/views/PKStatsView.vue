@@ -6,6 +6,7 @@ import LeaderSideBar from "@/components/LeaderSideBar.vue";
 import ScoreGraph from "@/components/ScoreGraph.vue";
 import FavoriteService from "@/services/favorites.service";
 import ProblemService from "@/services/problem.service";
+import { marked } from "marked";
 </script>
 
 <template>
@@ -76,79 +77,59 @@ import ProblemService from "@/services/problem.service";
                     </el-scrollbar>
                   </div>
                   <div class="block problem" v-loading="loading">
-                    <div v-if="currProblem.content">
-                      <div
-                        class="problem-title"
-                        v-if="currProblem.content.classification >= 0"
-                      >
-                        <span
-                          >{{ currProblem.num + 1 }}.
-                          {{ types[currProblem.type] }}</span
-                        >
-                        <!-- <el-button type="primary" @click="addToFavorite(problemNum);">收藏本题</el-button> -->
-                        <el-dropdown>
-                          <span class="el-dropdown-link">
-                            <small>
-                              收藏本题
-                              <el-icon class="el-icon--right"
-                                ><arrow-down
-                              /></el-icon>
-                            </small>
-                          </span>
-                          <template #dropdown>
-                            <el-dropdown-menu>
-                              <el-dropdown-item
-                                v-for="fav in favLists"
-                                @click="addToFavorite(fav.id, problemNum)"
-                                >{{ fav.name }}</el-dropdown-item
-                              >
-                            </el-dropdown-menu>
-                          </template>
-                        </el-dropdown>
-                      </div>
-                      <div
-                        class="problem-stats"
-                        v-if="currProblem.content.classification >= 0"
-                      >
-                        <small>你的得分 {{ currProblem.userPoints }}</small>
-                        &nbsp;&nbsp;
-                        <small>平均得分 {{ currProblem.average }}</small>
-                      </div>
-                      <hr v-if="currProblem.content.classification >= 0" />
-                      <div v-if="currProblem.content.classification === -1">
-                        题目不存在
-                      </div>
-                      <div v-else-if="currProblem.content.classification <= 1">
-                        <span class="problem-text">{{
-                          currProblem.content.content
-                        }}</span>
-                        <div
-                          v-for="(sp, index) in currProblem.content.subproblem"
-                        >
-                          <span class="problem-text">{{ sp.content }}</span>
-                          <div class="answer" v-if="sp.choice.length === 4">
-                            <ol type="A">
-                              <li
-                                v-for="(c, i) in sp.choice"
-                                :class="{
-                                  correct:
-                                    String.fromCharCode(65 + i) ===
-                                    currProblem.content.answer[index],
-                                }"
-                              >
-                                &nbsp;&nbsp;{{ c }}
-                              </li>
-                            </ol>
-                          </div>
-                          <div class="answer" v-else>
-                            <el-radio-group v-model="sp.radio" size="large">
-                              <el-radio label="A">正确</el-radio>
-                              <el-radio label="B">错误</el-radio>
-                            </el-radio-group>
+                    <el-scrollbar>
+                      <div v-if="currProblem.content">
+                        <div class="problem-title" v-if="currProblem.content.classification >= 0">
+                          <span>{{ currProblem.num + 1 }}. {{ types[currProblem.type] }}</span>
+                          <!-- <el-button type="primary" @click="addToFavorite(problemNum);">收藏本题</el-button> -->
+                          <el-dropdown>
+                            <span class="el-dropdown-link">
+                              <small>
+                                收藏本题
+                                <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                              </small>
+                            </span>
+                            <template #dropdown>
+                              <el-dropdown-menu>
+                                <el-dropdown-item v-for="fav in favLists" @click="addToFavorite(fav.id, problemNum)">{{
+                                    fav.name
+                                }}</el-dropdown-item>
+                              </el-dropdown-menu>
+                            </template>
+                          </el-dropdown>
+                        </div>
+                        <div class="problem-stats" v-if="currProblem.content.classification >= 0">
+                          <small>你的得分 {{ currProblem.userPoints }}</small>
+                          &nbsp;&nbsp;
+                          <small>平均得分 {{ currProblem.average }}</small>
+                        </div>
+                        <hr v-if="currProblem.content.classification >= 0" />
+                        <div v-if="currProblem.content.classification === -1">
+                          题目不存在
+                        </div>
+                        <div v-else-if="currProblem.content.classification <= 1">
+                          <span class="problem-text">{{ currProblem.content.content }}</span>
+                          <div v-html="codeHtml"></div>
+                          <div v-for="(sp, index) in currProblem.content.subproblem">
+                            <span class="problem-text">{{ sp.content }}</span>
+                            <div class="answer" v-if="sp.choice.length === 4">
+                              <ol type="A">
+                                <li v-for="(c, i) in sp.choice"
+                                  :class="{ correct: String.fromCharCode(65 + i) === currProblem.content.answer[index] }">
+                                  &nbsp;&nbsp;{{ c }}
+                                </li>
+                              </ol>
+                            </div>
+                            <div class="answer" v-else>
+                              <el-radio-group v-model="sp.radio" size="large">
+                                <el-radio label="A">正确</el-radio>
+                                <el-radio label="B">错误</el-radio>
+                              </el-radio-group>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </el-scrollbar>
                   </div>
                 </div>
               </div>
@@ -171,6 +152,14 @@ export default {
     },
     userIndex() {
       return this.$store.state.competition.index;
+    },
+    codeHtml() {
+      if (this.currProblem.content.code) {
+        return marked.parse(this.currProblem.content.code);
+      }
+      else {
+        return "";
+      }
     },
   },
   data() {

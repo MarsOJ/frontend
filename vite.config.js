@@ -29,4 +29,7 @@ export default defineConfig({
   configureWebpack: {
     plugins: [new MonacoWebpackPlugin({ languages: ["markdown"] })],
   },
+  build: {
+    chunkSizeWarningLimit: 1500,
+  },
 });
