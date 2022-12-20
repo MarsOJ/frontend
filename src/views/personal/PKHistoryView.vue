@@ -12,10 +12,18 @@ import RecordService from "@/services/record.service";
             <span>{{ record.date }}</span>
           </div>
           <div class="history-detail">
-            <div class="history-title">在PK中获得了第{{ record.rank + 1 }}名（{{ record.points[record.rank].score }}分） </div>
+            <div class="history-title">
+              在PK中获得了第{{ record.rank + 1 }}名（{{
+                record.points[record.rank].score
+              }}分）
+            </div>
             <table class="history-tb">
-              <tr v-for="line in record.points" :class="{ 'highlight': line.isUser }" class="link"
-                @click="$emit('checkUser', line.username);">
+              <tr
+                v-for="line in record.points"
+                :class="{ highlight: line.isUser }"
+                class="link"
+                @click="$emit('checkUser', line.username)"
+              >
                 <td width="48px">{{ line.rank + 1 }}</td>
                 <td width="162px">
                   <!-- <span> -->
@@ -28,7 +36,11 @@ import RecordService from "@/services/record.service";
           </div>
         </div>
       </div>
-      <div class="loading history-block fade-down" v-loading="loading" v-if="!end">
+      <div
+        class="loading history-block fade-down"
+        v-loading="loading"
+        v-if="!end"
+      >
         下拉加载更多
       </div>
       <div class="loading history-block fade-down" v-else>没有更多了</div>
@@ -112,12 +124,12 @@ export default {
         return a.score < b.score
           ? 1
           : b.score < a.score
-            ? -1
-            : a.isUser < b.isUser
-              ? 1
-              : a.isUser > b.isUser
-                ? -1
-                : 0;
+          ? -1
+          : a.isUser < b.isUser
+          ? 1
+          : a.isUser > b.isUser
+          ? -1
+          : 0;
       });
       var userRank = 0;
       record.points.forEach((user, i) => {
@@ -136,9 +148,8 @@ export default {
           (content) => {
             if (content.length == 0) {
               this.end = true;
-            }
-            else {
-              content.forEach(element => {
+            } else {
+              content.forEach((element) => {
                 element.rank = this.sortRankings(element);
               });
               this.history = this.history.concat(content);
@@ -162,9 +173,8 @@ export default {
       (content) => {
         if (content.length == 0) {
           this.end = true;
-        }
-        else {
-          content.forEach(element => {
+        } else {
+          content.forEach((element) => {
             element.rank = this.sortRankings(element);
           });
           this.history = content;

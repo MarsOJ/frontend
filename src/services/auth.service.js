@@ -51,23 +51,27 @@ class AuthService {
   }
 
   userInfo(username) {
-    return axios.get(API_URL + "info/", {
-      params: {
-        username: username,
-      },
-    }).then((response) => {
-      return response.data;
-    });
+    return axios
+      .get(API_URL + "info/", {
+        params: {
+          username: username,
+        },
+      })
+      .then((response) => {
+        return response.data;
+      });
   }
 
   userProfile(username) {
-    return axios.get(API_URL + "profile/", {
-      params: {
-        username: username,
-      },
-    }).then((response) => {
-      return response.data;
-    });
+    return axios
+      .get(API_URL + "profile/", {
+        params: {
+          username: username,
+        },
+      })
+      .then((response) => {
+        return response.data;
+      });
   }
 
   changeProfile(profile) {
