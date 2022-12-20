@@ -335,6 +335,12 @@ export default {
     },
     handleChangeFavorite() {
       this.updateProblemList();
+      for (const fav of this.favoriteList) {
+        if (fav.id == this.favoriteId) {
+          this.total = fav.problemNum;
+          break;
+        }
+      }
     },
     handleFilter() {
       this.listQuery.page = 1;

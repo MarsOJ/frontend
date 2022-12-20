@@ -66,7 +66,6 @@ import "element-plus/theme-chalk/el-message-box.css";
                       <el-table-column
                         label="序号"
                         prop="id"
-                        sortable="custom"
                         align="center"
                         width="80"
                       >
@@ -145,6 +144,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                       <el-form
                         ref="dataForm"
                         :model="InfoModel"
+                        :rules="InfoRules"
                         label-position="left"
                         label-width="80px"
                         style="margin-left: 50px; margin-right: 50px"
@@ -226,7 +226,6 @@ import "element-plus/theme-chalk/el-message-box.css";
                       <el-table-column
                         label="序号"
                         prop="id"
-                        sortable="custom"
                         align="center"
                         width="80"
                       >
@@ -248,15 +247,9 @@ import "element-plus/theme-chalk/el-message-box.css";
                       <el-table-column label="标题" width="200px">
                         <template v-slot="{ row }">
                           <span class="link-type">{{ row.title }}</span>
-                          <el-tag v-if="row.classification === 0"
-                            >单选题</el-tag
-                          >
-                          <el-tag v-else-if="row.classification === 1"
-                            >一般多选题</el-tag
-                          >
-                          <el-tag v-else-if="row.classification === 2"
-                            >程序多选题</el-tag
-                          >
+                          <el-tag v-if="row.type === 0">单选题</el-tag>
+                          <el-tag v-else-if="row.type === 1">一般多选题</el-tag>
+                          <el-tag v-else-if="row.type === 2">程序多选题</el-tag>
                           <el-tag v-else>其他题型</el-tag>
                         </template>
                       </el-table-column>
@@ -342,31 +335,31 @@ import "element-plus/theme-chalk/el-message-box.css";
                           />
                         </el-form-item>
                         <div v-if="ProblemModel.classification === 0">
-                          <el-form-item label="选项A">
+                          <el-form-item label="选项A" prop="choice">
                             <el-input
                               v-model="ProblemModel.subproblem[0].choice[0]"
                               class="filter-item"
                             />
                           </el-form-item>
-                          <el-form-item label="选项B">
+                          <el-form-item label="选项B" prop="choice">
                             <el-input
                               v-model="ProblemModel.subproblem[0].choice[1]"
                               class="filter-item"
                             />
                           </el-form-item>
-                          <el-form-item label="选项C">
+                          <el-form-item label="选项C" prop="choice">
                             <el-input
                               v-model="ProblemModel.subproblem[0].choice[2]"
                               class="filter-item"
                             />
                           </el-form-item>
-                          <el-form-item label="选项D">
+                          <el-form-item label="选项D" prop="choice">
                             <el-input
                               v-model="ProblemModel.subproblem[0].choice[3]"
                               class="filter-item"
                             />
                           </el-form-item>
-                          <el-form-item label="答案">
+                          <el-form-item label="答案" prop="answer">
                             <el-radio-group
                               v-model="ProblemModel.answer[0]"
                               size="large"
@@ -378,6 +371,18 @@ import "element-plus/theme-chalk/el-message-box.css";
                             </el-radio-group>
                           </el-form-item>
                         </div>
+                        <el-form-item
+                          label="代码"
+                          v-if="ProblemModel.classification === 2"
+                          prop="code"
+                        >
+                          <el-input
+                            v-model="ProblemModel.code"
+                            :autosize="{ minRows: 3, maxRows: 10 }"
+                            type="textarea"
+                            class="filter-item"
+                          />
+                        </el-form-item>
                         <div v-if="ProblemModel.classification > 0">
                           <div v-for="(sp, index) in ProblemModel.subproblem">
                             <el-form-item label="子问题">
@@ -386,33 +391,34 @@ import "element-plus/theme-chalk/el-message-box.css";
                                 :autosize="{ minRows: 3, maxRows: 5 }"
                                 type="textarea"
                                 class="filter-item"
+                                prop="content"
                               />
                             </el-form-item>
-                            <el-form-item label="选项A">
+                            <el-form-item label="选项A" prop="choice">
                               <el-input
                                 v-model="sp.choice[0]"
                                 class="filter-item"
                               />
                             </el-form-item>
-                            <el-form-item label="选项B">
+                            <el-form-item label="选项B" prop="choice">
                               <el-input
                                 v-model="sp.choice[1]"
                                 class="filter-item"
                               />
                             </el-form-item>
-                            <el-form-item label="选项C">
+                            <el-form-item label="选项C" prop="choice">
                               <el-input
                                 v-model="sp.choice[2]"
                                 class="filter-item"
                               />
                             </el-form-item>
-                            <el-form-item label="选项D">
+                            <el-form-item label="选项D" prop="choice">
                               <el-input
                                 v-model="sp.choice[3]"
                                 class="filter-item"
                               />
                             </el-form-item>
-                            <el-form-item label="答案">
+                            <el-form-item label="答案" prop="answer">
                               <el-radio-group
                                 v-model="ProblemModel.answer[index]"
                               >
@@ -495,12 +501,10 @@ import "element-plus/theme-chalk/el-message-box.css";
                       fit
                       highlight-current-row
                       style="width: 100%"
-                      @sort-change="sortChange"
                     >
                       <el-table-column
                         label="序号"
                         prop="id"
-                        sortable="custom"
                         align="center"
                         width="80"
                       >
@@ -558,6 +562,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                   </div>
                 </el-tab-pane>
               </el-tabs>
+              <div ref="codeEditBox"></div>
             </el-main>
           </el-container>
           <Footer />
@@ -570,6 +575,14 @@ import "element-plus/theme-chalk/el-message-box.css";
 <script>
 export default {
   data() {
+    var validateCode = (rule, value, callback) => {
+      var pattern = /^~~~.+~~~$/;
+      if (!value.match(pattern)) {
+        callback(new Error("请输入markdown格式代码块"));
+      } else {
+        callback();
+      }
+    };
     return {
       activeName: ref("info"),
       infoList: [],
@@ -585,19 +598,29 @@ export default {
         limit: 20,
         title: undefined,
         type: undefined,
-        sort: "+id",
       },
-      sortOptions: [
-        { label: "升序", key: "+id" },
-        { label: "降序", key: "-id" },
-      ],
       InfoModel: {
         title: "",
         content: "",
         source: "",
         id: 0,
-        rules: [],
         create: false,
+      },
+      InfoRules: {
+        title: [
+          {
+            required: true,
+            message: "标题不能为空",
+            trigger: "blur",
+          },
+        ],
+        content: [
+          {
+            required: true,
+            message: "资讯内容不能为空",
+            trigger: "blur",
+          },
+        ],
       },
       ProblemModel: {
         id: 0,
@@ -606,7 +629,45 @@ export default {
         subproblem: [{ content: "", choice: "" }],
         source: "",
         difficultyInt: 1,
-        classification: 0, //
+        classification: 2, //
+        code: "",
+      },
+      ProblemRules: {
+        content: [
+          {
+            required: true,
+            message: "题目内容不能为空",
+            trigger: "blur",
+          },
+        ],
+        type: [
+          {
+            required: true,
+            message: "",
+            trigger: "change",
+          },
+        ],
+        answer: [
+          {
+            type: "array",
+            required: true,
+            message: "请输入正确答案",
+            trigger: "change",
+          },
+        ],
+        choice: [
+          {
+            required: true,
+            message: "选项不能为空",
+            trigger: "change",
+          },
+        ],
+        code: [
+          {
+            validator: validateCode,
+            trigger: "blur",
+          },
+        ],
       },
       InfoDialogVisible: false,
       ProblemDialogVisible: false,
@@ -740,10 +801,6 @@ export default {
         },
       });
     },
-    getSortClass: function (key) {
-      const sort = this.listQuery.sort;
-      return sort === `+${key}` ? "ascending" : "descending";
-    },
     addInfo() {
       this.InfoModel = {
         title: "",
@@ -846,6 +903,7 @@ export default {
         difficultyInt: 1,
         classification: 1, //
         explanation: "",
+        code: "",
       };
       this.create = true;
       this.ProblemDialogVisible = true;

@@ -1,5 +1,5 @@
 <script setup>
-import { ArrowDown } from '@element-plus/icons-vue'
+import { ArrowDown } from "@element-plus/icons-vue";
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import LeaderSideBar from "@/components/LeaderSideBar.vue";
@@ -18,8 +18,12 @@ import { marked } from "marked";
           <el-container class="page-main">
             <el-main class="main" v-if="stats">
               <div class="title-result">
-                <span class="title" v-if="userRank == 1">恭喜，你在比赛中取得胜利！</span>
-                <span class="title" v-else>很遗憾，您获得了第{{ userRank }}名。</span>
+                <span class="title" v-if="userRank == 1"
+                  >恭喜，你在比赛中取得胜利！</span
+                >
+                <span class="title" v-else
+                  >很遗憾，您获得了第{{ userRank }}名。</span
+                >
                 <span class="user">
                   <img class="user-pic" src="../assets/user.png" />
                   <div class="win" v-if="userRank == 1"></div>
@@ -33,10 +37,15 @@ import { marked } from "marked";
                     <ScoreGraph :history="scoreHistory" :users="usernames" />
                   </div>
                   <div class="leader-wrapper">
-                    <LeaderSideBar :data="stats.points" :columns="[
-                      { prop: 'name', label: '用户名', width: '120' },
-                      { prop: 'points', label: '积分', width: '80' },
-                    ]" v-if="stats">PK积分榜</LeaderSideBar>
+                    <LeaderSideBar
+                      :data="stats.points"
+                      :columns="[
+                        { prop: 'name', label: '用户名', width: '120' },
+                        { prop: 'points', label: '积分', width: '80' },
+                      ]"
+                      v-if="stats"
+                      >PK积分榜</LeaderSideBar
+                    >
                   </div>
                 </div>
               </div>
@@ -46,13 +55,19 @@ import { marked } from "marked";
                   <div class="block selector">
                     <el-scrollbar>
                       <div>
-                        <div v-for="problem in stats.problems" class="problem-no" :class="{
-                          selected: problemNum == problem.num,
-                          correct: problem.correct,
-                          wrong: !problem.correct,
-                        }" @click="loadProblem(problem.num);">
+                        <div
+                          v-for="problem in stats.problems"
+                          class="problem-no"
+                          :class="{
+                            selected: problemNum == problem.num,
+                            correct: problem.correct,
+                            wrong: !problem.correct,
+                          }"
+                          @click="loadProblem(problem.num)"
+                        >
                           <span class="number">
-                            {{ problem.num + 1 }}. {{ types[problem.type] }}&nbsp;&nbsp;
+                            {{ problem.num + 1 }}.
+                            {{ types[problem.type] }}&nbsp;&nbsp;
                           </span>
                           <span class="comment">
                             正确率 {{ problem.correctRate }}%
@@ -162,57 +177,61 @@ export default {
   },
   methods: {
     addToFavorite(favId, id) {
-      FavoriteService.addProblem(favId, this.stats.problems[id].id).then((data) => {
-        if (data[0]) {
-          ElMessage({
-            message: "收藏成功！",
-            type: "success",
-          });
-        }
-        else if (data[1]) {
-          ElMessage({
-            message: "已经收藏过该题目！",
-            type: "info",
-          });
-        }
-        else {
-          ElMessage("收藏习题失败！", "收藏失败", {
+      FavoriteService.addProblem(favId, this.stats.problems[id].id).then(
+        (data) => {
+          if (data[0]) {
+            ElMessage({
+              message: "收藏成功！",
+              type: "success",
+            });
+          } else if (data[1]) {
+            ElMessage({
+              message: "已经收藏过该题目！",
+              type: "info",
+            });
+          } else {
+            ElMessage("收藏习题失败！", "收藏失败", {
+              confirmButtonText: "确认",
+            });
+          }
+        },
+        (error) => {
+          var msg =
+            (error.response && error.response.data) ||
+            error.message ||
+            error.toString();
+          ElMessageBox.alert(msg, "收藏失败", {
             confirmButtonText: "确认",
           });
         }
-      }, (error) => {
-        var msg =
-          (error.response && error.response.data) ||
-          error.message ||
-          error.toString();
-        ElMessageBox.alert(msg, "收藏失败", {
-          confirmButtonText: "确认",
-        });
-      });
+      );
     },
     loadProblem(id) {
       this.problemNum = id;
-      this.currProblem = this.stats.problems[id]
+      this.currProblem = this.stats.problems[id];
       if (!this.currProblem.content) {
         this.loading = true;
         this.fetchProblem(id);
       }
     },
     fetchProblem(id) {
-      ProblemService.getProblemDetail(this.stats.problems[id].id).then((content) => {
-        this.stats.problems[id].content = content;
-        this.loading = false;
-      }, (error) => {
-        this.stats.problems[id].content = {
-          content:
-            (error.response && error.response.data) ||
-            error.message ||
-            error.toString(),
-          classification: -1,
-        };
-        console.log(this.stats.problems[id].content);
-        this.loading = false;
-      });
+      ProblemService.getProblemDetail(this.stats.problems[id].id).then(
+        (content) => {
+          this.stats.problems[id].content = content;
+          this.loading = false;
+        },
+        (error) => {
+          this.stats.problems[id].content = {
+            content:
+              (error.response && error.response.data) ||
+              error.message ||
+              error.toString(),
+            classification: -1,
+          };
+          console.log(this.stats.problems[id].content);
+          this.loading = false;
+        }
+      );
     },
   },
   mounted() {
@@ -231,12 +250,12 @@ export default {
           return a.points < b.points
             ? 1
             : b.points < a.points
-              ? -1
-              : a.isUser < b.isUser
-                ? 1
-                : a.isUser > b.isUser
-                  ? -1
-                  : 0;
+            ? -1
+            : a.isUser < b.isUser
+            ? 1
+            : a.isUser > b.isUser
+            ? -1
+            : 0;
         });
         data.points.forEach((user, i) => {
           if (user.isUser) {
@@ -246,15 +265,21 @@ export default {
 
         // Calculate correct rates
         data.problems.forEach((problem) => {
-          problem.userPoints = problem.points[this.userIndex].reduce((a, x) => a + x);
-          problem.correct = problem.points[this.userIndex].reduce((a, x) => a && x > 0);
+          problem.userPoints = problem.points[this.userIndex].reduce(
+            (a, x) => a + x
+          );
+          problem.correct = problem.points[this.userIndex].reduce(
+            (a, x) => a && x > 0
+          );
           problem.sum = problem.points
             .reduce((a, x) => a.concat(x))
             .reduce((a, x) => a + x);
           problem.correctSum = problem.points
             .map((x) => x.reduce((a, x) => a && x > 0, true))
             .reduce((a, x) => a + x);
-          problem.correctRate = Math.round((problem.correctSum / problem.points.length) * 100);
+          problem.correctRate = Math.round(
+            (problem.correctSum / problem.points.length) * 100
+          );
           problem.average = Math.round(problem.sum / problem.points.length);
           problem.content = null;
         });
@@ -264,31 +289,34 @@ export default {
         data.points.forEach((_element, index) => {
           var history = [0];
           var lastScore = 0;
-          data.problems.forEach(problem => {
+          data.problems.forEach((problem) => {
             lastScore += problem.points[index].reduce((a, x) => a + x);
             history.push(lastScore);
-          })
+          });
           this.scoreHistory.push(history);
         });
 
         // Username lists
         this.usernames = [];
-        data.points.forEach(element => {
+        data.points.forEach((element) => {
           this.usernames.push(element.name);
-        })
+        });
 
         // Get favorite lists
-        FavoriteService.getFavoriteList().then((data) => {
-          this.favLists = data;
-        }, (error) => {
-          var msg =
-            (error.response && error.response.data) ||
-            error.message ||
-            error.toString();
-          ElMessageBox.alert(msg, "获取收藏夹列表失败", {
-            confirmButtonText: "确认",
-          });
-        });
+        FavoriteService.getFavoriteList().then(
+          (data) => {
+            this.favLists = data;
+          },
+          (error) => {
+            var msg =
+              (error.response && error.response.data) ||
+              error.message ||
+              error.toString();
+            ElMessageBox.alert(msg, "获取收藏夹列表失败", {
+              confirmButtonText: "确认",
+            });
+          }
+        );
 
         this.stats = data;
         this.loadProblem(0);

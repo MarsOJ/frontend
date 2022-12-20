@@ -4,7 +4,11 @@ import UserInfo from "@/components/UserInfo.vue";
 
 <template>
   <div id="leaderboard">
-    <UserInfo :username="checkUser" v-if="showCheckUser" @close="this.showCheckUser = false;" />
+    <UserInfo
+      :username="checkUser"
+      v-if="showCheckUser"
+      @close="this.showCheckUser = false"
+    />
     <div class="wrapper">
       <div class="title">
         <slot></slot>
@@ -24,10 +28,21 @@ import UserInfo from "@/components/UserInfo.vue";
           <div>{{ data[2].name }}</div>
         </div>
       </div>
-      <el-table id="leader-table" :data="data" table-layout="auto" :row-class-name="tableRowClassName"
-        @row-click="rowClicked">
+      <el-table
+        id="leader-table"
+        :data="data"
+        table-layout="auto"
+        :row-class-name="tableRowClassName"
+        @row-click="rowClicked"
+      >
         <el-table-column type="index" label="名次" align="center" width="80" />
-        <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :width="col.width" align="center" />
+        <el-table-column
+          v-for="col in columns"
+          :prop="col.prop"
+          :label="col.label"
+          :width="col.width"
+          align="center"
+        />
       </el-table>
     </div>
   </div>
