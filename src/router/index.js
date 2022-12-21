@@ -158,6 +158,6 @@ router.afterEach((to, from) => {
   nextTick(() => {
     document.title = (to.meta.title ? to.meta.title + " - " : "") + "MarsOJ";
   });
-})
+});
 
 export default router;

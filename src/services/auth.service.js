@@ -1,6 +1,7 @@
 import axios from "@/axios";
 
-const API_URL = "http://localhost:5000/account/";
+// const API_URL = "http://localhost:5000/account/";
+const API_URL = `http://${import.meta.env.VITE_APP_BASE_URL}/account/`;
 
 class AuthService {
   login(user) {
@@ -51,23 +52,27 @@ class AuthService {
   }
 
   userInfo(username) {
-    return axios.get(API_URL + "info/", {
-      params: {
-        username: username,
-      },
-    }).then((response) => {
-      return response.data;
-    });
+    return axios
+      .get(API_URL + "info/", {
+        params: {
+          username: username,
+        },
+      })
+      .then((response) => {
+        return response.data;
+      });
   }
 
   userProfile(username) {
-    return axios.get(API_URL + "profile/", {
-      params: {
-        username: username,
-      },
-    }).then((response) => {
-      return response.data;
-    });
+    return axios
+      .get(API_URL + "profile/", {
+        params: {
+          username: username,
+        },
+      })
+      .then((response) => {
+        return response.data;
+      });
   }
 
   changeProfile(profile) {

@@ -35,7 +35,10 @@ import ScrollUpButton from "@/components/ScrollUpButton.vue";
             <el-main>
               <div class="info">
                 <div v-for="item in info">
-                  <div class="info-block fade-down" @click="showDetail(item.id)">
+                  <div
+                    class="info-block fade-down"
+                    @click="showDetail(item.id)"
+                  >
                     <div class="info-date">
                       <span>{{ item.date }}</span>
                     </div>
@@ -47,7 +50,11 @@ import ScrollUpButton from "@/components/ScrollUpButton.vue";
                     </div>
                   </div>
                 </div>
-                <div class="loading info-block fade-down" v-loading="loading" v-if="!end">
+                <div
+                  class="loading info-block fade-down"
+                  v-loading="loading"
+                  v-if="!end"
+                >
                   下拉加载更多
                 </div>
                 <div class="loading info-block fade-down" v-else>
@@ -67,7 +74,7 @@ import ScrollUpButton from "@/components/ScrollUpButton.vue";
                 <div class="count-down">
                   距
                   <span style="color: grey; font-size: 16px">{{
-                      incomingCompetition
+                    incomingCompetition
                   }}</span>
                   还剩 {{ leavingDay }} 天
                 </div>
@@ -205,8 +212,7 @@ export default {
               (content) => {
                 if (content.length == 0) {
                   this.end = true;
-                }
-                else {
+                } else {
                   this.info = this.info.concat(content);
                 }
                 this.loading = false;

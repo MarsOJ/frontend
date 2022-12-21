@@ -80,7 +80,8 @@ export default {
               if (this.user.totalCompetitionsNum) {
                 this.user.vicRate =
                   Math.round(
-                    (this.user.victoriesNum / this.user.totalCompetitionsNum) * 100
+                    (this.user.victoriesNum / this.user.totalCompetitionsNum) *
+                      100
                   ) + "%";
               } else {
                 this.user.vicRate = "-";
@@ -89,7 +90,8 @@ export default {
               if (this.user.totalAnswersNum) {
                 this.user.correctRate =
                   Math.round(
-                    (this.user.correctAnswersNum / this.user.totalAnswersNum) * 100
+                    (this.user.correctAnswersNum / this.user.totalAnswersNum) *
+                      100
                   ) + "%";
               } else {
                 this.user.correctRate = "-";
@@ -115,7 +117,7 @@ export default {
     close() {
       this.$emit("close");
     },
-  }
+  },
 };
 </script>
 

@@ -12,8 +12,12 @@ import ProgressBar from "./ProgressBar.vue";
         <div class="cell score">得分</div>
       </li>
       <span v-for="player in players">
-        <li class="player" :class="{ user: player.isUser }" :style="{ '--rank': `${player.rank}` }"
-          @click="$emit('checkUser', player.username);">
+        <li
+          class="player"
+          :class="{ user: player.isUser }"
+          :style="{ '--rank': `${player.rank}` }"
+          @click="$emit('checkUser', player.username)"
+        >
           <div class="cell rank">{{ player.rank + 1 }}</div>
           <div class="cell name">
             <el-avatar :src="player.avatar" />
