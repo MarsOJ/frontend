@@ -5,7 +5,7 @@ import Pagination from "@/components/Pagination.vue";
 import FavoriteService from "@/services/favorites.service";
 import ProblemService from "@/services/problem.service";
 import { ref } from "vue";
-import { Edit, Search, Delete } from "@element-plus/icons-vue";
+import { Edit, Delete } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 import "element-plus/theme-chalk/el-message-box.css";
@@ -48,15 +48,6 @@ import { marked } from "marked";
                       :value="item.key"
                     />
                   </el-select>
-                  <el-button
-                    class="filter-item"
-                    type="primary"
-                    :icon="Search"
-                    size="small"
-                    @click="handleFilter"
-                  >
-                    搜索
-                  </el-button>
                   <el-button
                     class="filter-item"
                     style="margin-left: 10px"
@@ -186,8 +177,8 @@ import { marked } from "marked";
                         style="width: 140px"
                         class="filter-item"
                       >
-                        <el-option :label="'是'" :value="true" />
-                        <el-option :label="'否'" :value="false" />
+                        <el-option :label="'是'" :value="false" />
+                        <el-option :label="'否'" :value="true" />
                       </el-select>
                     </el-form-item>
                   </el-form>
@@ -436,22 +427,30 @@ export default {
     },
     handleDeleteFavorite() {
       ElMessageBox.alert("您确定要删除当前收藏夹吗？该操作不可恢复！", "警告", {
-        cancelButtonText: "Cancel",
-        confirmButtonText: "OK",
-        callback: () => {
-          FavoriteService.deleteFavorite(this.favoriteId).then((code) => {
-            if (code == 200) {
-              this.updateFavoriteList();
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          FavoriteService.deleteFavorite(this.favoriteId).then(
+            () => {
+              ElMessage({
+                type: "success",
+                message: "删除收藏夹成功",
+              });
+              this.favoriteId = "0";
               this.updateProblemList();
-            } else {
+              this.updateFavoriteList();
+            },
+            () => {
               ElMessage({
                 type: "error",
                 message: "删除收藏夹时出错",
               });
             }
-          });
-        },
-      });
+          );
+        })
+        .catch(() => {});
     },
     handleCheck(row) {
       ProblemService.getProblemDetail(row.id).then(
@@ -506,6 +505,7 @@ export default {
             message: "删除成功！",
             type: "success",
           });
+          this.updateProblemList();
         } else {
           ElMessage({
             message: "删除失败！",

@@ -658,22 +658,14 @@ export default {
           {
             required: true,
             message: "",
-            trigger: "change",
-          },
-        ],
-        answer: [
-          {
-            type: "array",
-            required: true,
-            message: "请输入正确答案",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         choice: [
           {
             required: true,
             message: "选项不能为空",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         code: [
@@ -998,7 +990,7 @@ export default {
       });
     },
     deleteProblem(row) {
-      ProblemService.deleteProblem(row.id).then(
+      ProblemService.deleteProblem([row.id]).then(
         () => {
           ElMessage({
             message: "成功删除",
