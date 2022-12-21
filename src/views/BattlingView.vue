@@ -54,8 +54,14 @@ import { ref } from "vue";
                 <div v-if="problem.type === 0">
                   <span class="problem-text">{{ problem.content }}</span>
                   <div v-html="codeHtml"></div>
-                  <div class="answer" v-if="problem.subproblem[0].choice.length === 4">
-                    <el-radio-group v-model="problem.subproblem[0].radio" size="large">
+                  <div
+                    class="answer"
+                    v-if="problem.subproblem[0].choice.length === 4"
+                  >
+                    <el-radio-group
+                      v-model="problem.subproblem[0].radio"
+                      size="large"
+                    >
                       <el-radio label="A">{{
                         problem.subproblem[0].choice[0]
                       }}</el-radio>
@@ -261,8 +267,7 @@ export default {
     codeHtml() {
       if (this.problem.code) {
         return marked.parse(this.problem.code);
-      }
-      else {
+      } else {
         return "";
       }
     },

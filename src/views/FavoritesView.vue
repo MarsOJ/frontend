@@ -3,11 +3,13 @@ import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import Pagination from "@/components/Pagination.vue";
 import FavoriteService from "@/services/favorites.service";
+import ProblemService from "@/services/problem.service";
 import { ref } from "vue";
 import { Edit, Search, Delete } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 import "element-plus/theme-chalk/el-message-box.css";
+import { marked } from "marked";
 </script>
 
 <template>
@@ -33,12 +35,6 @@ import "element-plus/theme-chalk/el-message-box.css";
                       :value="item.id"
                     />
                   </el-select>
-                  <el-input
-                    v-model="listQuery.title"
-                    placeholder="标题"
-                    style="width: 200px"
-                    class="filter-item"
-                  />
                   <el-select
                     v-model="listQuery.sort"
                     style="width: 140px"
@@ -237,6 +233,52 @@ import "element-plus/theme-chalk/el-message-box.css";
                     </el-button>
                   </div>
                 </el-dialog>
+                <el-dialog
+                  title="题目"
+                  v-model="ProblemVisible"
+                  :append-to-body="true"
+                >
+                  <el-scrollbar>
+                    <div class="block-content">
+                      <hr v-if="problem.classification >= 0" />
+                      <div v-if="problem.classification === -1">题目不存在</div>
+                      <div v-else-if="problem.classification <= 1">
+                        <span class="problem-text">{{ problem.content }}</span>
+                        <div v-html="codeHtml"></div>
+                        <div v-for="(sp, index) in problem.subproblem">
+                          <span class="problem-text">{{ sp.content }}</span>
+                          <div class="answer" v-if="sp.choice.length === 4">
+                            <ol type="A">
+                              <li
+                                v-for="(c, i) in sp.choice"
+                                :class="{
+                                  correct:
+                                    String.fromCharCode(65 + i) ===
+                                      problem.answer[index] && ShowAnswer,
+                                }"
+                              >
+                                &nbsp;&nbsp;{{ c }}
+                              </li>
+                            </ol>
+                          </div>
+                          <div class="answer" v-else>
+                            <el-radio-group v-model="sp.radio" size="large">
+                              <el-radio label="A">正确</el-radio>
+                              <el-radio label="B">错误</el-radio>
+                            </el-radio-group>
+                          </div>
+                        </div>
+                      </div>
+                      <el-switch
+                        v-model="ShowAnswer"
+                        active-text="查看答案解析"
+                      ></el-switch>
+                      <div class="problem-text" v-if="ShowAnswer">
+                        {{ problem.explanation }}
+                      </div>
+                    </div>
+                  </el-scrollbar>
+                </el-dialog>
               </div>
             </el-main>
           </el-container>
@@ -294,8 +336,19 @@ export default {
         ],
       },
       ProblemDialogVisible: ref(false),
+      ProblemVisible: ref(false),
       FavoriteDialogVisible: ref(false),
+      ShowAnswer: ref(false),
     };
+  },
+  computed: {
+    codeHtml() {
+      if (this.problem.code) {
+        return marked.parse(this.problem.code);
+      } else {
+        return "";
+      }
+    },
   },
   created() {
     this.updateFavoriteList();
@@ -401,8 +454,23 @@ export default {
       });
     },
     handleCheck(row) {
-      //查看问题详情页面
-      console.log(row);
+      ProblemService.getProblemDetail(row.id).then(
+        (problem) => {
+          this.problem = problem;
+          console.log(problem);
+          for (var sp of this.problem.subproblem) {
+            sp.radio = ref("A");
+          }
+          this.ProblemVisible = ref(true);
+        },
+        (error) => {
+          ElMessage({
+            type: "error",
+            message: "获取题目详情时时出错",
+          });
+          console.log(error);
+        }
+      );
     },
     handleMove(row) {
       this.problemId = row.id;
@@ -456,4 +524,9 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/index.scss";
+
+li.correct {
+  color: #00a8b1;
+  font-weight: bold;
+}
 </style>
