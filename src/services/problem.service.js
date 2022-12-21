@@ -19,6 +19,14 @@ class ProblemService {
       });
   }
 
+  uploadProblem(data) {
+    return axios.post(API_URL + "upload/", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  }
+
   modifyProblem(problem) {
     return axios.post(API_URL + "update/", problem).then((response) => {
       return response.data;
