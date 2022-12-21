@@ -5,7 +5,7 @@ import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
-import MonacoWebpackPlugin from "monaco-editor-webpack-plugin";
+// import MonacoWebpackPlugin from "monaco-editor-webpack-plugin";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -26,9 +26,9 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-  configureWebpack: {
-    plugins: [new MonacoWebpackPlugin({ languages: ["markdown"] })],
-  },
+  // configureWebpack: {
+  //   plugins: [new MonacoWebpackPlugin({ languages: ["markdown"] })],
+  // },
   build: {
     chunkSizeWarningLimit: 1500,
   },

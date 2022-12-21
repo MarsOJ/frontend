@@ -202,7 +202,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                       </el-button>
                       <el-button
                         class="filter-item"
-                        style="margin-left: 10px"
+                        style="margin-left: 15px"
                         type="primary"
                         size="small"
                         :icon="Edit"
@@ -210,6 +210,20 @@ import "element-plus/theme-chalk/el-message-box.css";
                       >
                         添加
                       </el-button>
+                      <el-upload
+                        v-model:http-request="uploadProblem"
+                        :show-file-list="false"
+                        style="margin-left: 182px; margin-top: -46px"
+                      >
+                        <el-button
+                          class="filter-item"
+                          type="primary"
+                          size="small"
+                          :icon="Edit"
+                        >
+                          批量上传
+                        </el-button></el-upload
+                      >
                     </div>
 
                     <el-table
@@ -946,6 +960,27 @@ export default {
         );
       }
       this.ProblemDialogVisible = false;
+    },
+    uploadProblem(options) {
+      // let data = { file: options.file };
+      const data = new FormData();
+      data.append("file", options.file);
+      ProblemService.uploadProblem(data).then(
+        () => {
+          ElMessage({
+            message: "成功上传",
+            type: "success",
+          });
+          this.updateList();
+        },
+        (error) => {
+          ElMessage({
+            message: "上传失败",
+            type: "error",
+          });
+          console.log(error);
+        }
+      );
     },
     checkProblem(row) {
       ProblemService.getProblemDetail(row.id).then((detail) => {
