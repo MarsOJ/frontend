@@ -71,9 +71,9 @@ import { ref } from "vue";
                 </div>
                 <div v-else-if="problem.type === 1">
                   <span class="problem-text">{{ problem.content }}</span>
+                  <div v-html="codeHtml"></div>
                   <div v-for="sp in problem.subproblem">
                     <span class="problem-text">{{ sp.content }}</span>
-                    <div v-html="codeHtml"></div>
                     <div class="answer" v-if="sp.choice.length === 4">
                       <el-radio-group v-model="sp.radio" size="large">
                         <el-radio label="A">{{ sp.choice[0] }}</el-radio>
