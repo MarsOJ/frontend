@@ -36,9 +36,7 @@ export default {
         autoIndent: true, //自动布局
         quickSuggestionsDelay: 100, //代码提示延时
       });
-      self.monacoEditor.onDidChangeModelContent(() => {
-        self.content = self.monacoEditor.getValue();
-      });
+      self.monacoEditor.onDidChangeModelContent(() => {});
     });
   },
 };

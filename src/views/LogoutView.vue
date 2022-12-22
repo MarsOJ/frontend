@@ -1,9 +1,3 @@
-<script setup>
-import AuthService from "@/services/auth.service";
-</script>
-
-<template></template>
-
 <script>
 export default {
   methods: {
