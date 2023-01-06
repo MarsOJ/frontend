@@ -2,7 +2,9 @@ import axios from "@/axios";
 
 // const API_URL = "http://127.0.0.1:8080/info/";
 // const API_URL = "http://localhost:5000/favorite/";
-const API_URL = `http://${import.meta.env.VITE_APP_BASE_URL}/favorite/`;
+// const API_URL = `http://${import.meta.env.VITE_APP_BASE_URL}/favorite/`;
+
+const API_URL = `/api/favorite/`;
 
 class FavoriteService {
   getFavoriteList() {

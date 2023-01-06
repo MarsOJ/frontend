@@ -1,7 +1,9 @@
 import axios from "@/axios";
 
 // const API_URL = "http://localhost:5000/record/";
-const API_URL = `http://${import.meta.env.VITE_APP_BASE_URL}/record/`;
+// const API_URL = `http://${import.meta.env.VITE_APP_BASE_URL}/record/`;
+
+const API_URL = `/api/record/`;
 
 class RecordService {
   getRankings() {

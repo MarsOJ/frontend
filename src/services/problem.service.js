@@ -1,7 +1,9 @@
 import axios from "@/axios";
 
 // const API_URL = "http://localhost:5000/question/";
-const API_URL = `http://${import.meta.env.VITE_APP_BASE_URL}/question/`;
+// const API_URL = `http://${import.meta.env.VITE_APP_BASE_URL}/question/`;
+
+const API_URL = `/api/question/`;
 
 class ProblemService {
   addProblem(problem) {

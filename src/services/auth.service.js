@@ -1,7 +1,7 @@
 import axios from "@/axios";
 
 // const API_URL = "http://localhost:5000/account/";
-const API_URL = `http://${import.meta.env.VITE_APP_BASE_URL}/account/`;
+const API_URL = `/api/account/`;
 
 class AuthService {
   login(user) {
