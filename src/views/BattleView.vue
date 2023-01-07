@@ -9,16 +9,9 @@ import RecordService from "@/services/record.service";
 <template>
   <div class="common-layout">
     <!-- TODO: check whether there's an ongoing match (socketConnected) -->
-    <LoadingBlock
-      v-if="pairing"
-      :cond="[!socketConnected && !paired, socketConnected && !paired, paired]"
-      :msg="['连接服务器中……', '配对中……', '加载中……']"
-    >
-      <el-button
-        v-if="!paired"
-        id="cancel-button"
-        @click="this.cancelPairing()"
-      >
+    <LoadingBlock v-if="pairing" :cond="[!socketConnected && !paired, socketConnected && !paired, paired]"
+      :msg="['连接服务器中……', '配对中……', '加载中……']">
+      <el-button v-if="!paired" id="cancel-button" @click="cancelPairing()">
         取消匹配
       </el-button>
     </LoadingBlock>
@@ -35,7 +28,7 @@ import RecordService from "@/services/record.service";
                   help candidates sharpen their tech skills and pursue job
                   opportunities.
                 </div>
-                <el-button id="pk-button" @click="this.startPairing()">
+                <el-button id="pk-button" @click="startPairing()">
                   开始匹配
                 </el-button>
                 <div class="info" v-if="score">
@@ -46,16 +39,11 @@ import RecordService from "@/services/record.service";
               </div>
             </el-main>
             <div class="leaderboard-wrapper" v-loading="loading">
-              <LeaderSideBar
-                :data="leaderData"
-                :columns="[
-                  { prop: 'name', label: '用户名', width: '150' },
-                  { prop: 'signature', label: '签名', width: '350' },
-                  { prop: 'points', label: '积分', width: '100' },
-                ]"
-                class="fade-down"
-                >实时周排行榜</LeaderSideBar
-              >
+              <LeaderSideBar :data="leaderData" :columns="[
+                { prop: 'name', label: '用户名', width: '150' },
+                { prop: 'signature', label: '签名', width: '350' },
+                { prop: 'points', label: '积分', width: '100' },
+              ]" class="fade-down">实时周排行榜</LeaderSideBar>
             </div>
           </el-container>
           <Footer />
@@ -163,13 +151,11 @@ export default {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  background: linear-gradient(
-      to bottom left,
+  background: linear-gradient(to bottom left,
       #d2eedb,
       transparent,
       transparent,
-      #d2eedb
-    ),
+      #d2eedb),
     linear-gradient(to bottom right, #d3d3fc, transparent, transparent, #d3d3fc);
 }
 

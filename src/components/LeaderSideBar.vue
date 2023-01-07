@@ -5,60 +5,30 @@ import AuthService from "@/services/auth.service";
 
 <template>
   <div id="leaderboard">
-    <UserInfo
-      :username="checkUser"
-      v-if="showCheckUser"
-      @close="this.showCheckUser = false"
-    />
+    <UserInfo :username="checkUser" v-if="showCheckUser" @close="showCheckUser = false" />
     <div class="wrapper">
       <div class="title">
         <slot></slot>
       </div>
       <div class="podium">
         <img class="podium-pic" src="../assets/podium.png" />
-        <div
-          class="user-info"
-          id="first-user"
-          v-if="data.length >= 1"
-          @click="podiumClicked(data[0].name)"
-        >
+        <div class="user-info" id="first-user" v-if="data.length >= 1" @click="podiumClicked(data[0].name)">
           <img class="user-pic" :src="podiumProfile[0]" />
           <div>{{ data[0].name }}</div>
         </div>
-        <div
-          class="user-info"
-          id="second-user"
-          v-if="data.length >= 2"
-          @click="podiumClicked(data[1].name)"
-        >
+        <div class="user-info" id="second-user" v-if="data.length >= 2" @click="podiumClicked(data[1].name)">
           <img class="user-pic" :src="podiumProfile[1]" />
           <div>{{ data[1].name }}</div>
         </div>
-        <div
-          class="user-info"
-          id="third-user"
-          v-if="data.length >= 3"
-          @click="podiumClicked(data[2].name)"
-        >
+        <div class="user-info" id="third-user" v-if="data.length >= 3" @click="podiumClicked(data[2].name)">
           <img class="user-pic" :src="podiumProfile[2]" />
           <div>{{ data[2].name }}</div>
         </div>
       </div>
-      <el-table
-        id="leader-table"
-        :data="data"
-        table-layout="auto"
-        :row-class-name="tableRowClassName"
-        @row-click="rowClicked"
-      >
+      <el-table id="leader-table" :data="data" table-layout="auto" :row-class-name="tableRowClassName"
+        @row-click="rowClicked">
         <el-table-column type="index" label="名次" align="center" width="80" />
-        <el-table-column
-          v-for="col in columns"
-          :prop="col.prop"
-          :label="col.label"
-          :width="col.width"
-          align="center"
-        />
+        <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :width="col.width" align="center" />
       </el-table>
     </div>
   </div>

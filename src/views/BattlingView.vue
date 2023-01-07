@@ -10,7 +10,7 @@ import { ref } from "vue";
 
 <template>
   <div class="common-layout">
-    <UserInfo :username="checkUser" v-if="showCheckUser" @close="this.showCheckUser = false" />
+    <UserInfo :username="checkUser" v-if="showCheckUser" @close="showCheckUser = false;" />
     <CountdownTimer v-if="waiting" @end="endOfCountdown" />
     <div class="sidebar-bg fade-in" @click="toggleSidebar()" v-if="showRanking"></div>
     <el-container direction="vertical" class="page">
@@ -49,16 +49,16 @@ import { ref } from "vue";
                   <div class="answer" v-if="problem.subproblem[0].choice.length === 4">
                     <el-radio-group v-model="problem.subproblem[0].radio" size="large">
                       <el-radio label="A">{{
-                          problem.subproblem[0].choice[0]
+                        problem.subproblem[0].choice[0]
                       }}</el-radio>
                       <el-radio label="B">{{
-                          problem.subproblem[0].choice[1]
+                        problem.subproblem[0].choice[1]
                       }}</el-radio>
                       <el-radio label="C">{{
-                          problem.subproblem[0].choice[2]
+                        problem.subproblem[0].choice[2]
                       }}</el-radio>
                       <el-radio label="D">{{
-                          problem.subproblem[0].choice[3]
+                        problem.subproblem[0].choice[3]
                       }}</el-radio>
                     </el-radio-group>
                   </div>

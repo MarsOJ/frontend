@@ -6,10 +6,7 @@ import { RouterLink } from "vue-router";
   <el-affix>
     <nav>
       <RouterLink to="/home">
-        <img
-          src="../assets/main-logo.png"
-          @click="this.$router.push('/home')"
-        />
+        <img src="../assets/main-logo.png" @click="$router.push('/home')" />
       </RouterLink>
 
       <div class="fill"></div>
@@ -24,22 +21,15 @@ import { RouterLink } from "vue-router";
         <!-- <RouterLink to="/gallery" class="link">
           <div>礼品屋</div>
         </RouterLink> -->
-        <RouterLink
-          to="/personal"
-          class="link"
-          :class="{ 'router-link-active': $route.path.startsWith('/personal') }"
-        >
+        <RouterLink to="/personal" class="link" :class="{ 'router-link-active': $route.path.startsWith('/personal') }">
           <div>
             {{ username }}
           </div>
-          <div
-            class="dropdown-content"
-            style="
+          <div class="dropdown-content" style="
                {
                 '--num':3 ;
               }
-            "
-          >
+            ">
             <RouterLink to="/personal">个人资料</RouterLink>
             <RouterLink to="/personal/settings">账户设置</RouterLink>
             <RouterLink to="/logout">退出登录</RouterLink>
@@ -96,11 +86,9 @@ nav img {
 nav .fill {
   height: 100%;
   flex-grow: 1;
-  background-image: linear-gradient(
-    to right,
-    transparent,
-    rgba(0, 20, 18, 0.8)
-  );
+  background-image: linear-gradient(to right,
+      transparent,
+      rgba(0, 20, 18, 0.8));
 }
 
 nav .links {
