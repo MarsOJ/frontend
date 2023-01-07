@@ -17,27 +17,49 @@ import AuthService from "@/services/auth.service";
         <div class="label">设置密码</div>
         <a class="action" @click="pwdEdit">修改密码</a>
       </div>
-      <el-form id="password-edit" class="fade-down" v-if="pwdEnabled" ref="formRef" :model="form" :rules="rules">
+      <el-form
+        id="password-edit"
+        class="fade-down"
+        v-if="pwdEnabled"
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+      >
         <div class="settings-item">
           <div class="label">原密码</div>
           <el-form-item prop="oldPwd">
-            <el-input v-model="form.oldPwd" type="password" placeholder="原密码" />
+            <el-input
+              v-model="form.oldPwd"
+              type="password"
+              placeholder="原密码"
+            />
           </el-form-item>
         </div>
         <div class="settings-item">
           <div class="label">新密码</div>
           <el-form-item prop="newPwd">
-            <el-input v-model="form.newPwd" type="password" placeholder="新密码" show-password />
+            <el-input
+              v-model="form.newPwd"
+              type="password"
+              placeholder="新密码"
+              show-password
+            />
           </el-form-item>
         </div>
         <div class="settings-item">
           <div class="label">重复输入密码</div>
           <el-form-item prop="newPwd2">
-            <el-input v-model="form.newPwd2" type="password" placeholder="重复输入密码" />
+            <el-input
+              v-model="form.newPwd2"
+              type="password"
+              placeholder="重复输入密码"
+            />
           </el-form-item>
         </div>
         <el-form-item class="submit-btns">
-          <el-button round type="primary" @click="submitForm($refs.formRef)">修改密码</el-button>
+          <el-button round type="primary" @click="submitForm($refs.formRef)"
+            >修改密码</el-button
+          >
         </el-form-item>
       </el-form>
     </div>

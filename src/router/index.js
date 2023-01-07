@@ -154,7 +154,7 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-router.afterEach((to, from) => {
+router.afterEach((to) => {
   nextTick(() => {
     document.title = (to.meta.title ? to.meta.title + " - " : "") + "MarsOJ";
   });

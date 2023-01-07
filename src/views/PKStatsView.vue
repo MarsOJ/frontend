@@ -172,7 +172,7 @@ import AuthService from "@/services/auth.service";
 <script>
 export default {
   name: "PKStatsView",
-  components: { ScoreGraph, LeaderSideBar, NaviBar, Footer },
+  components: { ScoreGraph, LeaderSideBar },
   computed: {
     users() {
       return this.$store.state.competition.users;
