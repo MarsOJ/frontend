@@ -1,5 +1,6 @@
 <script setup>
 import User from "@/models/user";
+import { ElMessageBox } from "element-plus";
 </script>
 
 <template>

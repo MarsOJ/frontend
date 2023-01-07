@@ -1,7 +1,7 @@
 <script setup>
 import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
-import Pagination from "@/components/Pagination.vue";
+import Pagination from "@/components/BottomPagination.vue";
 import FavoriteService from "@/services/favorites.service";
 import ProblemService from "@/services/problem.service";
 import { ref } from "vue";

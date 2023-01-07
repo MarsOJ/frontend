@@ -5,6 +5,7 @@ import NaviBar from "@/components/NaviBar.vue";
 import Footer from "@/components/PageFooter.vue";
 import ScrollUpButton from "@/components/ScrollUpButton.vue";
 import AuthService from "@/services/auth.service";
+import { ElMessage, ElMessageBox } from "element-plus";
 </script>
 
 <template>

@@ -7,6 +7,7 @@ import ScoreGraph from "@/components/ScoreGraph.vue";
 import FavoriteService from "@/services/favorites.service";
 import ProblemService from "@/services/problem.service";
 import { marked } from "marked";
+import { ElMessage, ElMessageBox } from "element-plus";
 import AuthService from "@/services/auth.service";
 </script>
 

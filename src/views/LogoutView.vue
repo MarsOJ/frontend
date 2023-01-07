@@ -1,3 +1,7 @@
+<script setup>
+import { ElMessageBox } from "element-plus";
+</script>
+
 <script>
 export default {
   methods: {

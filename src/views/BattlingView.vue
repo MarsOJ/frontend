@@ -6,6 +6,7 @@ import ScoreGraph from "@/components/ScoreGraph.vue";
 import UserInfo from "@/components/UserInfo.vue";
 import { marked } from "marked";
 import { ref } from "vue";
+import { ElMessageBox } from "element-plus";
 </script>
 
 <template>
