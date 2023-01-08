@@ -1,5 +1,5 @@
 <script setup>
-import { ElMessageBox } from "element-plus";
+// import { ElMessageBox } from "element-plus";
 </script>
 
 <script>

@@ -1,6 +1,6 @@
 <script setup>
 import User from "@/models/user";
-import { ElMessageBox } from "element-plus";
+// import { ElMessageBox } from "element-plus";
 </script>
 
 <template>
@@ -11,38 +11,20 @@ import { ElMessageBox } from "element-plus";
       <div id="register-form" class="fade-down">
         <el-form ref="formRef" :model="form" :rules="rules">
           <el-form-item prop="username">
-            <el-input
-              v-model="form.username"
-              type="text"
-              placeholder="用户名"
-              clearable
-            />
+            <el-input v-model="form.username" type="text" placeholder="用户名" clearable />
           </el-form-item>
           <br />
           <el-form-item prop="password">
-            <el-input
-              v-model="form.password"
-              type="password"
-              placeholder="密码"
-              show-password
-            />
+            <el-input v-model="form.password" type="password" placeholder="密码" show-password />
           </el-form-item>
           <br />
           <el-form-item prop="password2">
-            <el-input
-              v-model="form.password2"
-              type="password"
-              placeholder="再次输入密码"
-            />
+            <el-input v-model="form.password2" type="password" placeholder="再次输入密码" />
           </el-form-item>
           <br />
           <el-form-item class="submit-btns">
-            <el-button round type="info" @click="$router.push('/login')"
-              >登录</el-button
-            >
-            <el-button round type="primary" @click="submitForm($refs.formRef)"
-              >注册</el-button
-            >
+            <el-button round type="info" @click="$router.push('/login')">登录</el-button>
+            <el-button round type="primary" @click="submitForm($refs.formRef)">注册</el-button>
           </el-form-item>
         </el-form>
       </div>

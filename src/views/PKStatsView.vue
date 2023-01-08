@@ -7,7 +7,7 @@ import ScoreGraph from "@/components/ScoreGraph.vue";
 import FavoriteService from "@/services/favorites.service";
 import ProblemService from "@/services/problem.service";
 import { marked } from "marked";
-import { ElMessage, ElMessageBox } from "element-plus";
+// import { ElMessage, ElMessageBox } from "element-plus";
 import AuthService from "@/services/auth.service";
 </script>
 
@@ -20,12 +20,8 @@ import AuthService from "@/services/auth.service";
           <el-container class="page-main">
             <el-main class="main" v-if="stats">
               <div class="title-result">
-                <span class="title" v-if="userRank == 1"
-                  >恭喜，你在比赛中取得胜利！</span
-                >
-                <span class="title" v-else
-                  >很遗憾，您获得了第{{ userRank }}名。</span
-                >
+                <span class="title" v-if="userRank == 1">恭喜，你在比赛中取得胜利！</span>
+                <span class="title" v-else>很遗憾，您获得了第{{ userRank }}名。</span>
                 <span class="user">
                   <img class="user-pic" :src="avatar" />
                   <div class="win" v-if="userRank == 1"></div>
@@ -39,15 +35,10 @@ import AuthService from "@/services/auth.service";
                     <ScoreGraph :history="scoreHistory" :users="usernames" />
                   </div>
                   <div class="leader-wrapper">
-                    <LeaderSideBar
-                      :data="stats.points"
-                      :columns="[
-                        { prop: 'name', label: '用户名', width: '120' },
-                        { prop: 'points', label: '积分', width: '80' },
-                      ]"
-                      v-if="stats"
-                      >PK积分榜</LeaderSideBar
-                    >
+                    <LeaderSideBar :data="stats.points" :columns="[
+                      { prop: 'name', label: '用户名', width: '120' },
+                      { prop: 'points', label: '积分', width: '80' },
+                    ]" v-if="stats">PK积分榜</LeaderSideBar>
                   </div>
                 </div>
               </div>
@@ -57,16 +48,11 @@ import AuthService from "@/services/auth.service";
                   <div class="block selector">
                     <el-scrollbar>
                       <div>
-                        <div
-                          v-for="problem in stats.problems"
-                          class="problem-no"
-                          :class="{
-                            selected: problemNum == problem.num,
-                            correct: problem.correct,
-                            wrong: !problem.correct,
-                          }"
-                          @click="loadProblem(problem.num)"
-                        >
+                        <div v-for="problem in stats.problems" class="problem-no" :class="{
+                          selected: problemNum == problem.num,
+                          correct: problem.correct,
+                          wrong: !problem.correct,
+                        }" @click="loadProblem(problem.num)">
                           <span class="number">
                             {{ problem.num + 1 }}.
                             {{ types[problem.type] }}&nbsp;&nbsp;
@@ -81,39 +67,27 @@ import AuthService from "@/services/auth.service";
                   <div class="block problem" v-loading="loading">
                     <el-scrollbar>
                       <div v-if="currProblem.content">
-                        <div
-                          class="problem-title"
-                          v-if="currProblem.content.classification >= 0"
-                        >
-                          <span
-                            >{{ currProblem.num + 1 }}.
-                            {{ types[currProblem.type] }}</span
-                          >
+                        <div class="problem-title" v-if="currProblem.content.classification >= 0">
+                          <span>{{ currProblem.num + 1 }}.
+                            {{ types[currProblem.type] }}</span>
                           <!-- <el-button type="primary" @click="addToFavorite(problemNum);">收藏本题</el-button> -->
                           <el-dropdown>
                             <span class="el-dropdown-link">
                               <small>
                                 收藏本题
-                                <el-icon class="el-icon--right"
-                                  ><arrow-down
-                                /></el-icon>
+                                <el-icon class="el-icon--right"><arrow-down /></el-icon>
                               </small>
                             </span>
                             <template #dropdown>
                               <el-dropdown-menu>
-                                <el-dropdown-item
-                                  v-for="fav in favLists"
-                                  @click="addToFavorite(fav.id, problemNum)"
-                                  >{{ fav.name }}</el-dropdown-item
-                                >
+                                <el-dropdown-item v-for="fav in favLists" @click="addToFavorite(fav.id, problemNum)">{{
+                                  fav.name
+                                }}</el-dropdown-item>
                               </el-dropdown-menu>
                             </template>
                           </el-dropdown>
                         </div>
-                        <div
-                          class="problem-stats"
-                          v-if="currProblem.content.classification >= 0"
-                        >
+                        <div class="problem-stats" v-if="currProblem.content.classification >= 0">
                           <small>你的得分 {{ currProblem.userPoints }}</small>
                           &nbsp;&nbsp;
                           <small>平均得分 {{ currProblem.average }}</small>
@@ -122,28 +96,21 @@ import AuthService from "@/services/auth.service";
                         <div v-if="currProblem.content.classification === -1">
                           题目不存在
                         </div>
-                        <div
-                          v-else-if="currProblem.content.classification <= 1"
-                        >
+                        <div v-else-if="currProblem.content.classification <= 1">
                           <span class="problem-text">{{
                             currProblem.content.content
                           }}</span>
                           <div v-html="codeHtml"></div>
-                          <div
-                            v-for="(sp, index) in currProblem.content
-                              .subproblem"
-                          >
+                          <div v-for="(sp, index) in currProblem.content
+                          .subproblem">
                             <span class="problem-text">{{ sp.content }}</span>
                             <div class="answer" v-if="sp.choice.length === 4">
                               <ol type="A">
-                                <li
-                                  v-for="(c, i) in sp.choice"
-                                  :class="{
-                                    correct:
-                                      String.fromCharCode(65 + i) ===
-                                      currProblem.content.answer[index],
-                                  }"
-                                >
+                                <li v-for="(c, i) in sp.choice" :class="{
+                                  correct:
+                                    String.fromCharCode(65 + i) ===
+                                    currProblem.content.answer[index],
+                                }">
                                   &nbsp;&nbsp;{{ c }}
                                 </li>
                               </ol>
@@ -279,12 +246,12 @@ export default {
           return a.points < b.points
             ? 1
             : b.points < a.points
-            ? -1
-            : a.isUser < b.isUser
-            ? 1
-            : a.isUser > b.isUser
-            ? -1
-            : 0;
+              ? -1
+              : a.isUser < b.isUser
+                ? 1
+                : a.isUser > b.isUser
+                  ? -1
+                  : 0;
         });
         data.points.forEach((user, i) => {
           if (user.isUser) {
