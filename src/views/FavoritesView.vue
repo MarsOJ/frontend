@@ -1,17 +1,3 @@
-<script setup>
-import NaviBar from "@/components/NaviBar.vue";
-import Footer from "@/components/PageFooter.vue";
-import Pagination from "@/components/BottomPagination.vue";
-import FavoriteService from "@/services/favorites.service";
-import ProblemService from "@/services/problem.service";
-import { ref } from "vue";
-import { Edit, Delete } from "@element-plus/icons-vue";
-import { ElMessage, ElMessageBox } from "element-plus";
-import "element-plus/theme-chalk/el-message.css";
-import "element-plus/theme-chalk/el-message-box.css";
-import { marked } from "marked";
-</script>
-
 <template>
   <div class="common-layout">
     <el-container direction="vertical">
@@ -281,6 +267,17 @@ import { marked } from "marked";
 </template>
 
 <script>
+import NaviBar from "@/components/NaviBar.vue";
+import Footer from "@/components/PageFooter.vue";
+import Pagination from "@/components/BottomPagination.vue";
+import FavoriteService from "@/services/favorites.service";
+import ProblemService from "@/services/problem.service";
+import { ref } from "vue";
+import { Edit, Delete } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import "element-plus/theme-chalk/el-message.css";
+import "element-plus/theme-chalk/el-message-box.css";
+import { marked } from "marked";
 export default {
   data() {
     return {
@@ -326,10 +323,10 @@ export default {
           { required: true, message: "请输入收藏夹名字", trigger: "change" },
         ],
       },
-      ProblemDialogVisible: ref(false),
-      ProblemVisible: ref(false),
-      FavoriteDialogVisible: ref(false),
-      ShowAnswer: ref(false),
+      ProblemDialogVisible: false,
+      ProblemVisible: false,
+      FavoriteDialogVisible: false,
+      ShowAnswer: false,
     };
   },
   computed: {
@@ -405,7 +402,7 @@ export default {
       this.handleFilter();
     },
     handleAddFavorite() {
-      this.FavoriteDialogVisible = ref(true);
+      this.FavoriteDialogVisible = true;
     },
     addFavorite() {
       console.log("name", this.temp.name);
@@ -423,7 +420,7 @@ export default {
           });
         }
       });
-      this.FavoriteDialogVisible = ref(false);
+      this.FavoriteDialogVisible = false;
     },
     handleDeleteFavorite() {
       ElMessageBox.alert("您确定要删除当前收藏夹吗？该操作不可恢复！", "警告", {
@@ -460,7 +457,7 @@ export default {
           for (var sp of this.problem.subproblem) {
             sp.radio = ref("A");
           }
-          this.ProblemVisible = ref(true);
+          this.ProblemVisible = true;
         },
         (error) => {
           ElMessage({
@@ -473,7 +470,7 @@ export default {
     },
     handleMove(row) {
       this.problemId = row.id;
-      this.ProblemDialogVisible = ref(true);
+      this.ProblemDialogVisible = true;
       console.log(this.problemId);
     },
     MoveProblem() {
@@ -496,7 +493,7 @@ export default {
           });
         }
       });
-      this.ProblemDialogVisible = ref(false);
+      this.ProblemDialogVisible = false;
     },
     handleDelete(row) {
       FavoriteService.deleteProblem(this.favoriteId, row.id).then((code) => {

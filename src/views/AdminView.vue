@@ -36,7 +36,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                         type="danger"
                         :icon="Delete"
                         size="small"
-                        @click="handleBatchDelete"
+                        @click="handleInfoBatchDelete"
                       >
                         批量删除
                       </el-button>
@@ -196,7 +196,7 @@ import "element-plus/theme-chalk/el-message-box.css";
                         type="danger"
                         :icon="Delete"
                         size="small"
-                        @click="handleBatchDelete"
+                        @click="handleProblemBatchDelete"
                       >
                         批量删除
                       </el-button>
@@ -213,10 +213,10 @@ import "element-plus/theme-chalk/el-message-box.css";
                       <el-upload
                         v-model:http-request="uploadProblem"
                         :show-file-list="false"
-                        style="margin-left: 182px; margin-top: -46px"
+                        class="filter-item"
+                        style="margin-left: 15px"
                       >
                         <el-button
-                          class="filter-item"
                           type="primary"
                           size="small"
                           :icon="Edit"
@@ -598,7 +598,7 @@ export default {
       }
     };
     return {
-      activeName: ref("info"),
+      activeName: "info",
       infoList: [],
       problemList: [],
       recordList: [],
@@ -709,52 +709,41 @@ export default {
   methods: {
     updateList() {
       this.listLoading = true;
-      switch (this.activeName) {
-        case "info":
-          InfoService.getNewsCount().then((count) => {
-            this.infoTotal = count;
-          });
-          InfoService.getNewsList(
-            this.listQuery.page,
-            this.listQuery.limit
-          ).then((data) => {
-            this.infoList = data;
-          });
+      InfoService.getNewsCount().then((count) => {
+        this.infoTotal = count;
+      });
+      InfoService.getNewsList(
+        this.listQuery.page,
+        this.listQuery.limit
+      ).then((data) => {
+        this.infoList = data;
+      });
 
-          break;
-        case "problem":
-          ProblemService.getProblemCount().then((count) => {
-            this.problemTotal = count;
-          });
-          ProblemService.getProblemList(
-            this.listQuery.page,
-            this.listQuery.limit
-          ).then((data) => {
-            this.problemList = data;
-          });
-
-          break;
-        case "record":
-          RecordService.getRecordCount().then((count) => {
-            this.recordTotal = count;
-          });
-          RecordService.getRecordList(
-            this.listQuery.page,
-            this.listQuery.limit
-          ).then((data) => {
-            this.recordList = data;
-          });
-          break;
-        default:
-          break;
-      }
+      ProblemService.getProblemCount().then((count) => {
+        this.problemTotal = count;
+      });
+      ProblemService.getProblemList(
+        this.listQuery.page,
+        this.listQuery.limit
+      ).then((data) => {
+        this.problemList = data;
+      });
+      RecordService.getRecordCount().then((count) => {
+        this.recordTotal = count;
+      });
+      RecordService.getRecordList(
+        this.listQuery.page,
+        this.listQuery.limit
+      ).then((data) => {
+        this.recordList = data;
+      });
       this.listLoading = false;
     },
     handleSelectionChange(val) {
       this.multiSelection = val;
       console.log(val);
     },
-    handleBatchDelete() {
+    handleInfoBatchDelete() {
       ElMessageBox.alert("您确定要删除所选项目吗？该操作不可恢复！", "警告", {
         cancelButtonText: "Cancel",
         confirmButtonText: "OK",
@@ -764,46 +753,51 @@ export default {
             removeList.push(el.id);
           }
           if (removeList.length == 0) return;
-          switch (this.activeName) {
-            case "info":
-              InfoService.deleteNews(removeList).then(
-                () => {
-                  ElMessage({
-                    message: "批量删除成功",
-                    type: "success",
-                  });
-                  this.updateList();
-                },
-                (error) => {
-                  ElMessage({
-                    message: "批量删除失败",
-                    type: "error",
-                  });
-                  console.log(error);
-                }
-              );
-              break;
-            case "problem":
-              ProblemService.deleteProblem(removeList).then(
-                () => {
-                  ElMessage({
-                    message: "批量删除成功",
-                    type: "success",
-                  });
-                  this.updateList();
-                },
-                (error) => {
-                  ElMessage({
-                    message: "批量删除失败",
-                    type: "error",
-                  });
-                  console.log(error);
-                }
-              );
-              break;
-            default:
-              break;
+          InfoService.deleteNews(removeList).then(
+            () => {
+              ElMessage({
+                message: "批量删除成功",
+                type: "success",
+              });
+              this.updateList();
+            },
+            (error) => {
+              ElMessage({
+                message: "批量删除失败",
+                type: "error",
+              });
+              console.log(error);
+            }
+          );
+        },
+      });
+    },
+    handleProblemBatchDelete() {
+      ElMessageBox.alert("您确定要删除所选项目吗？该操作不可恢复！", "警告", {
+        cancelButtonText: "Cancel",
+        confirmButtonText: "OK",
+        callback: () => {
+          var removeList = [];
+          for (const el of this.multiSelection) {
+            removeList.push(el.id);
           }
+          if (removeList.length == 0) return;
+          ProblemService.deleteProblem(removeList).then(
+            () => {
+              ElMessage({
+                message: "批量删除成功",
+                type: "success",
+              });
+              this.updateList();
+            },
+            (error) => {
+              ElMessage({
+                message: "批量删除失败",
+                type: "error",
+              });
+              console.log(error);
+            }
+          );
         },
       });
     },
